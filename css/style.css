@@ -456,6 +456,7 @@ section .header{
 }
 
 .hljs {
+    background: #343439;
     white-space: pre;
     padding: 1rem;
     border-radius: 15px;
