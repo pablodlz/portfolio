@@ -116,10 +116,13 @@ body {
     border: 1px solid var(--primary-color);
   }
 
+
+
+
 .mini-banner-icon {
     background-color: var(--background-color-secondary);
     color: var(--text-color);
-    justify-content: center;
+    justify-content: center !important;
 }
 
 .icon-item {

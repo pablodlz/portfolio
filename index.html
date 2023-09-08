@@ -1,49 +1,54 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,700">
-    <title>Pablo de Souza Galerani</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/dracula.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/script.js"></script>
+    <title>Personal Portfolio #1 | AsmrProg</title>
 </head>
 
 <body>
 
-    <header>
-        <div class="author">
-            <p class="ev-text">Site desenvolvido exclusivamente por mim.</p>
+    <div class="author">
+        <p class="ev-text">Site desenvolvido exclusivamente por mim.</p>
+    </div>
+
+    <nav>
+        <div class="nav-links-cel">
+            <img src="./img/bahai.svg"></img>
+        </div>
+        <ul class="nav-links">
+            <li class="link"><a href="#">Home</a></li>
+            <li id="link1" class="link"><a href="#">Habilidades</a></li>
+            <li id="link2" class="link"><a href="#">Experiência</a></li>
+            <li id="link3" class="link"><a href="#">Projetos</a></li>
+            <li id="link4" class="link"><a href="#">Sobre mim</a></li>
+        </ul>
+        <button class="btn">Contato</button>
+    </nav>
+
+    <header class="container">
+        <div class="content">
+            <span class="blur"></span>
+            <span class="blur"></span>
+            <h4>OLÁ, SEJA BEM VINDO AO MEU PORTFÓLIO</h4>
+            <H1>Eu sou <span>Pablo</span>, profissional de Cybersecurity em formação</H1>
+            <p>
+                Estou cursando Segurança da Informação na Fatec e sou entusiasta no mundo de programação.
+            </p>
+            <button class="btn">Ler mais</button>
+        </div>
+        <div class="perfil-image-header">
+            <img class="perfil-image" src="./img/image.jpeg"></img>
         </div>
     </header>
 
-    <div id="body">
-
-        <!-- Barra de Menu -->
-        <div class="row navigation-menu">
-            <div class="navigation-item">
-                <a class="navigation-link" href="./index.html">
-                    <span>Menu 1</span>
-                </a>
-            </div>
-            <div class="navigation-item">
-                <a class="navigation-link" href="./index.html">
-                    <span>Menu 2</span>
-                </a>
-            </div>
-            <div class="navigation-item">
-                <a class="navigation-link" href="./index.html">
-                    <span>Menu 3</span>
-                </a>
-            </div>
-            <div class="navigation-item">
-                <a class="navigation-link" href="./index.html">
-                    <span>Menu 4</span>
-                </a>
-            </div>
-        </div>
-
+    <section>
         <div class="row mini-banner-icon">
             <div class="icon-item">
                 <div>
@@ -82,54 +87,330 @@
                 </div>
             </div>
         </div>
+    </section>
 
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="content-box-c">
-                        <div class="row">
-                        <figure>
-                            <img class="perfil-image content-box-b" src="./img/image.jpeg"></img>
-                        </figure>
-                        <div class="">
-                        <h2>Pablo de Souza Galerani</h2>
-                        <p class="desc-text">Olá! Me chamdo Pablo e estou cursando Segurança da Informação na Fatec e sou entusiasta no mundo de programação.</p>
-                    </div>
+    <section class="container">
+        <h2 class="header">Principais Projetos</h2>
+        <p class="sub-header">
+            Aqui estão meus projetos de destaque
+        </p>
+        <div class="pricing">
+            <div class="card">
+                <div class="content">
+                    <h4>Classificação</h4>
+                    <h3>Nome do Projeto</h3>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
                 </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="content-box-a light-box">
-                        <h2>Experiência Profissional</h2>
-                        <p>Desenvolvedor Web - Empresa ABC (2018 - Presente)</p>
-                        <p>Analista de Dados - Empresa XYZ (2015 - 2018)</p>
-                    </div>
-                    <div class="content-box-a light-box">
-                        <h2>Experiência Profissional</h2>
-                        <p>Desenvolvedor Web - Empresa ABC (2018 - Presente)</p>
-                        <p>Analista de Dados - Empresa XYZ (2015 - 2018)</p>
-                    </div>
-                    <div class="content-box-a light-box">
-                        <h2>Experiência Profissional</h2>
-                        <p>Desenvolvedor Web - Empresa ABC (2018 - Presente)</p>
-                        <p>Analista de Dados - Empresa XYZ (2015 - 2018)</p>
-                    </div>
-                </div>
+                <button class="btn">Ver Projeto</button>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="content-box-a light-box">
-                        <h2>Educação</h2>
-                        <p>Bacharelado em Ciência da Computação - Universidade ABC (2010 - 2014)</p>
-                    </div>
+            <div class="card">
+                <div class="content">
+                    <h4>Artigo científico</h4>
+                    <h3>Redes Neurais Generativas Adversariais Para Criação de Ataques Inéditos</h3>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Detecção de Ransomware
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Machine Learning
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Undersampling
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Redes
+                    </p>
+                </div>
+                <button class="btn">Ver Projeto</button>
+            </div>
+            <div class="card">
+                <div class="content">
+                    <h4>Classificação</h4>
+                    <h3>Nome do Projeto</h3>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                    <p>
+                        <i class="ri-git-commit-line"></i>
+                        Item
+                    </p>
+                </div>
+                <button class="btn">Ver Projeto</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <h2 class="header">Aplicações</h2>
+        <p class="sub-header">
+            que desenvolvi ao longo de meu aprendizado
+        </p>
+        <div class="project">
+            <h3 class="project-title">
+                Calculadora em JavaScript
+            </h3>
+            <p class="project-sub-title">
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit
+            </p>
+            <div class="features aplication">
+                <div class="card2">
+                    <img
+                        src="https://www.freecodecamp.org/portuguese/news/content/images/2022/04/Cw7jNVIhWFV4NSNY8-Lv8uX4583Hr5LvzYFq.gif">
+                    </img>
+                </div>
+                <div class="card2">
+                    <pre><code class="code">function sayHello() {
+    console.log("Hello, world!");
+    apply plugin:'application'
+public class Greeting {
+    static void hello() {
+        System.out.println("Hello.. Happy learning!");
+    }
+
+    public static void main(String[] args) {
+        hello();
+    }
+}
+function sayHello() {
+    console.log("Hello, world!");
+    apply plugin:'application'
+    public class Greeting {
+        static void hello() {
+            System.out.println("Hello.. Happy learning!");
+        }
+    
+        public static void main(String[] args) {
+            hello();
+        }
+    }
+    function sayHello() {
+        console.log("Hello, world!");
+        apply plugin:'application'
+    }
+}
+}</code></pre>
+                </div>
+                <div class="card2">
+                <h4>Título</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a class="feat-card2" href="#">Ver Projeto <i class="ri-arrow-right-line"></i></a>
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', (event) => {
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+    </section>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <section class="container">
+        <h2 class="header">Outras Aplicações</h2>
+        <p class="sub-header">
+            que desenvolvi ao longo de meu aprendizado
+        </p>
+        <div class="features features2">
+            <div class="card">
+                <h4>Título</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Ver Projeto <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <h4>Título</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Ver Projeto <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <h4>Título</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Ver Projeto <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <button class="btn">Ver tudo</button>
+        </div>
+    </section>
 
+    <section class="container">
+        <h2 class="header">Certificados</h2>
+        <p class="sub-header">
+            Veja meus certificados
+        </p>
+        <div class="features">
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/1.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/2.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/3.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/4.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/5.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/6.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/7.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/certificados/8.png"></img>
+                <h4>Nome da certificação</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Detalhes <i class="ri-arrow-right-line"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <h2 class="header">Linkedin</h2>
+        <p class="sub-header">
+            Veja minhas últimas postagens
+        </p>
+        <div class="features">
+            <div class="card">
+                <img class="linkedin-post" src="./img/linkedin2.jpg"></img>
+                <h4>Título da postagem</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Ver publicação <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/linkedin3.jpg"></img>
+                <h4>Título da postagem</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Ver publicação <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <div class="card">
+                <img class="linkedin-post" src="./img/linkedin.jpg"></img>
+                <h4>Título da postagem</h4>
+                <p>
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                </p>
+                <a href="#">Ver publicação <i class="ri-arrow-right-line"></i></a>
+            </div>
+            <button class="btn">Ver tudo</button>
+        </div>
+    </section>
+
+    <footer class="container">
+        <span class="blur"></span>
+        <span class="blur"></span>
+        <div class="column">
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
+            <div class="socials">
+                <a href="#"><i class="ri-youtube-line"></i></a>
+                <a href="#"><i class="ri-instagram-line"></i></a>
+                <a href="#"><i class="ri-twitter-line"></i></a>
+            </div>
+        </div>
+        <div class="column">
+            <h4>Company</h4>
+            <a href="#">Business</a>
+            <a href="#">Partnership</a>
+            <a href="#">Network</a>
+        </div>
+        <div class="column">
+            <h4>About Us</h4>
+            <a href="#">Blogs</a>
+            <a href="#">Channels</a>
+            <a href="#">Sponsors</a>
+        </div>
+        <div class="column">
+            <h4>Contact</h4>
+            <a href="#">Contact Us</a>
+            <a href="#">Privicy Policy</a>
+            <a href="#">Terms & Conditions</a>
+        </div>
+    </footer>
+
+    <div class="copyright">
+        Copyright © 2023 Pablo de Souza Galerani. All Rights Reserved.
+    </div>
+
+
+    <script src="./js/script.js"></script>
 </body>
 
 </html>
