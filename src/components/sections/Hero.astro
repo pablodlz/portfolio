@@ -1,6 +1,7 @@
 ---
-import { data } from '../../lib/data';
+import { data, obfuscatedEmail } from '../../lib/data';
 import { withBase } from '../../lib/url';
+import { formatRange } from '../../lib/dates';
 import Button from '../ui/Button.astro';
 import Badge from '../ui/Badge.astro';
 import Terminal from '../ui/Terminal.astro';
@@ -20,16 +21,35 @@ const termLines = about.easterEgg.content.map((line, i) => ({
 
 // Dados reais p/ os comandos do terminal (via atributo — escapado pelo Astro).
 const termData = {
+  name: profile.fullName,
   role: profile.role,
   company: profile.company.split(' ')[0],
+  headline: profile.headline,
+  location: profile.location,
+  bio: about.bio[0],
   github: profile.contact.github,
+  ghUser: profile.contact.githubUser,
   linkedin: profile.contact.linkedin,
   socials: profile.socials.map((s) => ({ name: s.name, url: s.url })),
-  topSkills: data.topSkills,
-  resume: withBase(`/${profile.resume}`),
+  skills: data.topSkills,
+  experience: data.experience.map((e) => ({
+    title: e.title,
+    org: e.company,
+    range: formatRange(e.startDate, e.endDate, e.current),
+  })),
+  education: data.education.map((e) => ({
+    degree: e.degree,
+    field: e.field,
+    org: e.institution,
+    years: `${e.startYear}–${e.endYear}`,
+  })),
+  projects: data.projects.map((p) => ({ name: p.name, cat: p.category })),
   certs: data.certifications.displayTotal,
+  certDocs: data.certifications.downloadedDocuments.files.length,
   pubs: data.publications.length,
-  location: profile.location,
+  talks: data.speaking.length,
+  resume: withBase(`/${profile.resume}`),
+  mail: obfuscatedEmail(),
 };
 ---
 

@@ -56,7 +56,7 @@ engenharia segura) e **modernidade minimalista**. O site substitui o site legado
 - **REQ-N03** — Lighthouse ≥ 100/100/100/100 (Performance, A11y, Best Practices, SEO) em mobile e desktop; CLS = 0.
 - **REQ-N04** — Conformidade WCAG 2.2 AA (contraste, foco visível, teclado, landmarks, alt).
 - **REQ-N05** — CSP via `<meta>` sem `unsafe-inline`/`unsafe-eval`, conforme `security.md`.
-- **REQ-N06** — Peso: JS enviado ao cliente ≤ 15KB gzip (tema + lightbox + filtro + reveal); sem framework JS de runtime.
+- **REQ-N06** — Peso: JS **do caminho crítico** ≤ 15KB gzip (tema, lightbox, filtro, reveal, typewriter). Atual: ~5KB. O motor do terminal Kali (`terminal.ts`, ~13KB gzip) é um **chunk separado carregado por `import()` dinâmico só na 1ª interação** com o terminal — fora do caminho crítico, não conta no orçamento. Sem framework JS de runtime. (Revisado no v3.1: o terminal virou feature-vitrine; o lazy-load preserva o TBT/FCP.)
 - **REQ-N07** — `sitemap.xml`, `robots.txt`, OG image própria, favicon multi-tamanho, web manifest, canonical, `lang="pt-BR"`.
 - **REQ-N08** — `security.txt` (RFC 9116) em `/.well-known/` e `/`, e `SECURITY.md` no repo.
 
