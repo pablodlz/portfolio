@@ -552,7 +552,22 @@ function ensureCtx(): AudioContext | null {
    arquivos no lugar da síntese. Same-origin → CSP 'self' intacta, zero
    terceiros. Sem manifest/arquivos, cai no fallback sintetizado (nada muda). */
 const sampleBuffers = new Map<string, AudioBuffer>();
+const sampleOffsets = new Map<string, number>(); // silêncio inicial a pular (s)
 let samplesTried = false;
+// detecta o silêncio no começo do arquivo (padding do encoder MP3) → tocamos a
+// partir daí p/ o som sair NO clique, sem atraso perceptível
+function leadingSilence(buf: AudioBuffer): number {
+  const thresh = 0.008;
+  const chans: Float32Array[] = [];
+  for (let ch = 0; ch < buf.numberOfChannels; ch++) chans.push(buf.getChannelData(ch));
+  const n = buf.length;
+  for (let i = 0; i < n; i++) {
+    for (const data of chans) {
+      if (Math.abs(data[i]!) > thresh) return Math.max(0, i / buf.sampleRate - 0.003); // 3ms de folga p/ não cortar o ataque
+    }
+  }
+  return 0;
+}
 async function loadSamples(ctx: AudioContext): Promise<void> {
   if (samplesTried) return;
   samplesTried = true;
@@ -568,7 +583,9 @@ async function loadSamples(ctx: AudioContext): Promise<void> {
           try {
             const r = await fetch(`${base}audio/${file}`);
             if (!r.ok) return;
-            sampleBuffers.set(cue, await ctx.decodeAudioData(await r.arrayBuffer()));
+            const buf = await ctx.decodeAudioData(await r.arrayBuffer());
+            sampleBuffers.set(cue, buf);
+            sampleOffsets.set(cue, leadingSilence(buf));
           } catch {
             /* arquivo ausente/inválido: mantém a síntese p/ esse cue */
           }
@@ -584,7 +601,7 @@ function playSample(name: string): boolean {
   const src = audioCtx.createBufferSource();
   src.buffer = buf;
   src.connect(master);
-  src.start();
+  src.start(0, sampleOffsets.get(name) ?? 0); // pula o silêncio inicial → sem atraso
   return true;
 }
 
