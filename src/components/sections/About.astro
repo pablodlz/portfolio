@@ -39,7 +39,7 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
         </ul>
       </div>
 
-      <Card class="about-card reveal" style="--reveal-index: 1">
+      <Card class="about-card reveal" data-ri="1">
         <Image
           src={profilePhoto}
           alt={`Foto de ${profile.fullName}`}
@@ -76,7 +76,7 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
 
     <div class="about-recs">
       {recommendationsReceived.highlighted.map((rec, i) => (
-        <Card as="article" class="rec-card reveal" style={`--reveal-index: ${i}`}>
+        <Card as="article" class="rec-card reveal" data-ri={i}>
           <blockquote>
             <p>“{rec.text}”</p>
           </blockquote>

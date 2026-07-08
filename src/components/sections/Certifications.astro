@@ -72,7 +72,7 @@ const stats = [
         const meta = certImage(f.file);
         const issuer = issuerOf(f.file);
         return (
-          <li data-issuer={issuer} class="reveal" style={`--reveal-index: ${Math.min(i % 8, 7)}`}>
+          <li data-issuer={issuer} class="reveal" data-ri={Math.min(i % 8, 7)}>
             <button
               type="button"
               class="cert-trigger"
@@ -101,7 +101,7 @@ const stats = [
       {certificateImagesInRepo.map((c, i) => {
         const meta = repoCertImage(c.file);
         return (
-          <li class="cert-verify-card reveal" style={`--reveal-index: ${Math.min(i, 5)}`}>
+          <li class="cert-verify-card reveal" data-ri={Math.min(i, 5)}>
             <button
               type="button"
               class="cert-trigger cert-verify-thumb-btn"

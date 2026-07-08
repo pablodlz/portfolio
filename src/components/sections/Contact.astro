@@ -9,12 +9,12 @@ const mail = obfuscatedEmail();
 <section id="contato" class="section contact atmosphere">
   <div class="container contact-inner">
     <p class="eyebrow reveal">handshake</p>
-    <h2 class="reveal" style="--reveal-index: 1">Vamos conversar?</h2>
-    <p class="contact-sub reveal" style="--reveal-index: 2">
+    <h2 class="reveal" data-ri="1">Vamos conversar?</h2>
+    <p class="contact-sub reveal" data-ri="2">
       Aberto a trocar ideias sobre SOC, AppSec e segurança ofensiva.
     </p>
 
-    <div class="contact-ctas reveal" style="--reveal-index: 3">
+    <div class="contact-ctas reveal" data-ri="3">
       <Button href="#contato" class="js-mail" data-u={mail.u} data-d={mail.d} variant="primary" icon="mail">
         <span class="js-mail-addr">Enviar e-mail</span>
       </Button>
@@ -28,7 +28,7 @@ const mail = obfuscatedEmail();
       </p>
     </noscript>
 
-    <p class="contact-loc reveal" style="--reveal-index: 4">
+    <p class="contact-loc reveal" data-ri="4">
       {profile.location} · UTC−3
     </p>
   </div>

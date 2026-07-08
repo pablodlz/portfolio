@@ -20,22 +20,23 @@ const termLines = about.easterEgg.content.map((line, i) => ({
 <section id="top" class="hero atmosphere">
   <div class="container hero-grid">
     <div class="hero-copy">
-      <p class="reveal" style="--reveal-index: 0">
+      <p class="reveal" data-ri="0">
         <Badge tone="accent" dot pulse>SOC ANALYST @ CLAVIS — NA ATIVA</Badge>
       </p>
 
-      <h1 class="reveal" style="--reveal-index: 1">
+      <!-- h1 e subtítulo SEM reveal: são o LCP — precisam pintar no 1º paint -->
+      <h1>
         <span class="text-gradient">{firstName}</span><br />
         <span class="text-accent">{restName.join(' ')}</span>
       </h1>
 
-      <p class="hero-sub reveal" style="--reveal-index: 2">
+      <p class="hero-sub">
         {firstSentence}
       </p>
 
-      <p class="hero-headline reveal" style="--reveal-index: 3">{profile.headline}</p>
+      <p class="hero-headline reveal" data-ri="1">{profile.headline}</p>
 
-      <div class="hero-ctas reveal" style="--reveal-index: 4">
+      <div class="hero-ctas reveal" data-ri="2">
         <Button href="#contato" variant="primary" icon="mail">Contato</Button>
         <Button href={profile.contact.github} variant="secondary" icon="github" external>
           GitHub
@@ -46,9 +47,9 @@ const termLines = about.easterEgg.content.map((line, i) => ({
       </div>
     </div>
 
-    <div class="hero-terminal reveal" style="--reveal-index: 5">
+    <div class="hero-terminal reveal" data-ri="3">
       <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal decorativo com easter egg">
-        <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} style={`--t-index: ${l.i}`}>{l.text}</span>)}<span class="t-line" style={`--t-index: ${termLines.length}`}><span class="t-accent">&#10095;</span> <span class="t-cursor" aria-hidden="true"></span></span></pre>
+        <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} data-ri={l.i}>{l.text}</span>)}<span class="t-line" data-ri={termLines.length}><span class="t-accent">&#10095;</span> <span class="t-cursor" aria-hidden="true"></span></span></pre>
       </Terminal>
     </div>
   </div>

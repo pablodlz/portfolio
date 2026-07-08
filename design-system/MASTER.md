@@ -32,7 +32,7 @@
 | `--border-strong` | `#3a3631` | Bordas em hover/foco de card |
 | `--text` | `#f2f0ed` | Texto principal (branco quente, nunca #fff puro) |
 | `--text-2` | `#aaa49c` | Texto secundário |
-| `--text-3` | `#736d64` | Texto mudo (metadados, datas) |
+| `--text-3` | `#8a8378` | Texto mudo (metadados, datas) — AA também sobre `--bg-raised` |
 | `--accent` | `#30d158` | Acento único (links, CTAs, foco, dots) |
 | `--accent-hover` | `#4ade70` | Hover de elementos de acento |
 | `--accent-soft` | `rgba(48,209,88,.10)` | Fundo de badge/glow suave |
@@ -50,7 +50,7 @@
 | `--border-strong` | `#d0cbc2` |
 | `--text` | `#1d1b18` |
 | `--text-2` | `#5b564e` |
-| `--text-3` | `#8b857b` |
+| `--text-3` | `#6d675e` |
 | `--accent` | `#15803d` |
 | `--accent-hover` | `#166f37` |
 | `--accent-soft` | `rgba(21,128,61,.10)` |

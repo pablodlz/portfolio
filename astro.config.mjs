@@ -22,8 +22,16 @@ export default defineConfig({
   trailingSlash: 'ignore',
   compressHTML: true,
   build: {
-    // CSS externo ('self' na CSP) em vez de inline — determinístico p/ CSP.
-    inlineStylesheets: 'never',
+    // CSS crítico inline (hasheado pela CSP do Astro) — elimina requests
+    // render-blocking; validado: style-src recebe os hashes no build.
+    inlineStylesheets: 'always',
+  },
+  vite: {
+    build: {
+      // Sem assets em data: URI (fontes pequenas viravam data:font/... e a
+      // CSP font-src 'self' bloqueia — e afrouxá-la seria pior que 1 request).
+      assetsInlineLimit: 0,
+    },
   },
   security: {
     csp: {
@@ -34,10 +42,9 @@ export default defineConfig({
         "font-src 'self'",
         "base-uri 'none'",
         "form-action 'self'",
-        // Nota (specs/security.md): frame-ancestors em <meta> é ignorado pelos
-        // browsers; fica como declaração de intenção. Proteção real exigiria
-        // header de servidor (GitHub Pages não permite).
-        "frame-ancestors 'none'",
+        // frame-ancestors NÃO entra: browsers ignoram (e logam erro) quando a
+        // diretiva vem via <meta>. Anti-clickjacking real exige header de
+        // servidor, que o GitHub Pages não permite — ver specs/security.md.
         "object-src 'none'",
         'upgrade-insecure-requests',
       ],

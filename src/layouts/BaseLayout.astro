@@ -2,6 +2,9 @@
 import '@fontsource-variable/inter';
 import '@fontsource-variable/space-grotesk';
 import '@fontsource-variable/jetbrains-mono';
+// URLs com hash p/ preload das fontes críticas (H1/corpo) — LCP
+import interWoff2 from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import groteskWoff2 from '@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2?url';
 import '../styles/global.css';
 // Script de tema inline (hash na CSP — ver astro.config.mjs). ?raw = conteúdo literal.
 import themeInit from '../scripts/theme-init.js?raw';
@@ -35,6 +38,9 @@ const ogImage = new URL(withBase('/og.png'), Astro.site);
 
     <!-- tema antes do primeiro paint (REQ-F11); conteúdo hasheado na CSP -->
     <script is:inline set:html={themeInit.trim()} />
+
+    <link rel="preload" as="font" type="font/woff2" href={groteskWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={interWoff2} crossorigin />
 
     <meta name="theme-color" content="#0e0d0c" />
     <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />

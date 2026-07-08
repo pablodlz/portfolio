@@ -26,7 +26,7 @@ const METRIC = /redução de ([\d,]+%)/;
         const related = p.relatedPublications.map(publicationByUrn);
         const isTalks = p.category === 'Palestras e Minicursos';
         return (
-          <Card as="article" class="proj-card reveal" style={`--reveal-index: ${i}`}>
+          <Card as="article" class="proj-card reveal" data-ri={i}>
             <Badge tone="info">{p.category}</Badge>
             <h3>{p.name}</h3>
             <p class="proj-desc">{p.description}</p>

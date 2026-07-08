@@ -21,7 +21,7 @@ const rest = education.slice(2);
     <div class="edu-grid">
       <div class="edu-featured">
         {featured.map((ed, i) => (
-          <Card as="article" class="edu-card reveal" style={`--reveal-index: ${i}`}>
+          <Card as="article" class="edu-card reveal" data-ri={i}>
             <div class="edu-head">
               <Badge tone="accent">{ed.degree}</Badge>
               <time class="edu-years">{ed.startYear}–{ed.endYear}</time>
@@ -42,7 +42,7 @@ const rest = education.slice(2);
           </Card>
         ))}
 
-        <ul class="edu-rest reveal" style="--reveal-index: 2">
+        <ul class="edu-rest reveal" data-ri="2">
           {rest.map((ed) => (
             <li>
               <div>
@@ -55,7 +55,7 @@ const rest = education.slice(2);
         </ul>
       </div>
 
-      <Card class="edu-radar reveal" style="--reveal-index: 1">
+      <Card class="edu-radar reveal" data-ri="1">
         <h3 class="edu-radar-title">Radar de certificações</h3>
         <ul class="edu-radar-list">
           {about.certificacoesEmAndamento.map((c) => (

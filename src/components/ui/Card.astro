@@ -3,21 +3,22 @@ interface Props {
   as?: 'div' | 'article' | 'li' | 'section';
   interactive?: boolean;
   class?: string;
-  style?: string;
+  /** índice de stagger do reveal — vira CSS var via [data-ri] (CSP proíbe style inline) */
+  'data-ri'?: number | string;
   'aria-hidden'?: 'true' | 'false';
 }
 const {
   as: Tag = 'div',
   interactive = false,
   class: className,
-  style,
+  'data-ri': dataRi,
   'aria-hidden': ariaHidden,
 }: Props = Astro.props;
 ---
 
 <Tag
   class:list={['card', { 'card--interactive': interactive }, className]}
-  {style}
+  data-ri={dataRi}
   aria-hidden={ariaHidden}
 >
   <slot />

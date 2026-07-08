@@ -245,6 +245,19 @@
     opacity: 1;
     transform: none;
   }
+
+  /* Índices de stagger via atributo — a CSP (style-src sem 'unsafe-inline')
+     bloqueia atributos style="", então as CSS vars entram por aqui. */
+  [data-ri='0'] { --reveal-index: 0; --t-index: 0; }
+  [data-ri='1'] { --reveal-index: 1; --t-index: 1; }
+  [data-ri='2'] { --reveal-index: 2; --t-index: 2; }
+  [data-ri='3'] { --reveal-index: 3; --t-index: 3; }
+  [data-ri='4'] { --reveal-index: 4; --t-index: 4; }
+  [data-ri='5'] { --reveal-index: 5; --t-index: 5; }
+  [data-ri='6'] { --reveal-index: 6; --t-index: 6; }
+  [data-ri='7'] { --reveal-index: 7; --t-index: 7; }
+  [data-ri='8'] { --reveal-index: 8; --t-index: 8; }
+  [data-ri='9'] { --reveal-index: 9; --t-index: 9; }
 }
 
 @media (prefers-reduced-motion: reduce) {

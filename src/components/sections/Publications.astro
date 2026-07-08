@@ -43,7 +43,7 @@ function excerpt(p: TPublication): string {
         return (
           <a
             class="pub-card pub-card--featured reveal"
-            style={`--reveal-index: ${i}`}
+            data-ri={i}
             href={p.permalink}
             target="_blank"
             rel="noopener noreferrer"
@@ -77,7 +77,7 @@ function excerpt(p: TPublication): string {
         return (
           <a
             class="pub-card reveal"
-            style={`--reveal-index: ${Math.min(i % 6, 5)}`}
+            data-ri={Math.min(i % 6, 5)}
             href={p.permalink}
             target="_blank"
             rel="noopener noreferrer"

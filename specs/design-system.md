@@ -18,14 +18,17 @@ brief > refs > skill). Este spec é o contrato de implementação; **`src/styles
 ### Cor — ver tabelas em `design-system/MASTER.md` §1 (valores idênticos)
 
 Dark: `--bg #0e0d0c · --bg-raised #151413 · --bg-raised-2 #1b1a18 · --border #282521 ·
---border-strong #3a3631 · --text #f2f0ed · --text-2 #aaa49c · --text-3 #736d64 ·
+--border-strong #3a3631 · --text #f2f0ed · --text-2 #aaa49c · --text-3 #8a8378 ·
 --accent #30d158 · --accent-hover #4ade70 · --accent-soft rgba(48,209,88,.10) ·
 --accent-border rgba(48,209,88,.28) · --on-accent #08210f`
 
 Light: `--bg #faf9f7 · --bg-raised #ffffff · --bg-raised-2 #f1efeb · --border #e5e1da ·
---border-strong #d0cbc2 · --text #1d1b18 · --text-2 #5b564e · --text-3 #8b857b ·
+--border-strong #d0cbc2 · --text #1d1b18 · --text-2 #5b564e · --text-3 #6d675e ·
 --accent #15803d · --accent-hover #166f37 · --accent-soft rgba(21,128,61,.10) ·
 --accent-border rgba(21,128,61,.30) · --on-accent #ffffff`
+
+(`--text-3` recalibrado no QA: precisa de ≥4.5:1 também sobre `--bg-raised`/`--bg-raised-2`,
+onde aparece em footers e metadados — dark 4.9:1, light 4.9:1 nas superfícies elevadas.)
 
 Status (só badges): dark `--ok #30d158 · --warn #ffd60a · --crit #ff453a · --info #64d2ff`;
 light `#15803d · #a16207 · #b91c1c · #0369a1`. Cada um com par `--*-soft` (10–12% alpha)
@@ -33,7 +36,7 @@ para fundo do badge.
 
 Contraste verificado (WCAG AA): texto normal ≥ 4.5:1, texto grande/UI ≥ 3:1.
 `#30d158` sobre `#0e0d0c` ≈ 9.9:1 ✔; `#15803d` sobre `#faf9f7` ≈ 4.9:1 ✔;
-`--text-3` é o mínimo aceitável para metadados (dark `#736d64` ≈ 4.6:1 ✔).
+`--text-3` validado contra a PIOR superfície em que aparece (raised), não só o bg base.
 Badges `--warn`/`--info` em dark usam o hex como **texto** sobre `--*-soft`, nunca como fundo com texto escuro pequeno.
 
 ### Tipografia

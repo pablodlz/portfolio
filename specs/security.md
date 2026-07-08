@@ -25,19 +25,24 @@ Política alvo:
 
 ```
 default-src 'self'; img-src 'self' data:; font-src 'self'; style-src 'self' 'sha256-…';
-script-src 'self' 'sha256-…'; base-uri 'none'; form-action 'self'; frame-ancestors 'none';
+script-src 'self' 'sha256-…'; base-uri 'none'; form-action 'self';
 object-src 'none'; upgrade-insecure-requests
 ```
 
 - Sem `unsafe-inline`/`unsafe-eval`. Estilos/scripts inline que o Astro emitir são
-  **hasheados** via suporte de CSP do Astro (`experimental.csp` ou hashes manuais
-  gerados no build — o que se provar estável); o script de tema no `<head>` entra por hash.
-- **Limitações documentadas (não fingir):** em `<meta>` CSP, `frame-ancestors` e
-  `report-uri` **são ignorados pelos browsers**, e não há como enviar `X-Frame-Options`,
-  `HSTS`, `X-Content-Type-Options` ou `Referrer-Policy` de servidor no GitHub Pages.
-  Proteção real de clickjacking/HSTS exigiria um CDN na frente (ex.: Cloudflare).
-  O README e este spec declaram isso explicitamente; a diretiva fica na política como
-  declaração de intenção + defesa onde meta for respeitada.
+  **hasheados** via `security.csp` do Astro (estável desde o Astro 7); o script de tema
+  no `<head>` entra por hash calculado no `astro.config.mjs`.
+- **Sem `style` inline em atributos**: `style-src` sem `unsafe-inline` bloqueia até
+  atributos `style=""` — o stagger de animação usa `[data-ri]` + regras CSS.
+- **Sem assets `data:` além de imagens**: `assetsInlineLimit: 0` no Vite impede fontes
+  inlinadas em `data:` que violariam `font-src 'self'`.
+- **Limitações documentadas (não fingir):** `frame-ancestors` e `report-uri` **são
+  ignorados pelos browsers quando entregues via `<meta>`** — por isso a diretiva foi
+  deliberadamente REMOVIDA da política (mantê-la só gera erro de console e falsa
+  sensação de proteção). Também não há como enviar `X-Frame-Options`, `HSTS`,
+  `X-Content-Type-Options` ou `Referrer-Policy` de servidor no GitHub Pages. Proteção
+  real de clickjacking/HSTS exigiria um CDN na frente (ex.: Cloudflare). O README
+  declara isso explicitamente.
 
 ### Rede e recursos
 

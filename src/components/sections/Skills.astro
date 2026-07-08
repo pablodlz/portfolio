@@ -60,7 +60,7 @@ const domains: Domain[] = [
 
     <div class="skills-bento">
       {domains.map((d, i) => (
-        <Card as="article" class={`skill-card${d.wide ? ' skill-card--wide' : ''} reveal`} style={`--reveal-index: ${i}`}>
+        <Card as="article" class={`skill-card${d.wide ? ' skill-card--wide' : ''} reveal`} data-ri={i}>
           <div class="skill-head">
             <span class="skill-icon"><Icon name={d.icon} size={22} /></span>
             <h3>{d.title}</h3>
@@ -78,7 +78,7 @@ const domains: Domain[] = [
         </Card>
       ))}
 
-      <Card class="skill-status reveal" style="--reveal-index: 4" aria-hidden="true">
+      <Card class="skill-status reveal" data-ri="4" aria-hidden="true">
         <div class="status-row">
           <Badge tone="ok" dot pulse>MONITORING</Badge>
           <span class="status-mono">shift 24/7</span>

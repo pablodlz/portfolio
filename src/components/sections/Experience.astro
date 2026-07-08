@@ -18,7 +18,7 @@ const COLLAPSE_AFTER = 3;
 
     <ol class="timeline">
       {data.experience.map((job, i) => (
-        <li class="timeline-item reveal" style={`--reveal-index: ${Math.min(i, 4)}`}>
+        <li class="timeline-item reveal" data-ri={Math.min(i, 4)}>
           <span class:list={['timeline-dot', { 'timeline-dot--current': job.current }]} aria-hidden="true"></span>
 
           <article class="job">
