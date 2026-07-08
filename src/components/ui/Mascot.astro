@@ -1,68 +1,157 @@
 ---
 /**
- * b1t — mascote cyber do site (v3). Robô minimal com visor laranja:
- * observa o cursor, pisca, dorme na inatividade, comemora conquistas,
- * solta dicas ocasionais. Decorativo+interativo; some em telas pequenas
- * e fica estático sob prefers-reduced-motion. Zero dependências.
+ * b1t — o pet cyber do portfólio (v4). Um pequeno robô com personalidade:
+ * emoções que mudam com o tempo e as ações, dezenas de micro-animações
+ * ociosas, passeia pela lateral, segue/foge do cursor, reage ao terminal
+ * (visor no `nmap`, óculos no `matrix`, plaquinha no `help`) e recompensa
+ * quem explora com comportamentos raros. Tudo em transform/opacity (GPU),
+ * desligado sob prefers-reduced-motion e sem roaming no mobile.
  */
 ---
 
-<div id="mascot" class="mascot" data-state="idle">
-  <button type="button" class="mascot-hit" aria-label="b1t, o mascote do site — clique para interagir">
-    <svg class="mascot-svg" viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
-      <!-- antena -->
-      <line x1="32" y1="10" x2="32" y2="4" stroke="var(--border-strong)" stroke-width="2" />
-      <circle class="mascot-antenna" cx="32" cy="4" r="3" fill="var(--accent)" />
-      <!-- corpo -->
-      <rect x="10" y="10" width="44" height="38" rx="12" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="2" />
-      <!-- visor -->
-      <rect x="16" y="18" width="32" height="16" rx="8" fill="var(--bg)" stroke="var(--accent-border)" stroke-width="1.5" />
-      <!-- olhos -->
-      <g class="mascot-eyes">
-        <circle class="mascot-eye" cx="26" cy="26" r="3.2" fill="var(--accent)" />
-        <circle class="mascot-eye" cx="38" cy="26" r="3.2" fill="var(--accent)" />
-      </g>
-      <!-- olhos dormindo (traços) -->
-      <g class="mascot-eyes-sleep">
-        <line x1="22.5" y1="26" x2="29.5" y2="26" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
-        <line x1="34.5" y1="26" x2="41.5" y2="26" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
-      </g>
-      <!-- boca -->
-      <path class="mascot-mouth" d="M27 40h10" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" fill="none" />
-      <path class="mascot-mouth-happy" d="M26 39q6 6 12 0" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" />
-      <!-- pés -->
-      <rect x="20" y="50" width="8" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
-      <rect x="36" y="50" width="8" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
-      <!-- linha de scan -->
-      <rect class="mascot-scanline" x="16" y="18" width="32" height="3" rx="1.5" fill="var(--accent)" opacity="0" />
-    </svg>
+<div id="mascot" class="mascot" data-state="idle" data-emotion="curious" hidden>
+  <button type="button" class="mascot-hit" aria-label="b1t, o pet do site — clique para brincar">
+    <span class="mascot-body">
+      <svg class="mascot-svg" viewBox="0 0 72 72" width="60" height="60" aria-hidden="true">
+        <!-- antena -->
+        <line class="m-antenna-stem" x1="36" y1="14" x2="36" y2="7" stroke="var(--border-strong)" stroke-width="2" />
+        <circle class="m-antenna" cx="36" cy="6" r="3" fill="var(--accent)" />
+        <!-- corpo -->
+        <rect class="m-shell" x="12" y="14" width="48" height="40" rx="13" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="2" />
+        <!-- visor -->
+        <rect class="m-visor" x="18" y="22" width="36" height="18" rx="9" fill="var(--bg)" stroke="var(--accent-border)" stroke-width="1.5" />
+        <!-- olhos -->
+        <g class="m-eyes">
+          <circle class="m-eye" cx="29" cy="31" r="3.4" fill="var(--accent)" />
+          <circle class="m-eye" cx="43" cy="31" r="3.4" fill="var(--accent)" />
+        </g>
+        <!-- olhos dormindo -->
+        <g class="m-eyes-sleep">
+          <line x1="25" y1="31" x2="33" y2="31" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
+          <line x1="39" y1="31" x2="47" y2="31" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
+        </g>
+        <!-- olhos empolgado (^ ^) -->
+        <g class="m-eyes-excited">
+          <path d="M25 32l4-4 4 4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M39 32l4-4 4 4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+        </g>
+        <!-- blush -->
+        <g class="m-blush">
+          <ellipse cx="24" cy="36" rx="3" ry="1.8" fill="var(--accent)" opacity="0.5" />
+          <ellipse cx="48" cy="36" rx="3" ry="1.8" fill="var(--accent)" opacity="0.5" />
+        </g>
+        <!-- boca -->
+        <path class="m-mouth" d="M31 45h10" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" fill="none" />
+        <path class="m-mouth-happy" d="M30 44q6 6 12 0" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" />
+        <!-- óculos escuros (matrix) -->
+        <g class="m-shades">
+          <rect x="19" y="27" width="15" height="8" rx="2" fill="#0a0a0a" stroke="var(--accent)" stroke-width="1" />
+          <rect x="38" y="27" width="15" height="8" rx="2" fill="#0a0a0a" stroke="var(--accent)" stroke-width="1" />
+          <line x1="34" y1="30" x2="38" y2="30" stroke="var(--accent)" stroke-width="1.5" />
+        </g>
+        <!-- barra de scan (nmap) -->
+        <rect class="m-scan" x="18" y="22" width="36" height="3" rx="1.5" fill="var(--accent)" opacity="0" />
+        <!-- pés -->
+        <rect class="m-foot m-foot-l" x="22" y="56" width="9" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
+        <rect class="m-foot m-foot-r" x="41" y="56" width="9" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
+      </svg>
+      <!-- plaquinha "Need assistance?" (help) -->
+      <span class="mascot-sign" aria-hidden="true">Need assistance?</span>
+    </span>
   </button>
   <p id="mascot-bubble" class="mascot-bubble" role="status" hidden></p>
 </div>
 
 <script>
-  const root = document.getElementById('mascot');
-  const bubble = document.getElementById('mascot-bubble');
-  const eyes = root?.querySelector<SVGGElement>('.mascot-eyes');
+  type Emotion = 'curious' | 'happy' | 'sleepy' | 'excited' | 'proud' | 'playful' | 'neutral';
 
-  if (root && bubble && eyes) {
+  const root = document.getElementById('mascot');
+  const hit = root?.querySelector<HTMLElement>('.mascot-hit');
+  const body = root?.querySelector<HTMLElement>('.mascot-body');
+  const eyes = root?.querySelector<SVGGElement>('.m-eyes');
+  const bubble = document.getElementById('mascot-bubble');
+
+  if (root && hit && body && eyes && bubble) {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = matchMedia('(pointer: coarse)').matches;
-    let idleTimer: ReturnType<typeof setTimeout>;
-    let bubbleTimer: ReturnType<typeof setTimeout>;
+    root.hidden = false;
 
-    const say = (text: string, ms = 4200): void => {
+    /* ------------------------------------------------ estado ------------ */
+    let asleep = false;
+    let busy = false; // executando uma animação/estado que não deve ser interrompido
+    let termActive = false;
+    let clicks = 0;
+    let friendship = 0; // sobe com interações; desbloqueia comportamentos raros
+    let sleepTimer: ReturnType<typeof setTimeout>;
+    let bubbleTimer: ReturnType<typeof setTimeout>;
+    let roamX = 0;
+
+    const maxRoam = () => Math.min(innerWidth * 0.42, 520);
+    const rnd = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length)]!;
+
+    /* ------------------------------------------------ fala -------------- */
+    const say = (text: string, ms = 4200, force = false): void => {
+      if (asleep) return;
+      if (termActive && !force) return; // não compete com quem digita no terminal
       bubble.textContent = text;
       bubble.hidden = false;
       clearTimeout(bubbleTimer);
       bubbleTimer = setTimeout(() => (bubble.hidden = true), ms);
     };
 
+    const setEmotion = (e: Emotion): void => {
+      root.dataset.emotion = e;
+    };
     const setState = (s: string): void => {
       root.dataset.state = s;
     };
 
-    /* olhos: seguem o cursor (desktop) ou vagueiam curiosos (touch) */
+    /* ------------------------------------------------ animações --------- */
+    // dispara uma animação de uso único no corpo do mascote
+    const anim = (name: string, ms = 900, lock = false): void => {
+      if (reduced) return;
+      if (lock) busy = true;
+      body.classList.add(`is-${name}`);
+      setTimeout(() => {
+        body.classList.remove(`is-${name}`);
+        if (lock) busy = false;
+      }, ms);
+    };
+
+    const IDLE_ANIMS = coarse
+      ? ['hop', 'wobble', 'blink2', 'lookaround', 'spin']
+      : ['hop', 'wobble', 'stretch', 'lookaround', 'spin', 'jump', 'pose', 'tumble', 'blink2'];
+    // comportamentos raros — só depois de o visitante criar vínculo (friendship)
+    const RARE_ANIMS = ['dance', 'backflip', 'slip', 'shiver'];
+
+    /* ------------------------------------------------ passeio ----------- */
+    const roamTo = (x: number, dur = 3200): void => {
+      if (reduced || coarse) return;
+      roamX = Math.max(0, Math.min(maxRoam(), x));
+      root.style.setProperty('--roam-dur', `${dur}ms`);
+      root.style.setProperty('--roam-x', `${roamX}px`);
+      root.classList.add('is-walking');
+      setTimeout(() => root.classList.remove('is-walking'), dur);
+    };
+
+    /* ------------------------------------------------ holo particles ---- */
+    const holo = (n = 6, glyphs = ['◇', '·', '△', '01', '10', '⬡']): void => {
+      if (reduced) return;
+      for (let i = 0; i < n; i++) {
+        const p = document.createElement('span');
+        p.className = 'mascot-holo';
+        p.textContent = rnd(glyphs);
+        const ang = Math.random() * Math.PI * 2;
+        const dist = 26 + Math.random() * 34;
+        p.style.setProperty('--hx', `${Math.cos(ang) * dist}px`);
+        p.style.setProperty('--hy', `${Math.sin(ang) * dist - 10}px`);
+        p.style.setProperty('--hd', `${400 + Math.random() * 400}ms`);
+        body.appendChild(p);
+        setTimeout(() => p.remove(), 900);
+      }
+    };
+
+    /* ------------------------------------------------ olhos seguem ------ */
     if (!reduced && !coarse) {
       let raf = 0;
       addEventListener(
@@ -75,105 +164,192 @@
             const dx = e.clientX - (r.left + r.width / 2);
             const dy = e.clientY - (r.top + r.height / 2);
             const ang = Math.atan2(dy, dx);
-            const dist = Math.min(2.4, Math.hypot(dx, dy) / 90);
-            eyes.style.transform = `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px)`;
+            const d = Math.min(2.6, Math.hypot(dx, dy) / 80);
+            eyes.style.transform = `translate(${Math.cos(ang) * d}px, ${Math.sin(ang) * d}px)`;
+            // proximidade → reação ocasional
+            const near = Math.hypot(dx, dy) < 90;
+            if (near && !busy && !asleep && root.dataset.state !== 'near') {
+              setState('near');
+              if (Math.random() < 0.5) {
+                anim('wave', 800);
+              } else if (Math.random() < 0.4) {
+                // foge de brincadeira
+                roamTo(roamX > maxRoam() / 2 ? roamX - 120 : roamX + 120, 700);
+                anim('hop', 700);
+              }
+            } else if (!near && root.dataset.state === 'near') {
+              setState('idle');
+            }
           });
         },
         { passive: true },
       );
     } else if (!reduced && coarse) {
+      // touch: olhar curioso autônomo
       setInterval(() => {
-        if (root.dataset.state === 'sleep') return;
+        if (asleep) return;
         const ang = Math.random() * Math.PI * 2;
-        const dist = Math.random() * 2.2;
-        eyes.style.transform = `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px)`;
+        const d = Math.random() * 2.2;
+        eyes.style.transform = `translate(${Math.cos(ang) * d}px, ${Math.sin(ang) * d}px)`;
       }, 2400);
     }
 
+    // piscar
     if (!reduced) {
-
-      /* piscar de vez em quando */
       setInterval(() => {
-        if (root.dataset.state !== 'sleep') {
+        if (!asleep && !busy) {
           root.classList.add('is-blink');
-          setTimeout(() => root.classList.remove('is-blink'), 160);
+          setTimeout(() => root.classList.remove('is-blink'), 150);
         }
-      }, 3800);
-
-      /* scan ocasional */
-      setInterval(() => {
-        if (root.dataset.state === 'idle' && Math.random() < 0.5) {
-          setState('scan');
-          setTimeout(() => setState('idle'), 1600);
-        }
-      }, 14000);
+      }, 3600);
     }
 
-    /* dormir na inatividade, acordar com atividade */
-    const rearm = (): void => {
-      if (root.dataset.state === 'sleep') {
-        setState('idle');
-        say('acordei. algum alerta? 👀', 2600);
-      }
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => {
-        setState('sleep');
-        say('zZz… monitorando em standby', 3000);
-      }, 35000);
-    };
-    ['pointermove', 'scroll', 'keydown', 'click'].forEach((ev) =>
-      addEventListener(ev, rearm, { passive: true }),
-    );
-    rearm();
-
-    /* clique: feliz + mensagem */
-    const CLICK_MSGS = [
-      'oi! eu sou o b1t 🤖',
-      'dica: digite `matrix` no terminal',
-      'tem flag escondida por aqui…',
-      '50+ certificações. eu conferi uma por uma.',
-      'já inspecionou o código-fonte? 😏',
-      'sudo make me a sandwich → permission denied',
-      'shift à noite, CTF de dia.',
-      'experimenta `neofetch` no terminal!',
+    /* ------------------------------------------------ ciclo ocioso ------ */
+    const ANTICS: { text: string; anim?: string; emo?: Emotion; holo?: boolean }[] = [
+      { text: 'encontrei uma vuln… era só um typo. 🐛', anim: 'lookaround', emo: 'curious' },
+      { text: 'plantei uma flag: CTF solved. 🚩', anim: 'pose', emo: 'proud', holo: true },
+      { text: 'firewall de brincadeira montado. 🧱', anim: 'wobble' },
+      { text: 'apagando meus rastros… 🧹', anim: 'spin' },
+      { text: 'escondi um secret.txt por aqui. 🤫', emo: 'playful' },
+      { text: 'scan holográfico ativado. 🔍', anim: 'scan', holo: true },
+      { text: 'tropecei num cabo imaginário. 🤖', anim: 'slip' },
+      { text: 'deploy sexta? eu vivo perigosamente.', emo: 'playful' },
+      { text: 'psst — digite `help` no terminal ↑', anim: 'hop' },
+      { text: 'já clicou em mim? tenho vários truques. 😉', anim: 'jump' },
     ];
-    let msgIdx = Math.floor(Math.random() * CLICK_MSGS.length);
-    root.querySelector('.mascot-hit')?.addEventListener('click', () => {
-      setState('happy');
-      say(CLICK_MSGS[msgIdx % CLICK_MSGS.length]!);
-      msgIdx++;
-      setTimeout(() => setState('idle'), 1400);
-    });
 
-    /* comemora conquistas do terminal */
-    addEventListener('pablodlz:achievement', ((e: CustomEvent<string>) => {
-      setState('happy');
-      say(`conquista: ${e.detail}! 🎉`, 5000);
-      setTimeout(() => setState('idle'), 2400);
-    }) as EventListener);
-
-    /* balões recorrentes (PC e celular): a cada ~50s, se acordado */
-    const TIPS = [
-      'psst — o terminal lá em cima é de verdade. digite `help`.',
-      'dica: TAB completa comandos no terminal.',
-      'já tentou `matrix`? 😎',
-      'tem um segredo no código-fonte… F12.',
-      '`./pablodlz.sh` desbloqueia uma conquista.',
-      '50+ certificações lá embaixo. eu contei.',
-      'o botão laranja ali do lado fala comigo não — fala com o Pablo.',
-      '`coffee` no terminal. confia.',
-    ];
-    let tipIdx = Math.floor(Math.random() * TIPS.length);
-    const scheduleTip = (delay: number): void => {
+    const idleTick = (): void => {
+      const delay = 5200 + Math.random() * 7000;
       setTimeout(() => {
-        if (root.dataset.state === 'idle' && bubble.hidden) {
-          say(TIPS[tipIdx % TIPS.length]!);
-          tipIdx++;
+        if (!asleep && !busy && root.dataset.state === 'idle') {
+          const roll = Math.random();
+          if (!coarse && roll < 0.28) {
+            // passeia para um novo ponto
+            roamTo(Math.random() * maxRoam(), 2600 + Math.random() * 1800);
+          } else if (roll < 0.5) {
+            // pequena travessura com fala
+            const a = rnd(ANTICS);
+            if (a.emo) setEmotion(a.emo);
+            if (a.anim) anim(a.anim, a.anim === 'scan' ? 1400 : 900);
+            if (a.holo) holo();
+            say(a.text, 3600);
+          } else {
+            // animação ociosa pura (raras liberadas pelo vínculo)
+            const pool = friendship >= 4 ? [...IDLE_ANIMS, ...RARE_ANIMS] : IDLE_ANIMS;
+            anim(rnd(pool));
+          }
         }
-        scheduleTip(45000 + Math.random() * 20000);
+        idleTick();
       }, delay);
     };
-    scheduleTip(15000);
+
+    /* ------------------------------------------------ dormir/acordar ---- */
+    const armSleep = (): void => {
+      clearTimeout(sleepTimer);
+      sleepTimer = setTimeout(() => {
+        if (busy) return;
+        setEmotion('sleepy');
+        anim('yawn', 1200);
+        setTimeout(() => {
+          asleep = true;
+          setState('sleep');
+          roamTo(0, 1200); // volta pra casa pra dormir
+        }, 1100);
+      }, 38000);
+    };
+    const wake = (startled = false): void => {
+      if (asleep) {
+        asleep = false;
+        setState('idle');
+        setEmotion('curious');
+        if (startled) {
+          anim('shiver', 700);
+          say('opa! acordei. 👀', 2400);
+        }
+      }
+      armSleep();
+    };
+    ['pointermove', 'scroll', 'keydown', 'click'].forEach((ev) =>
+      addEventListener(ev, () => wake(ev === 'keydown' || ev === 'click'), { passive: true }),
+    );
+
+    /* ------------------------------------------------ clique ------------ */
+    const CLICK_REACTIONS: (() => void)[] = [
+      () => { anim('jump', 700); say('oi! eu sou o b1t. 🤖'); },
+      () => { anim('spin', 800); holo(); say('giro cyber! 🌀'); },
+      () => { anim('dance', 1400); setEmotion('playful'); say('🎵 dança dos bits'); },
+      () => { anim('backflip', 900); say('mortal! nota 10. 🤸'); setEmotion('proud'); },
+      () => { anim('scan', 1400); holo(4, ['0', '1']); say('escaneando você… 100% dev. ✅'); },
+      () => { anim('hop', 600); setEmotion('happy'); holo(4); say('valeu o carinho! 🧡'); },
+      () => { anim('shiver', 600); say('ei! me assustou. 😵'); setEmotion('curious'); },
+      () => { anim('pose', 900); setEmotion('proud'); say('foto? já tô na pose. 📸'); },
+      () => { anim('wobble', 700); say('cuidado, sou sensível a cócegas. 😄'); },
+      () => { anim('hackpose', 1200); holo(8, ['{', '}', '<', '>', '/', '01']); say('acesso concedido a… um sorriso. 😎'); },
+    ];
+    let lastReaction = -1;
+    hit.addEventListener('click', () => {
+      wake(false);
+      clicks++;
+      friendship = Math.min(10, friendship + 1);
+      let i = Math.floor(Math.random() * CLICK_REACTIONS.length);
+      if (i === lastReaction) i = (i + 1) % CLICK_REACTIONS.length;
+      lastReaction = i;
+      CLICK_REACTIONS[i]!();
+      // marcos de amizade
+      if (clicks === 5) say('gostei de você. 🧡 já achou o easter egg do F12?', 5200, true);
+      if (clicks === 12) { say('nível de amizade: MÁXIMO. desbloqueei truques novos! 🎉', 5200, true); friendship = 10; }
+    });
+
+    /* ------------------------------------------------ reações ao terminal */
+    addEventListener('pablodlz:term-active', ((e: CustomEvent<boolean>) => {
+      termActive = e.detail;
+      if (termActive) bubble.hidden = true; // some enquanto o usuário digita
+    }) as EventListener);
+
+    addEventListener('pablodlz:term', ((e: CustomEvent<{ name: string; cat: string }>) => {
+      wake(false);
+      const { name, cat } = e.detail;
+      if (name === 'nmap' || name === 'rustscan' || name === 'nuclei' || cat === 'pentest') {
+        setState('scanning');
+        anim('scan', 1600);
+        holo(5, ['◇', '·', '⬡']);
+        setTimeout(() => setState('idle'), 1600);
+      } else if (name === 'matrix' || name === 'cmatrix') {
+        setState('shades');
+        setEmotion('playful');
+        say('whoa. 🕶️', 3000, true);
+        setTimeout(() => setState('idle'), 4200);
+      } else if (name === 'help' || name === 'man') {
+        setState('sign');
+        anim('wave', 900);
+        setTimeout(() => setState('idle'), 2600);
+      } else if (name === 'coffee') {
+        anim('hop', 700);
+        say('me vê um também? ☕', 3000, true);
+      } else {
+        // comando válido qualquer → comemora discreto
+        if (Math.random() < 0.6) anim('hop', 600);
+        setEmotion('excited');
+      }
+    }) as EventListener);
+
+    /* ------------------------------------------------ conquistas -------- */
+    addEventListener('pablodlz:achievement', ((e: CustomEvent<string>) => {
+      wake(false);
+      setEmotion('proud');
+      setState('idle');
+      anim('backflip', 900);
+      holo(10);
+      say(`conquista: ${e.detail}! 🎉`, 5000, true);
+    }) as EventListener);
+
+    /* ------------------------------------------------ boot -------------- */
+    setEmotion('curious');
+    armSleep();
+    idleTick();
+    setTimeout(() => say('e aí! sou o b1t 🤖 clica em mim ou explora o terminal ↑', 5200), 3500);
+    // recompensa por permanência
+    setTimeout(() => { if (!asleep) { friendship = Math.max(friendship, 5); say('curtindo a visita? 🧡 tem muito easter egg escondido.', 4600); } }, 90000);
   }
 </script>
 
@@ -186,8 +362,13 @@
     display: grid;
     justify-items: start;
     gap: var(--space-2);
+    transform: translateX(var(--roam-x, 0px));
+    transition: transform var(--roam-dur, 3s) cubic-bezier(0.5, 0, 0.5, 1);
+    will-change: transform;
   }
-  /* mobile: presente também — menor e com balão contido na tela */
+  .mascot[hidden] {
+    display: none;
+  }
   @media (max-width: 900px) {
     .mascot {
       left: 10px;
@@ -200,101 +381,166 @@
   }
 
   .mascot-hit {
+    position: relative;
     cursor: pointer;
     border-radius: var(--radius-lg);
-    transition: transform var(--dur-2) var(--ease);
-    animation: mascot-float 6s ease-in-out infinite;
+    animation: m-float 6s ease-in-out infinite;
   }
-  .mascot-hit:hover {
-    transform: translateY(-3px);
+  .mascot-body {
+    position: relative;
+    display: inline-block;
+    transform-origin: 50% 90%;
+    will-change: transform;
   }
-  @keyframes mascot-float {
-    0%,
-    100% {
-      translate: 0 0;
-    }
-    50% {
-      translate: 0 -4px;
-    }
+  @keyframes m-float {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -4px; }
   }
 
-  .mascot-antenna {
-    animation: mascot-ping 2.4s var(--ease) infinite;
-    transform-origin: 32px 4px;
-  }
-  @keyframes mascot-ping {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.35;
-    }
-  }
+  /* ---------------- traços por emoção ---------------- */
+  .m-eyes { transition: transform 120ms linear; transform-origin: 36px 31px; }
+  .m-eyes-sleep, .m-eyes-excited, .m-mouth-happy, .m-blush, .m-shades { opacity: 0; }
 
-  .mascot-eyes {
-    transition: transform 120ms linear;
-  }
-  .mascot-eyes-sleep,
-  .mascot-mouth-happy {
+  .mascot.is-blink .m-eyes { transform: scaleY(0.12); }
+  .m-antenna { animation: m-ping 2.4s var(--ease) infinite; transform-origin: 36px 6px; }
+  @keyframes m-ping { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+  .mascot[data-emotion='happy'] .m-mouth,
+  .mascot[data-emotion='proud'] .m-mouth,
+  .mascot[data-emotion='playful'] .m-mouth { opacity: 0; }
+  .mascot[data-emotion='happy'] .m-mouth-happy,
+  .mascot[data-emotion='proud'] .m-mouth-happy,
+  .mascot[data-emotion='playful'] .m-mouth-happy { opacity: 1; }
+  .mascot[data-emotion='happy'] .m-blush,
+  .mascot[data-emotion='proud'] .m-blush { opacity: 1; }
+  .mascot[data-emotion='excited'] .m-eyes { opacity: 0; }
+  .mascot[data-emotion='excited'] .m-eyes-excited { opacity: 1; }
+
+  /* ---------------- estados ---------------- */
+  .mascot[data-state='sleep'] .m-eyes { opacity: 0; }
+  .mascot[data-state='sleep'] .m-eyes-sleep { opacity: 1; }
+  .mascot[data-state='sleep'] .mascot-hit { animation-duration: 9s; filter: saturate(0.6) brightness(0.85); }
+  .mascot[data-state='sleep'] .m-mouth, .mascot[data-state='sleep'] .m-mouth-happy { opacity: 0; }
+
+  .mascot[data-state='shades'] .m-shades { opacity: 1; }
+  .mascot[data-state='shades'] .m-eyes { opacity: 0; }
+
+  .mascot[data-state='scanning'] .m-visor,
+  .mascot[data-state='sign'] .mascot-sign { }
+
+  /* plaquinha "Need assistance?" */
+  .mascot-sign {
+    position: absolute;
+    left: 50%;
+    top: -14px;
+    translate: -50% -100%;
+    padding: 4px 9px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    white-space: nowrap;
+    border-radius: var(--radius-sm);
     opacity: 0;
+    scale: 0.6;
+    transform-origin: bottom center;
+    transition: opacity var(--dur-2) var(--ease), scale var(--dur-2) var(--ease);
+    pointer-events: none;
+  }
+  .mascot-sign::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    translate: -50% 0;
+    border: 4px solid transparent;
+    border-top-color: var(--accent);
+  }
+  .mascot[data-state='sign'] .mascot-sign { opacity: 1; scale: 1; }
+
+  /* barra de scan (nmap) */
+  .mascot[data-state='scanning'] .m-scan { animation: m-scan 0.8s var(--ease) 2; }
+  .is-scan .m-scan { animation: m-scan 0.8s var(--ease) 2; }
+  @keyframes m-scan {
+    0% { opacity: 0.85; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(16px); }
   }
 
-  /* piscar */
-  .mascot.is-blink .mascot-eyes {
-    transform: scaleY(0.12);
-    transform-origin: 32px 26px;
+  /* ---------------- animações de uso único (no .mascot-body) ---------------- */
+  .is-hop { animation: m-hop 0.6s var(--ease); }
+  @keyframes m-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-11px); } }
+
+  .is-jump { animation: m-jump 0.7s var(--ease); }
+  @keyframes m-jump { 0%, 100% { transform: translateY(0) scale(1); } 45% { transform: translateY(-16px) scale(1.05, 0.95); } }
+
+  .is-spin { animation: m-spin 0.8s var(--ease); }
+  @keyframes m-spin { to { transform: rotateY(360deg); } }
+
+  .is-wobble { animation: m-wobble 0.7s var(--ease); }
+  @keyframes m-wobble { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
+
+  .is-stretch { animation: m-stretch 0.9s var(--ease); }
+  @keyframes m-stretch { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.12) translateY(-4px); } }
+
+  .is-lookaround { animation: m-look 1.2s var(--ease); }
+  @keyframes m-look { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+
+  .is-pose { animation: m-pose 0.9s var(--ease); }
+  @keyframes m-pose { 0% { transform: rotate(0); } 30% { transform: rotate(-8deg) translateX(-3px); } 100% { transform: rotate(0); } }
+
+  .is-tumble { animation: m-tumble 0.9s var(--ease); }
+  @keyframes m-tumble { 0% { transform: rotate(0); } 100% { transform: rotate(-360deg); } }
+
+  .is-dance { animation: m-dance 1.4s var(--ease); }
+  @keyframes m-dance {
+    0%, 100% { transform: rotate(0) translateY(0); }
+    20% { transform: rotate(-10deg) translateY(-4px); }
+    40% { transform: rotate(8deg) translateY(0); }
+    60% { transform: rotate(-8deg) translateY(-4px); }
+    80% { transform: rotate(10deg) translateY(0); }
   }
 
-  /* dormindo */
-  .mascot[data-state='sleep'] .mascot-eyes {
-    opacity: 0;
+  .is-backflip { animation: m-backflip 0.9s var(--ease); }
+  @keyframes m-backflip { 0% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-180deg) translateY(-20px); } 100% { transform: rotate(-360deg) translateY(0); } }
+
+  .is-slip { animation: m-slip 0.9s var(--ease); }
+  @keyframes m-slip { 0% { transform: rotate(0) translateX(0); } 30% { transform: rotate(18deg) translateX(6px) translateY(3px); } 60% { transform: rotate(-6deg); } 100% { transform: rotate(0); } }
+
+  .is-shiver { animation: m-shiver 0.6s linear; }
+  @keyframes m-shiver { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
+
+  .is-yawn { animation: m-stretch 1.2s var(--ease); }
+  .is-wave { animation: m-wobble 0.8s var(--ease); }
+  .is-blink2 .m-eyes { animation: m-dblink 0.5s steps(1) 1; }
+  @keyframes m-dblink { 0%, 100% { opacity: 1; } 25%, 75% { opacity: 0.15; } }
+
+  .is-hackpose { animation: m-hackpose 1.2s var(--ease); }
+  @keyframes m-hackpose { 0% { transform: translateY(0); } 20% { transform: translateY(-8px) rotate(-6deg); } 60% { transform: translateY(-8px) rotate(6deg); } 100% { transform: translateY(0); } }
+
+  /* passo (durante o passeio) */
+  .mascot.is-walking .mascot-body { animation: m-walk 0.42s ease-in-out infinite; }
+  @keyframes m-walk { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-3px); } }
+
+  /* ---------------- partículas holográficas ---------------- */
+  .mascot-holo {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--accent);
+    pointer-events: none;
+    animation: m-holo var(--hd, 700ms) var(--ease) forwards;
   }
-  .mascot[data-state='sleep'] .mascot-eyes-sleep {
-    opacity: 1;
-  }
-  .mascot[data-state='sleep'] .mascot-hit {
-    animation-duration: 9s;
-    filter: saturate(0.6) brightness(0.85);
+  @keyframes m-holo {
+    0% { opacity: 0.9; transform: translate(-50%, -50%); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--hx)), calc(-50% + var(--hy))); }
   }
 
-  /* feliz */
-  .mascot[data-state='happy'] .mascot-mouth {
-    opacity: 0;
-  }
-  .mascot[data-state='happy'] .mascot-mouth-happy {
-    opacity: 1;
-  }
-  .mascot[data-state='happy'] .mascot-hit {
-    animation: mascot-bounce 500ms var(--ease) 2;
-  }
-  @keyframes mascot-bounce {
-    0%,
-    100% {
-      translate: 0 0;
-    }
-    45% {
-      translate: 0 -9px;
-    }
-  }
-
-  /* scan */
-  .mascot[data-state='scan'] .mascot-scanline {
-    animation: mascot-scan 1.5s var(--ease) 1;
-  }
-  @keyframes mascot-scan {
-    0% {
-      opacity: 0.7;
-      transform: translateY(0);
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(13px);
-    }
-  }
-
+  /* ---------------- balão ---------------- */
   .mascot-bubble {
-    max-width: min(230px, 72vw);
+    max-width: min(240px, 72vw);
     padding: 8px 12px;
     background: var(--glass);
     backdrop-filter: blur(10px);
@@ -306,16 +552,13 @@
     font-size: var(--fs-xs);
     color: var(--text);
     box-shadow: var(--shadow-lightbox);
+    animation: m-bubble-in var(--dur-2) var(--ease);
   }
+  @keyframes m-bubble-in { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: none; } }
 
   @media (prefers-reduced-motion: reduce) {
-    .mascot-hit,
-    .mascot-antenna {
-      animation: none;
-    }
-    .mascot[data-state='happy'] .mascot-hit,
-    .mascot[data-state='scan'] .mascot-scanline {
-      animation: none;
-    }
+    .mascot { transition: none; }
+    .mascot-hit, .m-antenna, .mascot-body { animation: none !important; }
+    .mascot-bubble { animation: none; }
   }
 </style>

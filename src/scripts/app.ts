@@ -420,11 +420,17 @@ function unlockAchievement(name: string, text: string): void {
 }
 
 
-/* ---------- terminal: typewriter leve (load) + engine lazy (1ª interação) ---------- */
-function initGhost(input: HTMLInputElement): void {
+/* ---------- terminal: convite/modo-ativo (load) + engine lazy (1ª interação) ----------
+ * Fonte única de verdade: [data-active] no .terminal-wrap. Qualquer interação
+ * (foco, tecla, clique, colar) entra em "modo ativo" → o convite (typewriter +
+ * cursor) some e o scanner recua, para NUNCA sobrepor o texto do usuário. Volta
+ * ao convite só quando o campo fica vazio, sem foco e ocioso por alguns segundos.
+ */
+function initTerminalInvite(input: HTMLInputElement): void {
+  const wrap = document.querySelector<HTMLElement>('.terminal-wrap');
   const ghost = document.querySelector<HTMLElement>('.t-ghost');
   const ghostText = document.querySelector<HTMLElement>('.t-ghost-text');
-  if (!ghost || !ghostText) return;
+  if (!wrap || !ghost || !ghostText) return;
   input.placeholder = '';
   ghost.hidden = false;
 
@@ -433,19 +439,16 @@ function initGhost(input: HTMLInputElement): void {
     'tente nmap · sqlmap · matrix',
     'explore: about · skills · resume',
   ];
-  if (REDUCED) {
-    ghostText.textContent = PHRASES[0]!;
-    const sync = () => (ghost.hidden = document.activeElement === input || input.value.length > 0);
-    input.addEventListener('focus', sync);
-    input.addEventListener('blur', sync);
-    return;
-  }
-  let phrase = 0,
-    pos = 0,
-    deleting = false,
-    paused = false;
-  let timer: ReturnType<typeof setTimeout>;
+
+  let active = false;
+  let twTimer: ReturnType<typeof setTimeout> | undefined;
+  let idleTimer: ReturnType<typeof setTimeout> | undefined;
+  let phrase = 0;
+  let pos = 0;
+  let deleting = false;
+
   const tick = (): void => {
+    if (active || REDUCED) return;
     const text = PHRASES[phrase % PHRASES.length]!;
     let delay: number;
     if (!deleting) {
@@ -457,32 +460,52 @@ function initGhost(input: HTMLInputElement): void {
       ghostText.textContent = text.slice(0, pos);
       delay = pos <= 0 ? ((deleting = false), phrase++, 900) : 28;
     }
-    timer = setTimeout(tick, delay);
+    twTimer = setTimeout(tick, delay);
   };
-  timer = setTimeout(tick, 1600);
-  const pause = (): void => {
-    paused = true;
-    clearTimeout(timer);
-    ghost.hidden = true;
+
+  const setActive = (on: boolean): void => {
+    if (on === active) return;
+    active = on;
+    wrap.dataset.active = String(on);
+    // o mascote pausa suas dicas enquanto o terminal está em uso
+    document.dispatchEvent(new CustomEvent('pablodlz:term-active', { detail: on }));
+    if (on) {
+      clearTimeout(twTimer);
+    } else {
+      pos = 0;
+      deleting = false;
+      if (!REDUCED) twTimer = setTimeout(tick, 700);
+    }
   };
-  const resume = (): void => {
-    if (input.value.length > 0 || !paused) return;
-    paused = false;
-    ghost.hidden = false;
-    pos = 0;
-    deleting = false;
-    timer = setTimeout(tick, 700);
+
+  // qualquer sinal de uso → ativo
+  const engage = (): void => {
+    clearTimeout(idleTimer);
+    setActive(true);
   };
-  input.addEventListener('focus', pause);
-  input.addEventListener('input', pause);
-  input.addEventListener('blur', resume);
+  (['focus', 'keydown', 'input', 'paste', 'pointerdown'] as const).forEach((ev) =>
+    input.addEventListener(ev, engage),
+  );
+  // ao sair do campo: se vazio, agenda voltar ao convite; com texto, segue ativo
+  input.addEventListener('blur', () => {
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => {
+      if (input.value.length === 0 && document.activeElement !== input) setActive(false);
+    }, 3500);
+  });
+
+  if (REDUCED) {
+    ghostText.textContent = PHRASES[0]!;
+    return;
+  }
+  twTimer = setTimeout(tick, 1600);
 }
 
 function armTerminal(): void {
   const input = document.querySelector<HTMLInputElement>('.t-input');
   const body = document.querySelector<HTMLElement>('.terminal-body');
   if (!input || !body) return;
-  initGhost(input); // convite (leve) roda já
+  initTerminalInvite(input); // convite (leve) roda já
 
   let loading = false;
   const load = async (): Promise<void> => {

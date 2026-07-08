@@ -889,6 +889,8 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
     }
     usedCmds.add(head);
     if (usedCmds.size === 10) opts.unlock('Explorador', 'Dez comandos diferentes. Você explora de verdade.');
+    // avisa o mascote p/ reagir ao comando (visor no nmap, óculos no matrix…)
+    dispatchEvent(new CustomEvent('pablodlz:term', { detail: { name: head, cat: cmd.cat } }));
     busy = true;
     input!.setAttribute('aria-busy', 'true'); // não-nulo garantido pelo guard inicial
     try {

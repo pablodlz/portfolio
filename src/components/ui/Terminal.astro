@@ -84,6 +84,15 @@ const { title = 'bash — pablodlz', ariaLabel, spotlight = false, class: classN
       --scan-angle: 360deg;
     }
   }
+  /* modo ativo: usuário engajado → o scanner (discoverability) recua para
+     não competir com a leitura da entrada */
+  .terminal-wrap[data-active='true'] .terminal-ring {
+    animation-play-state: paused;
+    opacity: 0.18;
+  }
+  .terminal-wrap[data-active='true'] .terminal-ring--glow {
+    opacity: 0;
+  }
   @media (prefers-reduced-motion: reduce) {
     .terminal-ring {
       animation: none;
@@ -242,6 +251,12 @@ const { title = 'bash — pablodlz', ariaLabel, spotlight = false, class: classN
     font-size: var(--fs-xs);
     white-space: nowrap;
     overflow: hidden;
+  }
+  /* no modo ativo o convite some por completo — nunca sobrepõe o que foi
+     digitado (fonte única de verdade: data-active no .terminal-wrap) */
+  .terminal-wrap[data-active='true'] :global(.t-ghost),
+  :global(.t-ghost[hidden]) {
+    display: none;
   }
   .terminal-body :global(.t-ghost-text) {
     color: var(--text-3);
