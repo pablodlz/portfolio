@@ -690,6 +690,10 @@ const SFX: Record<string, (c: AudioContext) => void> = {
     tone(c, { freq: 220, type: 'sawtooth', dur: 0.16, gain: 0.03, slideTo: 60, at: 0.15 });
   },
   click: (c) => tone(c, { freq: 1300, type: 'square', dur: 0.03, gain: 0.03 }),
+  // cues do b1t que preferem samples (tap.mp3/tap2.mp3); fallback sintetizado
+  // caso os arquivos não existam — bitmsg = balão/mensagem, bitclick = clique
+  bitmsg: (c) => tone(c, { freq: 900, type: 'sine', dur: 0.07, gain: 0.03 }),
+  bitclick: (c) => tone(c, { freq: jitter(680), type: 'triangle', dur: 0.09, gain: 0.06 }),
 };
 
 function playSfx(name: string): void {

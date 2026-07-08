@@ -95,6 +95,7 @@
     };
     let mischief = false; // está aprontando algo → pode ser "pego no flagra"
     let hiding = false;
+    let clicking = false; // clique em curso → som do balão (bitmsg) não toca junto
     let nearCooldown = false; // evita reagir à proximidade toda hora
     let running: symbol | null = null; // token do episódio atual
     let lastEpisodeAt = 0;
@@ -136,6 +137,9 @@
     const say = (text: string, ms = 4200, force = false): void => {
       if (asleep) return;
       if (termActive && !force) return;
+      // som de MENSAGEM (tap.mp3) — toda fala espontânea do b1t; suprimido
+      // durante um clique (aí quem toca é o som de clique, bitclick/tap2)
+      if (!clicking) sfx('bitmsg');
       bubble.textContent = text;
       bubble.hidden = false;
       requestAnimationFrame(positionBubble);
@@ -905,15 +909,17 @@
     ];
     // clique NORMAL = sempre positivo (aceita carinho); nunca foge aqui.
     // cada reação tem 4 falas → o vary() garante que nunca repete a mesma seguida
+    // o SOM do clique é o bitclick (tap2), tocado uma vez no handler → as
+    // reações abaixo só animam e falam (o balão fica em silêncio no clique)
     const CLICKS: (() => void)[] = [
-      () => { void anim('jump', 700); say(vary('c-oi', ['oi! eu sou o b1t. 🤖', 'e aí, humano! 👋', 'bipe bipe, tô aqui! 🤖', 'salve! b1t na área. ⚡'])); sfx('boop'); },
-      () => { void anim('spin', 800); say(vary('c-spin', ['giro cyber! 🌀', 'rodei igual HD antigo. 💿', '360 no-scope. 🌀', 'tonto agora… 😵‍💫'])); sfx('boop2'); },
-      () => { void anim('dance', 1400); setEmotion('playful'); say(vary('c-dance', ['🎵 dança dos bits', '🎶 no ritmo do clock', '💃 modo festa on', '🕺 bit bit boogie'])); sfx('happy'); },
-      () => { void anim('backflip', 900); setEmotion('proud'); say(vary('c-flip', ['mortal! nota 10. 🤸', 'viu esse salto? 🤸', 'ginástica de kernel. 🤸', 'sem stunt double. 😎'])); sfx('happy'); },
-      () => { void anim('hop', 600); setEmotion('happy'); say(vary('c-hop', ['valeu o carinho! 🧡', 'que fofura, obrigado! 🧡', 'isso me carrega a bateria. 🔋', 'friendship++ 🧡'])); sfx('hop'); },
-      () => { void anim('pose', 900); setEmotion('proud'); say(vary('c-pose', ['foto? já tô na pose. 📸', 'meu ângulo bom. 📸', 'render em 4K, por favor. 🖼️', 'diz "queijo"! 🧀'])); sfx('boop'); },
-      () => { void anim('wobble', 700); setEmotion('happy'); say(vary('c-tickle', ['cuidado, sou sensível a cócegas. 😄', 'kkk para, faz cócega! 😆', 'buffer overflow de risada. 😂', 'hihi, de novo não! 😄'])); sfx('boop2'); },
-      () => { void anim('wave', 800); setEmotion('curious'); say(vary('c-wave', ['oi de novo! 👋', 'tá insistente, hein? 😏', 'a gente já se conhece. 😄', 'presente! 🙋'])); sfx('wave'); },
+      () => { void anim('jump', 700); say(vary('c-oi', ['oi! eu sou o b1t. 🤖', 'e aí, humano! 👋', 'bipe bipe, tô aqui! 🤖', 'salve! b1t na área. ⚡'])); },
+      () => { void anim('spin', 800); say(vary('c-spin', ['giro cyber! 🌀', 'rodei igual HD antigo. 💿', '360 no-scope. 🌀', 'tonto agora… 😵‍💫'])); },
+      () => { void anim('dance', 1400); setEmotion('playful'); say(vary('c-dance', ['🎵 dança dos bits', '🎶 no ritmo do clock', '💃 modo festa on', '🕺 bit bit boogie'])); },
+      () => { void anim('backflip', 900); setEmotion('proud'); say(vary('c-flip', ['mortal! nota 10. 🤸', 'viu esse salto? 🤸', 'ginástica de kernel. 🤸', 'sem stunt double. 😎'])); },
+      () => { void anim('hop', 600); setEmotion('happy'); say(vary('c-hop', ['valeu o carinho! 🧡', 'que fofura, obrigado! 🧡', 'isso me carrega a bateria. 🔋', 'friendship++ 🧡'])); },
+      () => { void anim('pose', 900); setEmotion('proud'); say(vary('c-pose', ['foto? já tô na pose. 📸', 'meu ângulo bom. 📸', 'render em 4K, por favor. 🖼️', 'diz "queijo"! 🧀'])); },
+      () => { void anim('wobble', 700); setEmotion('happy'); say(vary('c-tickle', ['cuidado, sou sensível a cócegas. 😄', 'kkk para, faz cócega! 😆', 'buffer overflow de risada. 😂', 'hihi, de novo não! 😄'])); },
+      () => { void anim('wave', 800); setEmotion('curious'); say(vary('c-wave', ['oi de novo! 👋', 'tá insistente, hein? 😏', 'a gente já se conhece. 😄', 'presente! 🙋'])); },
     ];
     let lastClick = -1;
     let rapidCount = 0;
@@ -936,6 +942,8 @@
         void stun();
         return;
       }
+      sfx('bitclick'); // som do CLIQUE (tap2.mp3)
+      clicking = true; // suprime o som de mensagem enquanto a reação fala
       clicks++;
       friendship = Math.min(10, friendship + 1);
       let i = Math.floor(Math.random() * CLICKS.length);
@@ -978,6 +986,7 @@
         dispatchEvent(new CustomEvent('pablodlz:fireworks'));
         dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Mestre b1t', text: '50 cliques! Fogos pra você. 🎆' } }));
       }
+      clicking = false; // fim do clique → mensagens espontâneas voltam a soar (bitmsg)
     });
 
     /* ---------------------------------------------- reações ---------- */

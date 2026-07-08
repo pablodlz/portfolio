@@ -1,8 +1,5 @@
 {
-  "_doc": "Mapa { cue: arquivo } de audio proprio/licenciado (arquivos nesta pasta, same-origin -> CSP 'self' intacta). Chaves com _ sao ignoradas. Sem arquivo, o cue cai no som sintetizado. Cues: achievement, mission, cheat, theme, save, pickup, secret, error, firework, boop, boop2, hop, scan, worried, happy, wave, click.",
-  "click": "tap.mp3",
-  "boop": "tap.mp3",
-  "boop2": "tap.mp3",
-  "hop": "tap.mp3",
-  "wave": "tap.mp3"
+  "_doc": "Mapa { cue: arquivo } de audio proprio/licenciado (arquivos nesta pasta, same-origin -> CSP 'self' intacta). Chaves com _ sao ignoradas. Sem arquivo, o cue cai no som sintetizado. bitmsg = som de qualquer MENSAGEM/balao do b1t; bitclick = som ao CLICAR no b1t. Outros cues: achievement, mission, cheat, theme, save, pickup, secret, error, firework, boop, boop2, hop, scan, worried, happy, wave, click.",
+  "bitmsg": "tap.mp3",
+  "bitclick": "tap2.mp3"
 }
