@@ -237,7 +237,9 @@ function initCounters(): void {
 /* ---------- partículas do hero ---------- */
 function initParticles(): void {
   const canvasEl = document.querySelector<HTMLCanvasElement>('canvas.particles');
-  if (!canvasEl || REDUCED) return;
+  // sem partículas no mobile (coarse): animação canvas contínua não vale a
+  // bateria/CPU numa tela pequena — mais leve e responsivo
+  if (!canvasEl || REDUCED || COARSE) return;
   const context = canvasEl.getContext('2d');
   if (!context) return;
   const canvas = canvasEl;

@@ -54,6 +54,7 @@
       </svg>
       <span class="mascot-sign" aria-hidden="true">Need assistance?</span>
       <span class="mascot-tool" aria-hidden="true"></span>
+      <span class="mascot-zzz" aria-hidden="true"><i>z</i><i>z</i><i>z</i></span>
     </span>
   </button>
   <p id="mascot-bubble" class="mascot-bubble" role="status" hidden></p>
@@ -70,17 +71,19 @@
   const bubble = document.getElementById('mascot-bubble');
 
   if (root && hit && bodyEl && eyes && tool && bubble) {
+    // adia toda a montagem do mascote para depois do load (idle) — tira a
+    // compilação/execução do caminho crítico → menor TBT, mais leve no mobile
+    const boot = (): void => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = matchMedia('(pointer: coarse)').matches;
     const mobile = coarse || innerWidth < 900;
     root.hidden = false;
 
     /* ---------------------------------------------- estado ----------- */
-    let mx = 0;
-    let my = 0;
     let facing = 1;
     let busy = false;
     let asleep = false;
+    let scrolling = false; // usuário rolando → espera estabilizar p/ novo episódio
     let termActive = false;
     let friendship = 0;
     let clicks = 0;
@@ -102,16 +105,17 @@
     // balão SEMPRE acima do personagem (como em jogos), com posicionamento
     // inteligente p/ nunca sair da tela; some enquanto anda (nunca desliza).
     const positionBubble = (): void => {
-      bubble.style.setProperty('--bx', '0px');
-      bubble.classList.remove('is-below');
       const rr = hit.getBoundingClientRect();
-      const br = bubble.getBoundingClientRect();
-      if (rr.top - br.height - 16 < 8) bubble.classList.add('is-below'); // sem espaço acima → abaixo
+      // offsetWidth/Height: dimensões de layout (imunes ao transform → sem feedback)
+      const bw = bubble.offsetWidth;
+      const bh = bubble.offsetHeight;
+      bubble.classList.toggle('is-below', rr.top - bh - 16 < 8); // sem espaço acima → abaixo
       const cx = rr.left + rr.width / 2;
-      const half = br.width / 2;
+      const leftIfCentered = cx - bw / 2;
+      const rightIfCentered = cx + bw / 2;
       let bx = 0;
-      if (cx - half < 8) bx = 8 - (cx - half);
-      else if (cx + half > innerWidth - 8) bx = innerWidth - 8 - (cx + half);
+      if (leftIfCentered < 8) bx = 8 - leftIfCentered;
+      else if (rightIfCentered > innerWidth - 8) bx = innerWidth - 8 - rightIfCentered;
       bubble.style.setProperty('--bx', `${bx}px`);
     };
     const say = (text: string, ms = 4200, force = false): void => {
@@ -141,267 +145,346 @@
     };
     const hideTool = () => tool.classList.remove('is-on');
 
-    /* ---------------------------------------------- movimento -------- */
+    /* ---------------------------------------------- movimento (scroll-aware)
+       O alvo do b1t é o ELEMENTO, não uma coordenada. Um loop rAF recalcula a
+       posição do elemento a cada frame → o robô "gruda" nele mesmo durante o
+       scroll; se o elemento sair da viewport, o alvo é perdido e o episódio
+       aborta (nunca anima "no vazio"). */
+    type Place = 'onTop' | 'left' | 'right' | 'inside';
     const robotH = () => hit.offsetHeight || 60;
     const robotW = () => hit.offsetWidth || 60;
     const homePos = () => ({ x: 14, y: innerHeight - 14 - robotH() });
-
+    const clampX = (x: number) => Math.max(8, Math.min(innerWidth - robotW() - 8, x));
+    const clampY = (y: number) => Math.max(8, Math.min(innerHeight - robotH() - 12, y));
     const face = (dir: number) => {
       facing = dir < 0 ? -1 : 1;
       root.style.setProperty('--face', String(facing));
     };
 
-    // mantém o robô inteiro dentro da viewport (respeitando margens)
-    const clampX = (x: number) => Math.max(8, Math.min(innerWidth - robotW() - 8, x));
-    const clampY = (y: number) => Math.max(8, Math.min(innerHeight - robotH() - 12, y));
-
-    // leva o robô (canto sup-esq dele) até (tx,ty) em coordenadas de viewport
-    const moveTo = async (tx: number, ty: number, tok: symbol, speed = 0.36, allowOff = false): Promise<void> => {
-      if (running !== tok) return;
-      if (!allowOff) {
-        tx = clampX(tx);
-        ty = clampY(ty);
-      }
-      const r = hit.getBoundingClientRect();
-      const dx = tx - r.left;
-      const dy = ty - r.top;
-      const dist = Math.hypot(dx, dy);
-      if (dist < 2) return;
-      face(dx);
-      mx += dx;
-      my += dy;
-      const dur = Math.max(420, Math.min(3200, dist / speed + 260));
-      root.style.setProperty('--mdur', `${dur}ms`);
-      root.style.setProperty('--mx', `${mx}px`);
-      root.style.setProperty('--my', `${my}px`);
-      root.classList.add('is-walking');
-      await wait(dur);
-      root.classList.remove('is-walking');
+    const elVisible = (el: Element | null): el is HTMLElement => {
+      if (!el || !(el as HTMLElement).isConnected) return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.bottom > 52 && r.top < innerHeight - 52 && r.right > 0 && r.left < innerWidth;
+    };
+    const placeFor = (el: HTMLElement, place: Place, off?: { x?: number; y?: number }) => {
+      const r = el.getBoundingClientRect();
+      const w = robotW();
+      const h = robotH();
+      let x: number;
+      let y: number;
+      if (place === 'left') { x = r.left - w - 6; y = r.top + r.height / 2 - h / 2; }
+      else if (place === 'right') { x = r.right + 6; y = r.top + r.height / 2 - h / 2; }
+      else if (place === 'inside') { x = r.left + r.width * 0.5 - w / 2; y = r.top + 8; }
+      else { x = r.left + r.width * 0.5 - w / 2; y = r.top - h + 10; }
+      return { x: clampX(x + (off?.x ?? 0)), y: clampY(y + (off?.y ?? 0)) };
     };
 
+    // --- núcleo rAF ---
+    let px = 14;
+    let py = innerHeight - 74;
+    let gEl: HTMLElement | null = null;
+    let gPlace: Place = 'onTop';
+    let gOff: { x?: number; y?: number } | undefined;
+    let gXY: { x: number; y: number } | null = null;
+    let targetLost = false;
+    let rafId = 0;
+
+    const applyTransform = (): void => {
+      root.style.setProperty('--mx', `${px - 14}px`);
+      root.style.setProperty('--my', `${py - homePos().y}px`);
+    };
+    const frame = (): void => {
+      let goal: { x: number; y: number } | null = null;
+      if (gEl) {
+        if (!elVisible(gEl)) {
+          targetLost = true;
+          gEl = null;
+        } else {
+          goal = placeFor(gEl, gPlace, gOff);
+        }
+      }
+      if (!goal) goal = gXY ?? homePos();
+      const dx = goal.x - px;
+      const dy = goal.y - py;
+      const d = Math.hypot(dx, dy);
+      if (d > 0.4) {
+        px += dx * 0.2;
+        py += dy * 0.2;
+        applyTransform();
+        const moving = d > 2.4 && !hiding;
+        root.classList.toggle('is-walking', moving);
+        if (Math.abs(dx) > 3) face(dx);
+      } else {
+        root.classList.remove('is-walking');
+      }
+      if (!bubble.hidden) positionBubble();
+      const more = d > 0.4 || gEl !== null || !bubble.hidden || root.classList.contains('is-walking');
+      rafId = more ? requestAnimationFrame(frame) : 0;
+    };
+    const kick = (): void => {
+      if (!rafId) rafId = requestAnimationFrame(frame);
+    };
+
+    const arrivedDist = 6;
+    const goStatic = async (x: number, y: number, tok: symbol, allowOff = false): Promise<void> => {
+      gEl = null;
+      targetLost = false;
+      gXY = { x: allowOff ? x : clampX(x), y: allowOff ? y : clampY(y) };
+      kick();
+      while (running === tok) {
+        if (Math.hypot(gXY.x - px, gXY.y - py) < arrivedDist) break;
+        await wait(55);
+      }
+    };
+    // caminha ATÉ um elemento e passa a segui-lo (gruda). Lança se o alvo sumir.
+    const arrive = async (el: HTMLElement, place: Place, tok: symbol, off?: { x?: number; y?: number }): Promise<void> => {
+      gEl = el;
+      gPlace = place;
+      gOff = off;
+      gXY = null;
+      targetLost = false;
+      kick();
+      while (running === tok) {
+        if (targetLost || !elVisible(el)) throw new Error('lost');
+        const g = placeFor(el, place, off);
+        if (Math.hypot(g.x - px, g.y - py) < arrivedDist + 8) break;
+        await wait(55);
+      }
+    };
+    // mantém seguindo o alvo atual por ms (some do alvo → lança)
+    const hold = async (ms: number, tok: symbol): Promise<void> => {
+      const t0 = performance.now();
+      while (performance.now() - t0 < ms) {
+        if (running !== tok) return;
+        if (targetLost) throw new Error('lost');
+        await wait(80);
+      }
+    };
     const goHome = async (tok: symbol): Promise<void> => {
       const h = homePos();
-      await moveTo(h.x, h.y, tok, 0.5);
+      await goStatic(h.x, h.y, tok);
     };
-
-    // teleporte "atalho secreto": some numa borda, reaparece na outra
-    const teleport = async (tx: number, ty: number, tok: symbol): Promise<void> => {
-      if (running !== tok) return;
-      root.style.setProperty('--mdur', '260ms');
-      root.classList.add('is-phase');
-      await wait(260);
-      const r = hit.getBoundingClientRect();
-      mx += tx - r.left;
-      my += ty - r.top;
-      root.style.setProperty('--mdur', '0ms');
-      root.style.setProperty('--mx', `${mx}px`);
-      root.style.setProperty('--my', `${my}px`);
-      await wait(30);
-      root.classList.remove('is-phase');
-      await wait(260);
-    };
-
     const snapHome = (): void => {
-      const h = homePos();
-      const r = hit.getBoundingClientRect();
-      mx += h.x - r.left;
-      my += h.y - r.top;
-      root.style.setProperty('--mdur', '0ms');
-      root.style.setProperty('--mx', `${mx}px`);
-      root.style.setProperty('--my', `${my}px`);
+      gEl = null;
+      gXY = null;
+      targetLost = false;
+      px = homePos().x;
+      py = homePos().y;
+      applyTransform();
       root.classList.remove('is-walking');
+    };
+    const teleport = async (x: number, y: number, tok: symbol): Promise<void> => {
+      if (running !== tok) return;
+      root.classList.add('is-phase');
+      await wait(220);
+      gEl = null;
+      gXY = { x: clampX(x), y: clampY(y) };
+      px = gXY.x;
+      py = gXY.y;
+      applyTransform();
+      await wait(40);
+      root.classList.remove('is-phase');
+      await wait(220);
     };
 
     /* ---------------------------------------------- alvos ------------ */
-    const vis = (el: Element | null): el is HTMLElement => {
-      if (!el) return false;
-      const r = el.getBoundingClientRect();
-      return r.width > 0 && r.top < innerHeight - 40 && r.bottom > 60 && r.left < innerWidth && r.right > 0;
-    };
+    const vis = (el: Element | null): el is HTMLElement => elVisible(el);
     const q = (sel: string) => document.querySelector<HTMLElement>(sel);
     const qa = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].filter(vis);
+    // quão central na viewport (1 = centro) — usado na fila de prioridade
+    const centrality = (el: HTMLElement): number => {
+      const r = el.getBoundingClientRect();
+      const cy = r.top + r.height / 2;
+      return 1 - Math.min(1, Math.abs(cy - innerHeight / 2) / (innerHeight / 2));
+    };
+    const bestOf = (sel: string): HTMLElement | null => {
+      const els = qa(sel);
+      if (!els.length) return null;
+      return els.sort((a, b) => centrality(b) - centrality(a))[0]!;
+    };
 
     /* ============================================================ EPISÓDIOS
-       cada um é uma pequena história (começo → meio → fim). alive() deixa
-       de valer se o usuário rolar muito ou a aba ocultar → o robô volta pra casa. */
+       Cada história ARRIVE num elemento (passa a segui-lo via rAF → gruda no
+       scroll) e HOLD enquanto ele estiver visível. Se o alvo sair da viewport,
+       arrive/hold LANÇAM → o episódio é cancelado e o robô volta pra casa. */
 
-    // 1) senta no menu, balança as pernas e tira poeira
+    // executa uma animação SEGUINDO o alvo (aborta se o alvo sumir)
+    const act = async (name: string, ms: number, tok: symbol): Promise<void> => {
+      const p = anim(name, ms);
+      await hold(ms, tok);
+      await p;
+    };
+
     async function epMenu(tok: symbol): Promise<void> {
-      const link = rnd(qa('.nav-links a'));
+      const link = bestOf('.nav-links a');
       if (!link) return;
-      const r = link.getBoundingClientRect();
-      await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 10, tok);
+      await arrive(link, 'onTop', tok);
       setEmotion('playful');
-      await anim('sit', 600);
-      await anim('legswing', 1400);
+      await act('sit', 600, tok);
+      await act('legswing', 1400, tok);
       showTool('🧹');
-      await anim('dust', 1100);
+      await act('dust', 1100, tok);
       hideTool();
       say('poeirinha zero. ✨', 2600);
-      await wait(900);
+      await hold(800, tok);
     }
 
-    // 2) vai até o botão de contato, aponta e bate pra chamar atenção
     async function epContact(tok: symbol): Promise<void> {
       const fab = q('#fab-toggle');
       if (!vis(fab)) return;
-      const r = fab!.getBoundingClientRect();
-      await moveTo(r.left - robotW() - 6, r.top + r.height / 2 - robotH() / 2, tok);
+      await arrive(fab!, 'left', tok);
       setEmotion('excited');
-      await anim('point', 900);
-      await anim('knock', 700);
-      await anim('knock', 700);
+      await act('point', 900, tok);
+      await act('knock', 700, tok);
+      await act('knock', 700, tok);
       say('clica aqui pra falar com o Pablo! 👉', 3200);
-      await wait(1200);
+      await hold(1000, tok);
     }
 
-    // 3) apronta no terminal: pula dentro, dá um impacto elástico, percebe a
-    //    bagunça, arruma preocupado, confere, sorri aliviado e foge
+    // apronta no terminal: pula dentro, impacto elástico, arruma, confere, foge
     async function epTerminal(tok: symbol): Promise<void> {
       const term = q('.terminal-wrap');
       if (!vis(term) || termActive) return;
-      const r = term!.getBoundingClientRect();
       setEmotion('playful');
-      mischief = true; // aprontando → pode ser pego no flagra
-      await moveTo(r.left + r.width * 0.5 - robotW() / 2, r.top - robotH() + 6, tok); // no topo
-      await anim('runover', 900);
-      await moveTo(r.left + r.width * 0.5 - robotW() / 2, r.top + 8, tok, 0.7); // pula pra dentro
-      await anim('land', 500);
+      mischief = true;
+      await arrive(term!, 'onTop', tok);
+      await act('runover', 900, tok);
+      await arrive(term!, 'inside', tok);
+      await act('land', 500, tok);
       sfx('hop');
-      term!.querySelector('.terminal')?.classList.add('is-bumped'); // impacto elástico
+      term!.querySelector('.terminal')?.classList.add('is-bumped');
       setEmotion('worried');
       setState('worried');
       say('opa… baguncei? 😰', 2200, true);
       sfx('worried');
-      await wait(700);
+      await hold(700, tok);
       showTool('🔧');
-      await anim('fix', 1200); // "arruma"
+      await act('fix', 1200, tok);
       hideTool();
       setTimeout(() => term!.querySelector('.terminal')?.classList.remove('is-bumped'), 300);
-      await anim('check', 700); // confere
+      await act('check', 700, tok);
       setEmotion('happy');
       setState('idle');
       say('ufa, tá tudo certo. 😅', 1800, true);
       sfx('happy');
       mischief = false;
-      await anim('hop', 500);
+      await act('hop', 500, tok);
     }
 
-    // 4) conserta um card de experiência "torto"
     async function epFixCard(tok: symbol): Promise<void> {
-      const card = rnd(qa('#experiencia .job'));
+      const card = bestOf('#experiencia .job');
       if (!card) return;
-      card.classList.add('is-mascot-tilt'); // inclinação sutil e proposital
-      const r = card.getBoundingClientRect();
+      card.classList.add('is-mascot-tilt');
       setEmotion('curious');
-      await moveTo(r.left - robotW() + 8, r.top + r.height / 2 - robotH() / 2, tok);
-      say('ei… tá torto isso. 🤨', 2200);
-      await anim('push', 1100); // empurra
-      card.classList.remove('is-mascot-tilt'); // alinha
-      await anim('dust', 900); // limpa as mãos
-      setEmotion('proud');
-      await anim('pose', 900); // trabalho concluído
-      say('alinhado. de nada. 😎', 2600);
-      await wait(800);
+      try {
+        await arrive(card, 'left', tok);
+        say('ei… tá torto isso. 🤨', 2200);
+        await act('push', 1100, tok);
+        card.classList.remove('is-mascot-tilt');
+        await act('dust', 900, tok);
+        setEmotion('proud');
+        await act('pose', 900, tok);
+        say('alinhado. de nada. 😎', 2600);
+        await hold(700, tok);
+      } finally {
+        card.classList.remove('is-mascot-tilt'); // nunca deixa o card torto
+      }
     }
 
-    // 5) inspeciona um certificado com lupa e carimba "Approved"
     async function epCert(tok: symbol): Promise<void> {
-      const cert = rnd(qa('#certificacoes .cert-trigger'));
+      const cert = bestOf('#certificacoes .cert-trigger');
       if (!cert) return;
-      const r = cert.getBoundingClientRect();
-      await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 12, tok);
+      await arrive(cert, 'onTop', tok);
       setEmotion('curious');
       showTool('🔍');
-      await anim('inspect', 1400);
+      await act('inspect', 1400, tok);
       hideTool();
       showTool('✅');
-      await anim('stamp', 800);
+      await act('stamp', 800, tok);
       hideTool();
       setEmotion('proud');
       say('Approved. selo do b1t. 🏅', 2800);
-      await wait(900);
+      await hold(800, tok);
     }
 
-    // 6) reage à foto do Pablo (raro): olhos arregalados + "boss detected"
     async function epPhoto(tok: symbol): Promise<void> {
       const photo = q('.about-photo');
       if (!vis(photo)) return;
-      const r = photo!.getBoundingClientRect();
-      await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 8, tok);
+      await arrive(photo!, 'onTop', tok);
       setState('wide');
-      await anim('doubletake', 900);
+      await act('doubletake', 900, tok);
       sfx('secret');
       say(rnd(['👀 fiu fiu…', '⭐ boss detected.', '👑 o chefe apareceu.']), 3200);
-      await wait(1400);
+      await hold(1400, tok);
       setState('idle');
     }
 
-    // 7) "atalho secreto": some rapidinho (fade) e reaparece numa borda visível
-    //    já andando pra dentro — nunca fica fora da tela por muito tempo
+    // "atalho secreto" (mais raro): fade → reaparece numa borda visível
     async function epCross(tok: symbol): Promise<void> {
-      const y = clampY(innerHeight * (0.4 + Math.random() * 0.25));
+      const y = clampY(innerHeight * (0.4 + Math.random() * 0.2));
       setEmotion('playful');
       sfx('scan');
       const fromRight = Math.random() < 0.5;
-      await teleport(fromRight ? innerWidth - robotW() - 8 : 8, y, tok); // fade → reaparece na borda
-      await anim('wobble', 700);
+      await teleport(fromRight ? innerWidth - robotW() - 8 : 8, y, tok);
+      await act('wobble', 700, tok);
       say('atalho secreto. 🕳️', 2400);
-      await moveTo(innerWidth * (fromRight ? 0.4 : 0.6), y, tok, 0.5);
-      await wait(500);
+      await goStatic(innerWidth * (fromRight ? 0.4 : 0.6), y, tok);
+      await hold(500, tok);
     }
 
-    // 8) PRANK do tema (raro, uma vez por sessão, só se o usuário ainda não
-    //    mexeu no toggle): espia, corre, aperta (troca p/ light), ri e FOGE
     async function epThemePrank(tok: symbol): Promise<void> {
       const btn = q('#theme-toggle');
       if (!vis(btn) || themePranked || document.documentElement.dataset.userTheme) return;
       themePranked = true;
       mischief = true;
-      const r = btn!.getBoundingClientRect();
       setEmotion('playful');
-      await moveTo(r.left - robotW() - 4, r.top + r.height / 2 - robotH() / 2, tok);
-      await anim('peek', 700); // olha pros lados
+      await arrive(btn!, 'left', tok);
+      await act('peek', 700, tok);
       say('ninguém olhando… 👀', 1800);
-      await wait(600);
-      await anim('peek', 700);
+      await hold(600, tok);
+      await act('peek', 700, tok);
       dispatchEvent(new CustomEvent('pablodlz:mascot-theme')); // aperta! (dark → light)
       sfx('theme');
-      await anim('hop', 500);
+      await act('hop', 500, tok);
       setEmotion('proud');
       say('kkkk troquei seu tema. 😜', 3200);
       sfx('happy');
-      await anim('dance', 1400);
-      await anim('point', 700); // aponta pro usuário
+      await act('dance', 1400, tok);
+      await act('point', 700, tok);
       mischief = false;
-      // foge do "flagra"
-      await moveTo(clampX(innerWidth * 0.7), r.top + r.height + 20, tok, 0.7);
+      await goStatic(clampX(innerWidth * 0.7), clampY(innerHeight * 0.28), tok);
     }
 
-    interface Episode { run: (t: symbol) => Promise<void>; ok: () => boolean; weight: number }
+    interface Episode { run: (t: symbol) => Promise<void>; target: () => HTMLElement | null; weight: number }
     const EPISODES: Episode[] = [
-      { run: epMenu, ok: () => qa('.nav-links a').length > 0, weight: 3 },
-      { run: epContact, ok: () => vis(q('#fab-toggle')), weight: 2 },
-      { run: epTerminal, ok: () => vis(q('.terminal-wrap')) && !termActive, weight: 3 },
-      { run: epFixCard, ok: () => qa('#experiencia .job').length > 0, weight: 3 },
-      { run: epCert, ok: () => qa('#certificacoes .cert-trigger').length > 0, weight: 2 },
-      { run: epPhoto, ok: () => vis(q('.about-photo')), weight: 1 },
-      { run: epCross, ok: () => !mobile, weight: 2 },
-      { run: epThemePrank, ok: () => vis(q('#theme-toggle')) && !themePranked && !document.documentElement.dataset.userTheme, weight: 1 },
+      { run: epMenu, target: () => bestOf('.nav-links a'), weight: 3 },
+      { run: epContact, target: () => (vis(q('#fab-toggle')) ? q('#fab-toggle') : null), weight: 2 },
+      { run: epTerminal, target: () => (!termActive && vis(q('.terminal-wrap')) ? q('.terminal-wrap') : null), weight: 3 },
+      { run: epFixCard, target: () => bestOf('#experiencia .job'), weight: 3 },
+      { run: epCert, target: () => bestOf('#certificacoes .cert-trigger'), weight: 2 },
+      { run: epPhoto, target: () => (vis(q('.about-photo')) ? q('.about-photo') : null), weight: 1 },
+      { run: epCross, target: () => (!mobile ? document.body : null), weight: 1 },
+      { run: epThemePrank, target: () => (!themePranked && !document.documentElement.dataset.userTheme && vis(q('#theme-toggle')) ? q('#theme-toggle') : null), weight: 1 },
     ];
 
-    /* ---------------------------------------------- diretor ---------- */
+    /* ---------------------------------------------- diretor (priorizado) */
     const canPlay = () =>
-      !busy && !asleep && !termActive && !reduced && !mobile && !document.hidden;
+      !busy && !asleep && !termActive && !reduced && !mobile && !document.hidden && !scrolling;
 
     async function playEpisode(): Promise<void> {
       if (!canPlay()) return;
-      const pool = EPISODES.filter((e) => e.ok());
+      // fila de prioridade: só alvos VISÍVEIS; peso × centralidade na viewport
+      const pool = EPISODES.map((e) => ({ e, t: e.target() })).filter(
+        (x): x is { e: Episode; t: HTMLElement } => x.t !== null,
+      );
       if (!pool.length) return;
-      // seleção ponderada
-      const total = pool.reduce((s, e) => s + e.weight, 0);
+      const scored = pool.map((x) => ({
+        e: x.e,
+        w: x.e.weight * (0.35 + 0.65 * (x.t === document.body ? 0.4 : centrality(x.t))),
+      }));
+      const total = scored.reduce((s, x) => s + x.w, 0);
       let pick = Math.random() * total;
-      const ep = pool.find((e) => (pick -= e.weight) < 0) ?? pool[0]!;
+      const ep = (scored.find((x) => (pick -= x.w) < 0) ?? scored[0]!).e;
       busy = true;
       const tok = Symbol();
       running = tok;
@@ -409,15 +492,17 @@
         await ep.run(tok);
         if (running === tok) await goHome(tok);
       } catch {
-        /* nada */
+        // alvo saiu da tela no meio → volta pra casa e procura outro
+        if (running === tok) await goHome(tok).catch(() => snapHome());
       }
       hideTool();
+      mischief = false;
       setState('idle');
       if (running === tok) running = null;
       busy = false;
     }
 
-    // aborta episódio ao rolar muito ou trocar de aba → volta pra casa
+    // cancela episódio ao trocar de aba → volta pra casa
     const bail = (): void => {
       if (!busy) return;
       running = null;
@@ -426,16 +511,19 @@
       hideTool();
       root.classList.remove('is-walking', 'is-phase', 'is-hiding');
       setState('idle');
-      root.style.setProperty('--mdur', '400ms');
       snapHome();
       busy = false;
     };
-    let lastY = scrollY;
+    // scroll: NÃO cancela na hora (o robô gruda no alvo enquanto visível); só
+    // marca "rolando" p/ segurar novos episódios até estabilizar
+    let scrollSettle: ReturnType<typeof setTimeout>;
     addEventListener(
       'scroll',
       () => {
-        if (busy && !hiding && Math.abs(scrollY - lastY) > 160) bail();
-        lastY = scrollY;
+        scrolling = true;
+        kick();
+        clearTimeout(scrollSettle);
+        scrollSettle = setTimeout(() => (scrolling = false), 520);
       },
       { passive: true },
     );
@@ -443,23 +531,19 @@
       if (document.hidden) bail();
     });
 
-    // WATCHDOG de presença: nunca some por muito tempo. Se estiver ocioso e
-    // (parcialmente) fora da tela, volta pra casa suavemente.
+    // WATCHDOG de presença: se ocioso e (parcial) fora da tela, volta pra casa
     setInterval(() => {
       if (busy || asleep || mobile) return;
       const r = hit.getBoundingClientRect();
       const off = r.right < 30 || r.left > innerWidth - 30 || r.bottom < 30 || r.top > innerHeight - 30 || r.top < -4 || r.bottom > innerHeight + 4;
-      if (off) {
-        root.style.setProperty('--mdur', '600ms');
-        snapHome();
-      }
+      if (off) snapHome();
     }, 2500);
 
-    // loop do diretor: episódios bem espaçados p/ não cansar
+    // loop do diretor: episódios bem espaçados; se estiver rolando, adia
     const scheduleDirector = (): void => {
-      const gap = 15000 + Math.random() * 22000; // episódios bem espaçados
+      const gap = 15000 + Math.random() * 22000;
       setTimeout(async () => {
-        await playEpisode();
+        if (canPlay()) await playEpisode();
         scheduleDirector();
       }, gap);
     };
@@ -522,7 +606,7 @@
       sfx('worried');
       await anim('shiver', 500);
       const cornerX = Math.random() < 0.5 ? 8 : innerWidth - robotW() - 8;
-      await moveTo(cornerX, innerHeight - robotH() - 12, tok, 0.95);
+      await goStatic(cornerX, innerHeight - robotH() - 12, tok);
       root!.classList.add('is-hiding'); // "se esconde" (encolhe/translúcido)
       await wait(2600);
       root!.classList.remove('is-hiding');
@@ -679,6 +763,10 @@
     };
 
     /* ---------------------------------------------- boot ------------- */
+    px = homePos().x;
+    py = homePos().y;
+    applyTransform();
+    kick(); // liga o loop rAF
     addEventListener('resize', () => { if (!busy) snapHome(); });
     setEmotion('curious');
     armSleep();
@@ -706,6 +794,10 @@
       });
     };
     if (!mobile && !reduced) setTimeout(tryThemePrank, 70000 + Math.random() * 20000);
+    };
+    if ('requestIdleCallback' in window)
+      (window as unknown as { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback(boot, { timeout: 1800 });
+    else setTimeout(boot, 250);
   }
 </script>
 
@@ -722,8 +814,9 @@
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
     pointer-events: none; /* nunca bloqueia a UI; só o robô captura clique */
+    /* SEM transição no transform: o loop rAF posiciona por frame (segue o
+       elemento vivo durante o scroll). A suavização é feita no JS (lerp). */
     transform: translate(var(--mx, 0px), var(--my, 0px));
-    transition: transform var(--mdur, 3s) cubic-bezier(0.45, 0, 0.4, 1);
     will-change: transform;
   }
   .mascot[hidden] {
@@ -731,7 +824,7 @@
   }
   .mascot.is-phase {
     opacity: 0;
-    transition: transform var(--mdur, 260ms) linear, opacity 220ms ease;
+    transition: opacity 220ms ease;
   }
   @media (max-width: 900px) {
     .mascot {
@@ -820,6 +913,37 @@
   }
   .mascot-tool.is-on { opacity: 1; scale: 1; }
 
+  /* "zzz" flutuando quando dorme */
+  .mascot-zzz {
+    position: absolute;
+    right: -2px;
+    top: -6px;
+    display: none;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--accent);
+    pointer-events: none;
+  }
+  .mascot[data-state='sleep'] .mascot-zzz { display: block; }
+  .mascot-zzz i {
+    position: absolute;
+    font-style: normal;
+    opacity: 0;
+    animation: m-zzz 3s ease-in-out infinite;
+  }
+  .mascot-zzz i:nth-child(1) { font-size: 0.6rem; animation-delay: 0s; }
+  .mascot-zzz i:nth-child(2) { font-size: 0.75rem; animation-delay: 1s; }
+  .mascot-zzz i:nth-child(3) { font-size: 0.9rem; animation-delay: 2s; }
+  @keyframes m-zzz {
+    0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+    30% { opacity: 0.9; }
+    100% { opacity: 0; transform: translate(10px, -22px) rotate(12deg); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mascot-zzz i { animation: none; opacity: 0.8; }
+    .mascot-zzz i:nth-child(1), .mascot-zzz i:nth-child(2) { display: none; }
+  }
+
   /* ---------------- animações one-shot (no .mascot-body) ---------------- */
   .is-hop { animation: m-hop 0.6s var(--ease); }
   @keyframes m-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-11px); } }
@@ -893,7 +1017,7 @@
     transform: translateX(calc(-50% + var(--bx, 0px)));
     transform-origin: bottom center;
     width: max-content; /* tamanho proporcional ao texto */
-    max-width: min(240px, 72vw);
+    max-width: min(240px, 66vw);
     padding: 8px 12px;
     background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--accent-border); border-radius: var(--radius-md);

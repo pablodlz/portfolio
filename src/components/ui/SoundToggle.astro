@@ -42,14 +42,16 @@ import Icon from './Icon.astro';
     border-color: var(--accent-border);
     background: var(--accent-soft);
   }
-  .sfx-toggle .icon-off {
+  /* :global obrigatório: o SVG vem do componente Icon (outro escopo) — sem
+     isto os dois ícones apareciam juntos */
+  .sfx-toggle :global(.icon-off) {
     display: none;
   }
-  .sfx-toggle[aria-pressed='false'] .icon-on {
+  .sfx-toggle[aria-pressed='false'] :global(.icon-on) {
     display: none;
   }
-  .sfx-toggle[aria-pressed='false'] .icon-off {
-    display: inline-flex;
+  .sfx-toggle[aria-pressed='false'] :global(.icon-off) {
+    display: block;
   }
   :global(html.no-js) .sfx-toggle {
     display: none;
