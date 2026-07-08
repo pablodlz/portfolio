@@ -26,10 +26,15 @@ export const Profile = z.object({
     linkedin: z.string().url(),
   }),
   languages: z.array(z.object({ name: z.string().min(1), level: z.string().min(1) })),
+  socials: z.array(
+    z.object({ name: z.string().min(1), handle: z.string().min(1), url: z.string().url() }),
+  ),
+  resume: z.string().regex(/\.pdf$/),
 });
 
 export const About = z.object({
   summary: z.string().min(1),
+  bio: z.array(z.string().min(1)).min(1),
   experiencia: z.array(z.string().min(1)),
   conhecimento: z.array(z.string().min(1)),
   habilidades: z.array(z.string().min(1)),
@@ -80,6 +85,7 @@ export const CertDocFile = z.object({
 
 export const Certifications = z.object({
   totalOnLinkedIn: z.number().int(),
+  displayTotal: z.string().min(1),
   items: z.array(CertificationItem).min(1),
   downloadedDocuments: z.object({
     folder: z.literal('img/certificados/linkedin/'),

@@ -2,12 +2,20 @@
 import { data } from '../../lib/data';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Card from '../ui/Card.astro';
-import Badge from '../ui/Badge.astro';
 import Tag from '../ui/Tag.astro';
 import Icon from '../ui/Icon.astro';
 import type { IconName } from '../../lib/icons';
 
 const { about } = data;
+
+// Números reais derivados dos dados (substitui o antigo "painel ilustrativo").
+const firstYear = Math.min(...data.experience.map((e) => Number(e.startDate.slice(0, 4))));
+const stats = [
+  { count: 50, suffix: '+', label: 'certificações e treinamentos' },
+  { count: data.publications.length, suffix: '', label: 'publicações no LinkedIn' },
+  { count: data.speaking.length, suffix: '', label: 'palestras e minicursos' },
+  { count: new Date().getFullYear() - firstYear, suffix: '+', label: 'anos em tecnologia' },
+];
 
 /**
  * Agrupamento determinístico (specs/content-model.md §Agrupamento).
@@ -78,20 +86,17 @@ const domains: Domain[] = [
         </Card>
       ))}
 
-      <Card class="skill-status reveal" data-ri="4" aria-hidden="true">
-        <div class="status-row">
-          <Badge tone="ok" dot pulse>MONITORING</Badge>
-          <span class="status-mono">shift 24/7</span>
-        </div>
-        <div class="status-row">
-          <Badge tone="info">SIEM</Badge>
-          <span class="status-mono">octopus · wazuh · rapid7</span>
-        </div>
-        <div class="status-row">
-          <Badge tone="warn">TRIAGE</Badge>
-          <span class="status-mono">alerta → playbook → ação</span>
-        </div>
-        <p class="status-note">// painel ilustrativo</p>
+      <Card class="skill-stats reveal" data-ri="4">
+        <ul class="stats-grid">
+          {stats.map((s) => (
+            <li>
+              <span class="stat-n">
+                <span data-count={s.count}>0</span>{s.suffix && <span class="stat-plus">{s.suffix}</span>}
+              </span>
+              <span class="stat-label">{s.label}</span>
+            </li>
+          ))}
+        </ul>
       </Card>
     </div>
   </div>
@@ -159,26 +164,34 @@ const domains: Domain[] = [
     gap: var(--space-2);
   }
 
-  .skill-status {
+  /* card de números reais (Zento) com contadores animados */
+  .skill-stats {
     display: grid;
-    gap: var(--space-3);
-    align-content: start;
+    align-content: center;
   }
-  .status-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5) var(--space-4);
   }
-  .status-mono {
+  .stats-grid li {
+    display: grid;
+    gap: 2px;
+  }
+  .stat-n {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .stat-plus {
+    color: var(--accent);
+  }
+  .stat-label {
     font-family: var(--font-mono);
-    font-size: var(--fs-xs);
+    font-size: 0.72rem;
     color: var(--text-3);
-  }
-  .status-note {
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    color: var(--text-3);
-    margin-top: var(--space-2);
+    letter-spacing: 0.02em;
   }
 </style>

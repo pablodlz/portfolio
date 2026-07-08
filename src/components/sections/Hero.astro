@@ -1,5 +1,6 @@
 ---
 import { data } from '../../lib/data';
+import { withBase } from '../../lib/url';
 import Button from '../ui/Button.astro';
 import Badge from '../ui/Badge.astro';
 import Terminal from '../ui/Terminal.astro';
@@ -9,19 +10,21 @@ const { profile, about } = data;
 const firstSentence = about.summary.split('. ')[0] + '.';
 const [firstName, ...restName] = profile.fullName.split(' ');
 
-// Linhas do terminal preparadas aqui (template fica simples p/ o compilador).
+// Linhas de "boot" do terminal (easter egg do LinkedIn); o shell interativo
+// entra logo abaixo delas (app.ts).
 const termLines = about.easterEgg.content.map((line, i) => ({
-  text: line === '' ? ' ' : line,
+  text: line === '' ? ' ' : line,
   accent: line.startsWith('┌') || line.startsWith('└'),
   i,
 }));
 ---
 
 <section id="top" class="hero atmosphere">
+  <canvas class="particles" aria-hidden="true"></canvas>
   <div class="container hero-grid">
     <div class="hero-copy">
       <p class="reveal" data-ri="0">
-        <Badge tone="accent" dot pulse>SOC ANALYST @ CLAVIS — NA ATIVA</Badge>
+        <Badge tone="ok" dot pulse>SOC ANALYST @ CLAVIS — NA ATIVA</Badge>
       </p>
 
       <!-- h1 e subtítulo SEM reveal: são o LCP — precisam pintar no 1º paint -->
@@ -38,6 +41,9 @@ const termLines = about.easterEgg.content.map((line, i) => ({
 
       <div class="hero-ctas reveal" data-ri="2">
         <Button href="#contato" variant="primary" icon="mail">Contato</Button>
+        <Button href={withBase(`/${profile.resume}`)} variant="secondary" icon="download" download>
+          Currículo
+        </Button>
         <Button href={profile.contact.github} variant="secondary" icon="github" external>
           GitHub
         </Button>
@@ -48,8 +54,24 @@ const termLines = about.easterEgg.content.map((line, i) => ({
     </div>
 
     <div class="hero-terminal reveal" data-ri="3">
-      <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal decorativo com easter egg">
-        <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} data-ri={l.i}>{l.text}</span>)}<span class="t-line" data-ri={termLines.length}><span class="t-accent">&#10095;</span> <span class="t-cursor" aria-hidden="true"></span></span></pre>
+      <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal interativo com easter egg">
+        <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} data-ri={l.i}>{l.text}</span>)}</pre>
+        <pre class="t-out" role="log" aria-live="polite"></pre>
+        <form class="t-form">
+          <label class="visually-hidden" for="term-input">
+            Terminal interativo — digite um comando e pressione Enter. Dica: help
+          </label>
+          <span class="t-accent" aria-hidden="true">&#10095;</span>
+          <input
+            id="term-input"
+            class="t-input"
+            type="text"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="digite help e pressione Enter_"
+          />
+        </form>
       </Terminal>
     </div>
   </div>
@@ -57,7 +79,7 @@ const termLines = about.easterEgg.content.map((line, i) => ({
 
 <style>
   .hero {
-    padding-block: clamp(4.5rem, 11vw, 8.5rem) var(--section-pad);
+    padding-block: clamp(4rem, 9vw, 7rem) var(--section-pad);
   }
   .hero-grid {
     display: grid;

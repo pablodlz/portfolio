@@ -1,5 +1,14 @@
 # Design System — tokens finais
 
+> **Rev v2 (08/jul/2026, pedido do Pablo):** acento migrado de verde-terminal para
+> **laranja SaaSPro** — dark `#ff5024` (5.9:1 sobre `--bg`), light `#b83a0a` (AA em
+> todas as superfícies), `--on-accent` dark `#2b0a03` / light `#fff`. O verde permanece
+> **apenas** como `--ok` (status). Novidades v2: tokens `--glass`/`--glass-border`
+> (Spellar), `--section-pad` compacto, scrollbar customizada, partículas no hero
+> (Cobalt), terminal interativo com conquista, scrollspy, contadores animados.
+> As tabelas abaixo refletem o tema v1 onde não editado; `src/styles/tokens.css` é
+> o valor autoritativo (regra de ouro §Temas).
+
 Derivado de [`../design-system/MASTER.md`](../design-system/MASTER.md) (conciliação:
 brief > refs > skill). Este spec é o contrato de implementação; **`src/styles/tokens.css`
 é o único lugar onde estes valores existem em código.** Componentes consomem só

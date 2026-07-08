@@ -64,6 +64,9 @@ const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props
   .terminal-body {
     padding: var(--space-4) var(--space-4) var(--space-5);
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 380px;
+    cursor: text;
   }
   .terminal-body :global(pre) {
     font-family: var(--font-mono);
@@ -94,5 +97,54 @@ const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props
     .terminal-body :global(.t-cursor) {
       animation: none;
     }
+  }
+
+  /* ---- modo interativo (linhas injetadas pelo app.ts não têm scope) ---- */
+  .terminal-body :global(.t-out) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    line-height: 1.75;
+    color: var(--text-2);
+    white-space: pre-wrap;
+    word-break: break-word;
+    display: block;
+  }
+  .terminal-body :global(.t-out .t-line) {
+    display: block;
+  }
+  .terminal-body :global(.t-line.is-live) {
+    opacity: 1;
+    animation: none;
+  }
+  .terminal-body :global(.t-cmd) {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .terminal-body :global(.t-warn) {
+    color: var(--warn);
+  }
+  .terminal-body :global(.t-form) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+  }
+  .terminal-body :global(.t-input) {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    caret-color: var(--accent);
+    padding: 2px 0;
+  }
+  .terminal-body :global(.t-input::placeholder) {
+    color: var(--text-3);
+    opacity: 0.7;
   }
 </style>

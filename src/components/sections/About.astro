@@ -1,10 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 import { data } from '../../lib/data';
+import { withBase } from '../../lib/url';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Card from '../ui/Card.astro';
 import Badge from '../ui/Badge.astro';
 import Tag from '../ui/Tag.astro';
+import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
 import profilePhoto from '../../../img/image.jpeg';
 
@@ -22,7 +24,9 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
 
     <div class="about-grid">
       <div class="about-text reveal">
-        <p class="about-summary">{about.summary}</p>
+        {about.bio.map((p, i) => (
+          <p class={i === 0 ? 'about-summary' : 'about-bio'}>{p}</p>
+        ))}
 
         <h3>No dia a dia</h3>
         <ul class="about-daily">
@@ -43,8 +47,8 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
         <Image
           src={profilePhoto}
           alt={`Foto de ${profile.fullName}`}
-          width={320}
-          height={320}
+          width={720}
+          height={720}
           class="about-photo"
         />
         <div class="about-card-head">
@@ -71,6 +75,15 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
             <li><Tag>{h}</Tag></li>
           ))}
         </ul>
+        <Button
+          href={withBase(`/${profile.resume}`)}
+          variant="secondary"
+          icon="download"
+          download
+          class="about-resume"
+        >
+          Baixar currículo
+        </Button>
       </Card>
     </div>
 
@@ -140,13 +153,22 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     display: grid;
     gap: var(--space-4);
     justify-items: start;
+    align-content: start;
   }
+  /* foto grande em destaque (pedido do redesign v2) */
   :global(.about-photo) {
-    width: 96px;
-    height: 96px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    max-height: 340px;
     border-radius: var(--radius-lg);
     object-fit: cover;
+    object-position: center top;
     border: 1px solid var(--border-strong);
+  }
+  .about-bio {
+    color: var(--text-2);
+    font-size: var(--fs-small);
   }
   .about-name {
     font-family: var(--font-display);

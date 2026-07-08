@@ -93,7 +93,7 @@ const METRIC = /redução de ([\d,]+%)/;
   .proj-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-5);
+    gap: var(--space-6);
   }
   @media (max-width: 900px) {
     .proj-grid {
@@ -101,15 +101,23 @@ const METRIC = /redução de ([\d,]+%)/;
     }
   }
 
+  /* v2: mais respiro dentro dos cards ("tudo muito junto") */
+  .projects :global(.proj-card) {
+    padding: var(--space-6);
+  }
   .proj-card {
     display: grid;
-    gap: var(--space-4);
+    gap: var(--space-5);
     align-content: start;
     justify-items: start;
+  }
+  .proj-card h3 {
+    line-height: 1.3;
   }
   .proj-desc {
     color: var(--text-2);
     font-size: var(--fs-small);
+    line-height: 1.8;
   }
 
   .proj-stat {

@@ -1,5 +1,9 @@
 # Design System — Pablo Galerani Portfolio (fonte conciliada)
 
+> **Rev v2 (08/jul/2026):** a pedido do Pablo, o acento único passou a ser o **laranja
+> SaaSPro** (`#ff5024` dark / `#b83a0a` light); verde ficou restrito a `--ok`. Ver
+> `specs/design-system.md` e `src/styles/tokens.css` (autoritativo).
+
 > **Este é o arquivo canônico.** Ele concilia três insumos, nesta ordem de prioridade:
 > 1. **Brief do Pablo** (`data/design-references.json > designBrief`) — vence sempre.
 > 2. **Referências coletadas** (`data/design-references.json > sites/synthesis`).

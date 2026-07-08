@@ -6,7 +6,6 @@ import type { TPublication, TPublicationCategory } from '../../lib/schema';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Badge from '../ui/Badge.astro';
 import Icon from '../ui/Icon.astro';
-import Button from '../ui/Button.astro';
 
 const { publications, profile } = data;
 
@@ -22,6 +21,7 @@ const CAT: Record<TPublicationCategory, { tone: 'accent' | 'ok' | 'warn' | 'info
 
 const featured = publications.filter((p) => p.featured);
 const rest = publications.filter((p) => !p.featured);
+const linkedinActivity = `${profile.profileUrl}recent-activity/all/`;
 
 function excerpt(p: TPublication): string {
   if (p.description.length <= 180) return p.description;
@@ -99,13 +99,21 @@ function excerpt(p: TPublication): string {
           </a>
         );
       })}
-    </div>
 
-    <p class="pub-more reveal">
-      <Button href={profile.profileUrl} variant="ghost" icon="linkedin" external>
-        Ver perfil completo no LinkedIn
-      </Button>
-    </p>
+      <a
+        class="pub-cta reveal"
+        href={linkedinActivity}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="pub-cta-icon"><Icon name="linkedin" size={22} /></span>
+        <span class="pub-cta-title">Tem muito mais no feed</span>
+        <span class="pub-cta-text">
+          Acompanhe todas as publicações e atividades direto no LinkedIn
+        </span>
+        <span class="pub-cta-go">Abrir LinkedIn <Icon name="arrow-right" size={15} /></span>
+      </a>
+    </div>
   </div>
 </section>
 
@@ -160,6 +168,8 @@ function excerpt(p: TPublication): string {
     height: auto;
     aspect-ratio: 16 / 9;
     object-fit: cover;
+    /* rostos ficam no terço superior das capas do LinkedIn — nunca cortar */
+    object-position: center top;
     border-bottom: 1px solid var(--border);
   }
 
@@ -206,8 +216,46 @@ function excerpt(p: TPublication): string {
     color: var(--text-3);
   }
 
-  .pub-more {
-    margin-top: var(--space-6);
-    text-align: center;
+  /* card-CTA no fim do feed → LinkedIn */
+  .pub-cta {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--space-2);
+    min-height: 220px;
+    padding: var(--space-5);
+    border: 1px dashed var(--accent-border);
+    border-radius: var(--radius-lg);
+    background: var(--accent-soft);
+    color: inherit;
+    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+  }
+  .pub-cta:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    color: inherit;
+  }
+  .pub-cta-icon {
+    color: var(--accent);
+  }
+  .pub-cta-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .pub-cta-text {
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+  .pub-cta-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
   }
 </style>

@@ -34,11 +34,23 @@
     "languages": [
       { "name": "Português", "level": "Fluente ou nativo" },
       { "name": "English", "level": "Nível básico a intermediário" }
-    ]
+    ],
+    "socials": [
+      { "name": "HackerOne", "handle": "pablodlz", "url": "https://hackerone.com/pablodlz" },
+      { "name": "Bugcrowd", "handle": "pablodlz", "url": "https://bugcrowd.com/h/pablodlz" },
+      { "name": "Hack The Box", "handle": "pablodlz", "url": "https://profile.hackthebox.com/profile/019f2afa-cb43-718d-91a5-8d4f51e292a0f" },
+      { "name": "LetsDefend", "handle": "pablodlz", "url": "https://app.letsdefend.io/user/pablodlz" }
+    ],
+    "resume": "curriculo-pablo-galerani.pdf"
   },
 
   "about": {
     "summary": "Profissional de cibersegurança, atuando como Analista de Operações de Segurança na Clavis Segurança da Informação, com foco no monitoramento do SOC. Tecnólogo em Segurança da Informação, com conhecimento em AppSec e programação, além de especialização em Cibersegurança Ofensiva.",
+    "bio": [
+      "Meu primeiro contato com um computador aconteceu ainda muito jovem — e a curiosidade nunca mais foi embora. O que começou como fascínio por entender como as coisas funcionam por dentro evoluiu para uma paixão por desenvolvimento, hardware e, principalmente, cibersegurança.",
+      "Sou tecnólogo em Segurança da Informação pela Fatec e pós-graduado em Cibersegurança Ofensiva pela Acadi-TI. Pelo caminho, construí uma bagagem multidisciplinar — programação, desenvolvimento web, hardware, design gráfico, edição de imagem e vídeo e modelagem 3D — que fortaleceu minha visão técnica e contribui diretamente para minha atuação como pesquisador de segurança, pentester e desenvolvedor de ferramentas voltadas para segurança ofensiva.",
+      "Hoje opero na linha de frente do SOC da Clavis: monitoramento, triagem e resposta a incidentes. Fora do turno, estudo técnicas ofensivas, pratico em CTFs e labs, e levo para a operação mais de 5 anos de experiência em otimização de processos — eficiência também é segurança."
+    ],
     "experiencia": [
       "Monitoramento SIEM (Octopus, Wazuh, Rapid7), triagem de alertas, investigação (logs, malware, phishing) e criação de playbooks.",
       "Gerenciamento de tickets (Jira) com atenção ao SLA, notificação a clientes, escalonamento e elaboração de planos de ação e mitigação."
@@ -305,6 +317,7 @@
 
   "certifications": {
     "totalOnLinkedIn": 24,
+    "displayTotal": "50+",
     "items": [
       { "issuer": "Clavis Segurança da Informação (Academia CLAVIS)", "title": "Treinamento CompTIA PenTest+ e Ethical Hacking", "type": "Certificado de Conclusão", "credentialUrl": null },
       { "issuer": "Clavis Segurança da Informação (Academia CLAVIS)", "title": "Treinamento CompTIA Security+", "type": "Certificado de Conclusão", "credentialUrl": null },

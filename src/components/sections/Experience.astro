@@ -143,18 +143,21 @@ const COLLAPSE_AFTER = 3;
     }
   }
 
+  /* monograma premium (sem logos oficiais: favicons públicos são de baixa
+     qualidade e sem licença clara — decisão documentada no redesign v2) */
   .job-logo {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
+    width: 46px;
+    height: 46px;
     border-radius: var(--radius-md);
-    background: var(--bg-raised-2);
-    border: 1px solid var(--border);
+    background: linear-gradient(140deg, var(--bg-raised-2) 40%, var(--accent-soft));
+    border: 1px solid var(--accent-border);
     font-family: var(--font-mono);
     font-weight: 700;
-    color: var(--text-2);
+    font-size: 1.05rem;
+    color: var(--accent);
   }
   .job-org {
     color: var(--text-2);

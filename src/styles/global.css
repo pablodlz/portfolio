@@ -42,6 +42,26 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /* scrollbar fina na cor de acento (Firefox) */
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) transparent;
+  }
+
+  /* scrollbar customizada (WebKit/Blink): fina, elegante, acento */
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--accent), var(--accent-hover));
+    border-radius: var(--radius-pill);
+    border: 2px solid var(--bg);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-hover);
   }
 
   html,
@@ -240,10 +260,13 @@
     transform: none;
   }
 
-  /* fallback: sem JS, tudo visível */
+  /* fallback: sem JS, tudo visível; terminal interativo some (não funcionaria) */
   html.no-js .reveal {
     opacity: 1;
     transform: none;
+  }
+  html.no-js .t-form {
+    display: none;
   }
 
   /* Índices de stagger via atributo — a CSP (style-src sem 'unsafe-inline')
@@ -258,6 +281,71 @@
   [data-ri='7'] { --reveal-index: 7; --t-index: 7; }
   [data-ri='8'] { --reveal-index: 8; --t-index: 8; }
   [data-ri='9'] { --reveal-index: 9; --t-index: 9; }
+
+  /* ---------- barra de progresso de leitura (injetada pelo app.ts) ---------- */
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    z-index: 60;
+    background: var(--accent);
+    transform-origin: 0 50%;
+    transform: scaleX(var(--scroll-p, 0));
+    pointer-events: none;
+  }
+
+  /* ---------- toast de conquista (gamificação) ---------- */
+  .achievement {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    max-width: min(92vw, 380px);
+    padding: var(--space-4) var(--space-5);
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lightbox);
+    transform: translateY(140%);
+    transition: transform var(--dur-3) var(--ease);
+  }
+  .achievement.is-in {
+    transform: none;
+  }
+  .achievement-icon {
+    display: inline-flex;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+    color: var(--accent);
+    flex: none;
+  }
+  .achievement-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .achievement-text {
+    font-size: var(--fs-small);
+    color: var(--text);
+  }
+
+  /* ---------- partículas (Cobalt) — canvas atrás do conteúdo do hero ---------- */
+  .particles {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -5,7 +5,18 @@ critério verificado. Ordem: foundation → tokens → shell → primitivos → 
 segurança → QA → CI/CD.
 
 > Status: **concluído em 07/jul/2026** (sessão autônoma). Pendências de conteúdo
-> permanecem como TODO-C1/C2 no content-model (dependem do Pablo).
+> permanecem como TODO-C2 no content-model (dependem do Pablo).
+>
+> **Redesign v2 (08/jul/2026, brief do Pablo):** acento laranja `#ff5024`/`#b83a0a`;
+> terminal interativo com conquista (gamificação); partículas no hero; scrollbar
+> customizada; scrollspy + underline animado na nav; contadores animados (stats reais
+> substituem o "painel ilustrativo"); bio nova + foto em destaque + currículo p/
+> download (TODO-C1 RESOLVIDO — `public/curriculo-pablo-galerani.pdf`); socials
+> HackerOne/Bugcrowd/HTB/LetsDefend; CTAs de LinkedIn em certificações (50+) e
+> publicações; capas sem cortar rosto; branding `@pablodlz`; glow do rodapé contido;
+> seções compactadas. QA v2: **desktop 100×4; mobile 97/100/100/100** (mesmo teto de
+> font-swap do v1 + CSS crítico maior; CLS 0, TBT 0); `npm audit` 0; CSP inalterada
+> (terminal/partículas/toast 100% no bundle próprio, sem style inline).
 
 ## Fase 2 — Fundação
 

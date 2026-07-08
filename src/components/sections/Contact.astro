@@ -1,9 +1,20 @@
 ---
 import { data, obfuscatedEmail } from '../../lib/data';
+import { withBase } from '../../lib/url';
 import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
+import type { IconName } from '../../lib/icons';
 
 const { profile } = data;
 const mail = obfuscatedEmail();
+
+// Ícone temático por plataforma (marcas não têm SVG licenciado no set próprio)
+const SOCIAL_ICON: Record<string, IconName> = {
+  HackerOne: 'bug',
+  Bugcrowd: 'target',
+  'Hack The Box': 'cube',
+  LetsDefend: 'shield-check',
+};
 ---
 
 <section id="contato" class="section contact atmosphere">
@@ -18,9 +29,24 @@ const mail = obfuscatedEmail();
       <Button href="#contato" class="js-mail" data-u={mail.u} data-d={mail.d} variant="primary" icon="mail">
         <span class="js-mail-addr">Enviar e-mail</span>
       </Button>
+      <Button href={withBase(`/${profile.resume}`)} variant="secondary" icon="download" download>
+        Currículo
+      </Button>
       <Button href={profile.contact.github} variant="secondary" icon="github" external>GitHub</Button>
       <Button href={profile.contact.linkedin} variant="secondary" icon="linkedin" external>LinkedIn</Button>
     </div>
+
+    <ul class="contact-socials reveal" data-ri="4" aria-label="Outras plataformas">
+      {profile.socials.map((s) => (
+        <li>
+          <a href={s.url} target="_blank" rel="noopener noreferrer">
+            <Icon name={SOCIAL_ICON[s.name] ?? 'external-link'} size={16} />
+            <span>{s.name}</span>
+            <span class="contact-social-handle">/{s.handle}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
 
     <noscript>
       <p class="contact-noscript">
@@ -28,7 +54,7 @@ const mail = obfuscatedEmail();
       </p>
     </noscript>
 
-    <p class="contact-loc reveal" data-ri="4">
+    <p class="contact-loc reveal" data-ri="5">
       {profile.location} · UTC−3
     </p>
   </div>
@@ -64,10 +90,51 @@ const mail = obfuscatedEmail();
     color: var(--text-3);
     margin-top: var(--space-4);
   }
-  /* glow também no fechamento, invertido (vem de baixo) */
+  /* pills das outras plataformas (bug bounty / labs) */
+  .contact-socials {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+  .contact-socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    color: var(--text-2);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    transition:
+      color var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease),
+      transform var(--dur-1) var(--ease);
+  }
+  .contact-socials a:hover {
+    text-decoration: none;
+    color: var(--text);
+    border-color: var(--accent-border);
+    transform: translateY(-1px);
+  }
+  .contact-socials a :global(svg) {
+    color: var(--accent);
+  }
+  .contact-social-handle {
+    font-family: var(--font-mono);
+    color: var(--text-3);
+  }
+
+  /* glow do fechamento: contido na seção (fix do brilho desalinhado no rodapé) */
+  .contact.atmosphere {
+    overflow: clip;
+  }
   .contact.atmosphere::after {
-    inset: auto -10% -20%;
-    background: radial-gradient(ellipse 60% 55% at 50% 100%, var(--glow), transparent 70%);
+    inset: auto 0 0;
+    height: 60%;
+    background: radial-gradient(ellipse 55% 60% at 50% 100%, var(--glow), transparent 72%);
   }
   .contact.atmosphere::before {
     /* máscara alpha: "black" = área visível, não é cor renderizada */

@@ -14,7 +14,9 @@ const LINKS = [
 
 <header class="nav-wrap">
   <nav class="nav container" aria-label="Principal">
-    <a class="brand" href="#top" aria-label="pg_ — voltar ao topo">pg<span class="brand-cursor">_</span></a>
+    <a class="brand" href="#top" aria-label="@pablodlz — voltar ao topo">
+      <span class="brand-at">@</span>pablodlz<span class="brand-cursor">_</span>
+    </a>
 
     <ul class="nav-links">
       {LINKS.map((l) => (
@@ -52,10 +54,10 @@ const LINKS = [
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    backdrop-filter: blur(14px) saturate(1.4);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    border-bottom: 1px solid var(--glass-border);
   }
   .nav {
     display: flex;
@@ -68,13 +70,17 @@ const LINKS = [
   .brand {
     font-family: var(--font-mono);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: var(--text);
     letter-spacing: -0.02em;
+    white-space: nowrap;
   }
   .brand:hover {
     text-decoration: none;
     color: var(--text);
+  }
+  .brand-at {
+    color: var(--accent);
   }
   .brand-cursor {
     color: var(--accent);
@@ -96,13 +102,39 @@ const LINKS = [
     gap: var(--space-5);
   }
   .nav-links a {
+    position: relative;
     color: var(--text-2);
     font-size: var(--fs-small);
     font-weight: 500;
+    padding-block: 4px;
+    transition: color var(--dur-2) var(--ease);
+  }
+  /* underline animado (gamificação sutil) + estado ativo via scrollspy */
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--dur-2) var(--ease);
   }
   .nav-links a:hover {
     color: var(--text);
     text-decoration: none;
+  }
+  .nav-links a:hover::after {
+    transform: scaleX(0.55);
+  }
+  .nav-links a.is-active {
+    color: var(--text);
+  }
+  .nav-links a.is-active::after {
+    transform: scaleX(1);
   }
 
   .nav-actions {

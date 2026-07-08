@@ -7,16 +7,27 @@ interface Props {
   variant?: 'primary' | 'secondary' | 'ghost';
   icon?: IconName;
   external?: boolean;
+  /** força download do href (ex.: currículo PDF) */
+  download?: boolean;
   class?: string;
   /** atributos data-* extras (ex.: mailto ofuscado) */
   [key: `data-${string}`]: string | undefined;
 }
 
-const { href, variant = 'primary', icon, external = false, class: className, ...rest } = Astro.props;
+const {
+  href,
+  variant = 'primary',
+  icon,
+  external = false,
+  download = false,
+  class: className,
+  ...rest
+} = Astro.props;
 const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+const downloadAttrs = download ? { download: true } : {};
 ---
 
-<a class:list={['btn', `btn--${variant}`, className]} {href} {...externalAttrs} {...rest}>
+<a class:list={['btn', `btn--${variant}`, className]} {href} {...externalAttrs} {...downloadAttrs} {...rest}>
   {icon && <Icon name={icon} size={18} />}
   <slot />
 </a>

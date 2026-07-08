@@ -32,11 +32,15 @@ const groups = ISSUER_GROUPS.filter((g) => (counts.get(g) ?? 0) > 0);
 
 const verifiableCount = certificateImagesInRepo.filter((c) => c.verifyUrl !== null).length;
 
+// displayTotal ("50+") vem do linkedin.json; o contador anima até o número.
+const displayCount = Number.parseInt(certifications.displayTotal, 10);
+const displaySuffix = certifications.displayTotal.replace(String(displayCount), '');
 const stats = [
-  { n: files.length, label: 'documentos comprobatórios' },
-  { n: certifications.items.length, label: 'certificações e treinamentos', plus: true },
-  { n: verifiableCount, label: 'verificáveis online' },
+  { count: displayCount, suffix: displaySuffix, label: 'certificações e treinamentos' },
+  { count: files.length, suffix: '', label: 'documentos comprobatórios' },
+  { count: verifiableCount, suffix: '', label: 'verificáveis online' },
 ];
+const linkedinCerts = `${data.profile.profileUrl}details/certifications/`;
 ---
 
 <section id="certificacoes" class="section">
@@ -50,7 +54,9 @@ const stats = [
     <ul class="cert-stats reveal">
       {stats.map((s) => (
         <li>
-          <span class="cert-stat-n">{s.n}{s.plus && <span class="cert-stat-plus">+</span>}</span>
+          <span class="cert-stat-n">
+            <span data-count={s.count}>0</span>{s.suffix && <span class="cert-stat-plus">{s.suffix}</span>}
+          </span>
           <span class="cert-stat-label">{s.label}</span>
         </li>
       ))}
@@ -94,6 +100,16 @@ const stats = [
           </li>
         );
       })}
+      <li class="cert-cta reveal">
+        <a href={linkedinCerts} target="_blank" rel="noopener noreferrer">
+          <span class="cert-cta-icon"><Icon name="linkedin" size={22} /></span>
+          <span class="cert-cta-title">E não para por aí</span>
+          <span class="cert-cta-text">
+            Veja a lista completa de certificações direto no LinkedIn
+          </span>
+          <span class="cert-cta-go">Abrir LinkedIn <Icon name="arrow-right" size={15} /></span>
+        </a>
+      </li>
     </ul>
 
     <h3 class="cert-verify-title reveal">Certificados verificáveis (2022–2023)</h3>
@@ -219,7 +235,10 @@ const stats = [
   }
   .cert-count {
     font-family: var(--font-mono);
-    opacity: 0.75;
+    color: var(--text-3); /* nunca opacity: dilui abaixo do AA */
+  }
+  .cert-filters button[aria-pressed='true'] .cert-count {
+    color: inherit;
   }
 
   .cert-grid {
@@ -279,6 +298,50 @@ const stats = [
     display: flex;
     gap: var(--space-2);
     flex-wrap: wrap;
+  }
+
+  /* card-CTA no fim da galeria → LinkedIn */
+  .cert-cta a {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--space-2);
+    height: 100%;
+    min-height: 158px;
+    padding: var(--space-4);
+    border: 1px dashed var(--accent-border);
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+    color: inherit;
+    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+  }
+  .cert-cta a:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    color: inherit;
+  }
+  .cert-cta-icon {
+    color: var(--accent);
+  }
+  .cert-cta-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .cert-cta-text {
+    font-size: var(--fs-xs);
+    color: var(--text-2);
+  }
+  .cert-cta-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
   }
 
   .cert-verify-title {
