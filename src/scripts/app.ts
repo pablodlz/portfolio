@@ -451,6 +451,9 @@ function initTerminal(): void {
     if (!(ev.target as HTMLElement).closest('a, button')) input.focus();
   });
 
+  /* placeholder typewriter (discoverability): digita, pausa, apaga, repete */
+  initGhost(input);
+
   const scroll = () => (body.scrollTop = body.scrollHeight);
   const print = (text: string, cls = ''): HTMLElement => {
     const line = document.createElement('span');
@@ -837,6 +840,86 @@ function initTerminal(): void {
       else if (matches.length > 1) print(matches.join('   '), 't-accent');
     }
   });
+}
+
+/* ---------- placeholder typewriter do terminal (discoverability) ---------- */
+function initGhost(input: HTMLInputElement): void {
+  const ghost = document.querySelector<HTMLElement>('.t-ghost');
+  const ghostText = document.querySelector<HTMLElement>('.t-ghost-text');
+  if (!ghost || !ghostText) return;
+
+  // o ghost substitui o placeholder nativo (fica um por cima do outro)
+  input.placeholder = '';
+  ghost.hidden = false;
+
+  const PHRASES = [
+    'digite help e pressione Enter',
+    'tente ./pablodlz.sh',
+    'explore: matrix · coffee · secret',
+  ];
+
+  if (REDUCED) {
+    ghostText.textContent = PHRASES[0]!;
+    const syncStatic = () => {
+      ghost.hidden = document.activeElement === input || input.value.length > 0;
+    };
+    input.addEventListener('focus', syncStatic);
+    input.addEventListener('blur', syncStatic);
+    return;
+  }
+
+  let phrase = 0;
+  let pos = 0;
+  let deleting = false;
+  let timer: ReturnType<typeof setTimeout>;
+  let paused = false;
+
+  const tick = (): void => {
+    const text = PHRASES[phrase % PHRASES.length]!;
+    let delay: number;
+    if (!deleting) {
+      pos++;
+      ghostText.textContent = text.slice(0, pos);
+      if (pos >= text.length) {
+        deleting = true;
+        delay = 2400; // pausa lendo a frase completa
+      } else {
+        delay = 55 + Math.random() * 65; // cadência humana
+      }
+    } else {
+      pos--;
+      ghostText.textContent = text.slice(0, pos);
+      if (pos <= 0) {
+        deleting = false;
+        phrase++;
+        delay = 900; // respiro antes da próxima frase
+      } else {
+        delay = 28;
+      }
+    }
+    timer = setTimeout(tick, delay);
+  };
+  timer = setTimeout(tick, 1600); // deixa o boot do terminal terminar antes
+
+  // some quando o usuário assume o teclado; volta se sair com o campo vazio
+  const pause = (): void => {
+    paused = true;
+    clearTimeout(timer);
+    ghost.hidden = true;
+  };
+  const resume = (): void => {
+    if (input.value.length > 0) return;
+    if (paused) {
+      paused = false;
+      ghost.hidden = false;
+      pos = 0;
+      deleting = false;
+      timer = setTimeout(tick, 700);
+    }
+  };
+  input.addEventListener('focus', pause);
+  input.addEventListener('input', pause);
+  input.addEventListener('blur', resume);
 }
 
 /* ---------- egg do console (v3) ---------- */

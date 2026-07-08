@@ -1,25 +1,103 @@
 ---
-/** Janela de terminal (Portline): 3 dots, corpo mono, cursor opcional. */
+/**
+ * Janela de terminal (Portline): 3 dots, corpo mono, cursor opcional.
+ * `spotlight` liga o anel-scanner na borda (discoverability do terminal
+ * interativo do hero): gradiente cônico transparente→laranja→transparente
+ * circulando o contorno + glow externo suave acompanhando.
+ */
 interface Props {
   title?: string;
   ariaLabel?: string;
+  spotlight?: boolean;
   class?: string;
 }
-const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props;
+const { title = 'bash — pablodlz', ariaLabel, spotlight = false, class: className } = Astro.props;
 ---
 
-<figure class:list={['terminal', className]} aria-label={ariaLabel}>
-  <figcaption class="terminal-bar">
-    <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-    <span class="terminal-title">{title}</span>
-  </figcaption>
-  <div class="terminal-body">
-    <slot />
-  </div>
-</figure>
+<div class:list={['terminal-wrap', { 'terminal-wrap--spotlight': spotlight }, className]}>
+  {spotlight && (
+    <>
+      <span class="terminal-ring terminal-ring--glow" aria-hidden="true"></span>
+      <span class="terminal-ring" aria-hidden="true"></span>
+    </>
+  )}
+  <figure class="terminal" aria-label={ariaLabel}>
+    <figcaption class="terminal-bar">
+      <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="terminal-title">{title}</span>
+    </figcaption>
+    <div class="terminal-body">
+      <slot />
+    </div>
+  </figure>
+</div>
 
 <style>
+  .terminal-wrap {
+    position: relative;
+  }
+
+  /* ---- anel-scanner (discoverability): energia circulando a borda ---- */
+  @property --scan-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .terminal-ring {
+    position: absolute;
+    inset: -1px;
+    border-radius: calc(var(--radius-lg) + 1px);
+    pointer-events: none;
+    z-index: 2;
+    padding: 1.5px;
+    background: conic-gradient(
+      from var(--scan-angle),
+      transparent 0turn,
+      transparent 0.6turn,
+      var(--accent) 0.88turn,
+      transparent 1turn
+    );
+    /* mostra só o contorno (recorta o miolo) */
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: scan-rotate 5.5s linear infinite;
+  }
+  /* glow externo suave acompanhando o scanner */
+  .terminal-ring--glow {
+    inset: -8px;
+    padding: 0;
+    -webkit-mask: none;
+    mask: none;
+    border-radius: calc(var(--radius-lg) + 8px);
+    filter: blur(16px);
+    opacity: 0.38;
+    z-index: 0;
+  }
+  @keyframes scan-rotate {
+    to {
+      --scan-angle: 360deg;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-ring {
+      animation: none;
+      /* estático: um realce fixo e discreto na borda superior */
+      background: linear-gradient(90deg, transparent, var(--accent-border), transparent);
+    }
+    .terminal-ring--glow {
+      display: none;
+    }
+  }
+
   .terminal {
+    position: relative;
+    z-index: 1;
     background: var(--bg-raised);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
@@ -146,5 +224,39 @@ const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props
   .terminal-body :global(.t-input::placeholder) {
     color: var(--text-3);
     opacity: 0.7;
+  }
+  /* ---- placeholder typewriter + cursor de bloco (discoverability) ---- */
+  .terminal-body :global(.t-input-wrap) {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+  }
+  .terminal-body :global(.t-ghost) {
+    position: absolute;
+    inset: 0;
+    display: inline-flex;
+    align-items: center;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .terminal-body :global(.t-ghost-text) {
+    color: var(--text-3);
+  }
+  .terminal-body :global(.t-ghost-cursor) {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.05em;
+    margin-left: 2px;
+    background: var(--accent);
+    animation: t-blink 1.06s steps(2, start) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-body :global(.t-ghost-cursor) {
+      animation: none;
+    }
   }
 </style>

@@ -68,7 +68,7 @@ const termData = {
     </div>
 
     <div class="hero-terminal reveal" data-ri="3">
-      <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal interativo com easter egg">
+      <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal interativo com easter egg" spotlight>
         <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} data-ri={l.i}>{l.text}</span>)}</pre>
         <pre class="t-out" role="log" aria-live="polite"></pre>
         <form class="t-form" data-term={JSON.stringify(termData)}>
@@ -76,15 +76,21 @@ const termData = {
             Terminal interativo — digite um comando e pressione Enter. Dica: help
           </label>
           <span class="t-accent" aria-hidden="true">&#10095;</span>
-          <input
-            id="term-input"
-            class="t-input"
-            type="text"
-            autocomplete="off"
-            autocapitalize="off"
-            spellcheck="false"
-            placeholder="digite help e pressione Enter_"
-          />
+          <span class="t-input-wrap">
+            <input
+              id="term-input"
+              class="t-input"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="digite help e pressione Enter"
+            />
+            <span class="t-ghost" aria-hidden="true" hidden>
+              <span class="t-ghost-text"></span>
+              <span class="t-ghost-cursor"></span>
+            </span>
+          </span>
         </form>
       </Terminal>
     </div>
