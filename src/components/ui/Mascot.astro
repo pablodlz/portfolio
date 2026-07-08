@@ -87,23 +87,11 @@
     let termActive = false;
     let friendship = 0;
     let clicks = 0;
-    // brincadeira do tema: UMA vez por sessão (persiste em sessionStorage p/
-    // não repetir nem ao navegar entre páginas na mesma sessão)
-    const PRANK_KEY = 'b1t-theme-prank';
-    let themePranked = (() => {
-      try {
-        return sessionStorage.getItem(PRANK_KEY) === '1';
-      } catch {
-        return false;
-      }
-    })();
+    // brincadeira do tema: acontece UMA vez por CARREGAMENTO da página — só
+    // volta a acontecer se o usuário der F5 (flag em memória, não persiste)
+    let themePranked = false;
     const markPranked = (): void => {
       themePranked = true;
-      try {
-        sessionStorage.setItem(PRANK_KEY, '1');
-      } catch {
-        /* sem storage: vale para a sessão em memória */
-      }
     };
     let mischief = false; // está aprontando algo → pode ser "pego no flagra"
     let hiding = false;
@@ -114,7 +102,16 @@
     let bubbleTimer: ReturnType<typeof setTimeout>;
 
     const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, reduced ? 0 : ms));
-    const rnd = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length)]!;
+    // variação com memória: nunca repete a MESMA fala duas vezes seguidas p/ uma
+    // dada "chave" → garante que sempre tem novidade em cada interação
+    const lastVar: Record<string, number> = {};
+    const vary = (key: string, arr: string[]): string => {
+      if (arr.length < 2) return arr[0] ?? '';
+      let i = Math.floor(Math.random() * arr.length);
+      if (i === lastVar[key]) i = (i + 1) % arr.length;
+      lastVar[key] = i;
+      return arr[i]!;
+    };
     const setEmotion = (e: Emotion) => (root.dataset.emotion = e);
     const setState = (s: string) => (root.dataset.state = s);
     const sfx = (n: string) => dispatchEvent(new CustomEvent('pablodlz:sfx', { detail: n }));
@@ -348,7 +345,12 @@
       showTool('🧹');
       await act('dust', 1100, tok);
       hideTool();
-      say('poeirinha zero. ✨', 2600);
+      say(vary('menu', [
+        'poeirinha zero. ✨',
+        'limpei a sujeirinha do menu. 🧽',
+        'faxina cyber concluída. 🧹',
+        'brilhando que nem SSD novo. ✨',
+      ]), 2600);
       await hold(800, tok);
     }
 
@@ -360,7 +362,12 @@
       await act('point', 900, tok);
       await act('knock', 700, tok);
       await act('knock', 700, tok);
-      say('clica aqui pra falar com o Pablo! 👉', 3200);
+      say(vary('contact', [
+        'clica aqui pra falar com o Pablo! 👉',
+        'toc toc — manda um oi pra ele. 📨',
+        'quer contratar? é por aqui. 😉',
+        'bora trocar ideia? só apertar. 💬',
+      ]), 3200);
       await hold(1000, tok);
     }
 
@@ -378,7 +385,12 @@
       term!.querySelector('.terminal')?.classList.add('is-bumped');
       setEmotion('worried');
       setState('worried');
-      say('opa… baguncei? 😰', 2200, true);
+      say(vary('term-oops', [
+        'opa… baguncei? 😰',
+        'ihh, mexi onde não devia. 😬',
+        'calma, eu conserto! 😅',
+        'quem colocou isso aqui? …fui eu. 🫣',
+      ]), 2200, true);
       sfx('worried');
       await hold(700, tok);
       showTool('🔧');
@@ -388,7 +400,12 @@
       await act('check', 700, tok);
       setEmotion('happy');
       setState('idle');
-      say('ufa, tá tudo certo. 😅', 1800, true);
+      say(vary('term-fixed', [
+        'ufa, tá tudo certo. 😅',
+        'consertado. ninguém viu nada. 😎',
+        'exit 0. bugzinho resolvido. ✅',
+        'commitei o fix. 😌',
+      ]), 1800, true);
       sfx('happy');
       mischief = false;
       await act('hop', 500, tok);
@@ -401,13 +418,23 @@
       setEmotion('curious');
       try {
         await arrive(card, 'left', tok);
-        say('ei… tá torto isso. 🤨', 2200);
+        say(vary('fix-tilt', [
+          'ei… tá torto isso. 🤨',
+          'esse card tá de ressaca? 🥴',
+          'peraí, deixa eu endireitar. 📐',
+          'pixel torto me incomoda. 😤',
+        ]), 2200);
         await act('push', 1100, tok);
         card.classList.remove('is-mascot-tilt');
         await act('dust', 900, tok);
         setEmotion('proud');
         await act('pose', 900, tok);
-        say('alinhado. de nada. 😎', 2600);
+        say(vary('fix-done', [
+          'alinhado. de nada. 😎',
+          'reto que nem régua. 📏',
+          '90 graus certinhos. 😌',
+          'design pixel-perfect. 🧑‍🎨',
+        ]), 2600);
         await hold(700, tok);
       } finally {
         card.classList.remove('is-mascot-tilt'); // nunca deixa o card torto
@@ -427,7 +454,12 @@
       sfx('pickup'); // coletável estilo GTA:SA
       hideTool();
       setEmotion('proud');
-      say('Approved. selo do b1t. 🏅', 2800);
+      say(vary('cert', [
+        'Approved. selo do b1t. 🏅',
+        'validado e carimbado. 🎖️',
+        'certificação legítima. confia. ✅',
+        'mais um pro mural. 📜',
+      ]), 2800);
       await hold(800, tok);
     }
 
@@ -438,7 +470,13 @@
       setState('wide');
       await act('doubletake', 900, tok);
       sfx('secret');
-      say(rnd(['👀 fiu fiu…', '⭐ boss detected.', '👑 o chefe apareceu.']), 3200);
+      say(vary('photo', [
+        '👀 fiu fiu…',
+        '⭐ boss detected.',
+        '👑 o chefe apareceu.',
+        '📸 esse é o dono da casa!',
+        '🫡 respeitável figura.',
+      ]), 3200);
       await hold(1400, tok);
       setState('idle');
     }
@@ -451,7 +489,12 @@
       const fromRight = Math.random() < 0.5;
       await teleport(fromRight ? innerWidth - robotW() - 8 : 8, y, tok);
       await act('wobble', 700, tok);
-      say('atalho secreto. 🕳️', 2400);
+      say(vary('cross', [
+        'atalho secreto. 🕳️',
+        'teletransporte não é bug, é feature. ✨',
+        'ping baixo demais, teleportei. 🛜',
+        'sudo aparecer_aqui. 🌀',
+      ]), 2400);
       await goStatic(innerWidth * (fromRight ? 0.4 : 0.6), y, tok);
       await hold(500, tok);
     }
@@ -465,14 +508,24 @@
       sfx('mission'); // "new mission": o b1t decidiu aprontar 😏
       await arrive(btn!, 'left', tok);
       await act('peek', 700, tok);
-      say('ninguém olhando… 👀', 1800);
+      say(vary('prank-peek', [
+        'ninguém olhando… 👀',
+        'só uma travessurinha… 😏',
+        'será que ele percebe? 🤫',
+        'modo furtivo ativado… 🥷',
+      ]), 1800);
       await hold(600, tok);
       await act('peek', 700, tok);
       dispatchEvent(new CustomEvent('pablodlz:mascot-theme')); // aperta! (dark → light)
       sfx('theme');
       await act('hop', 500, tok);
       setEmotion('proud');
-      say('kkkk troquei seu tema. 😜', 3200);
+      say(vary('prank-done', [
+        'kkkk troquei seu tema. 😜',
+        'modo claro! surpresa! 💡',
+        'agora tá clarinho. de nada. 😆',
+        'peguei você no susto, né? 😹',
+      ]), 3200);
       sfx('happy');
       await act('dance', 1400, tok);
       await act('point', 700, tok);
@@ -489,7 +542,14 @@
       setEmotion('curious');
       await act('lookaround', 1000, tok);
       say(
-        rnd(['hmm, interessante. 🤔', 'deixa eu espiar… 👀', 'esse aqui é bom. 📌', 'anotado! 🙂', 'boa. continua rolando. 👇']),
+        vary('peek', [
+          'hmm, interessante. 🤔',
+          'deixa eu espiar… 👀',
+          'esse aqui é bom. 📌',
+          'anotado! 🙂',
+          'boa. continua rolando. 👇',
+          'gostei desse. ⭐',
+        ]),
         2800,
       );
       await hold(700, tok);
@@ -510,13 +570,109 @@
       { run: epPeek, target: () => bestOf('.pub-card, .rec-card, .skill-card, .edu-card'), weight: 4 },
     ];
 
+    /* -------------------------------------- apresentação de seções -------
+       Conforme o usuário ROLA, o b1t "recebe" cada seção UMA vez: vai até o
+       título, solta uma apresentação/trocadilho e faz a animação característica
+       daquela seção. Formação ele pula de bloco em bloco; Projetos ele diz UAU! */
+    interface SecScript {
+      id: string;
+      sel: string; // âncora = título da seção
+      emotion: Emotion;
+      anim: string; // animação característica
+      lines: string[]; // apresentação + trocadilho (sorteados sem repetir)
+      special?: (t: symbol) => Promise<void>; // coreografia própria
+    }
+
+    // FORMAÇÃO: pula de bloco em bloco (cada card da formação)
+    async function eduJump(tok: symbol): Promise<void> {
+      const blocks = qa('#formacao .edu-card, #formacao .edu-radar').slice(0, 3);
+      if (!blocks.length) return void (await act('jump', 700, tok));
+      for (const b of blocks) {
+        if (running !== tok) return;
+        if (!elVisible(b)) continue;
+        await arrive(b, 'onTop', tok);
+        await act('jump', 600, tok);
+        sfx('hop');
+        await hold(300, tok);
+      }
+    }
+
+    const SECTIONS: SecScript[] = [
+      { id: 'sobre', sel: '#sobre .section-heading', emotion: 'curious', anim: 'wave',
+        lines: ['seção "sobre" — o whoami do Pablo. 👤', 'aqui mora a bio. sudo conhecer melhor? 🧑‍💻', 'quem é o Pablo? role e descubra. 🔎'] },
+      { id: 'skills', sel: '#skills .section-heading', emotion: 'proud', anim: 'pose',
+        lines: ['o arsenal dele: nmap, Burp, Splunk… 🧰', 'skills carregando… 100%. 💪', 'ferramentas afiadas. respeita o kit. 🛠️'] },
+      { id: 'experiencia', sel: '#experiencia .section-heading', emotion: 'excited', anim: 'point',
+        lines: ['a linha do tempo profissional. 📈', 'experiência real, no SOC de verdade. 🛡️', 'cada bloco = uma missão cumprida. ✅'] },
+      { id: 'formacao', sel: '#formacao .section-heading', emotion: 'playful', anim: 'jump',
+        lines: ['formação! deixa eu pular de bloco em bloco. 🎓', 'roadmap acadêmico — segura que eu vou pulando. 🎓'], special: eduJump },
+      { id: 'projetos', sel: '#projetos .section-heading', emotion: 'excited', anim: 'backflip',
+        lines: ['UAU! olha esses projetos! 🤩', 'UAU! ML contra ransomware?! 🔥', 'UAU! isso aqui é pesquisa de verdade! 🚀'] },
+      { id: 'certificacoes', sel: '#certificacoes .section-heading', emotion: 'proud', anim: 'stamp',
+        lines: ['50+ certificações. eu contei uma a uma. 🏅', 'parede de selos. impressionante. 🎖️', 'certificado até dizer chega. 📜'] },
+      { id: 'publicacoes', sel: '#publicacoes .section-heading', emotion: 'curious', anim: 'inspect',
+        lines: ['artigos publicados. leitura boa. 📚', 'ele escreve E hackeia. 🖊️', 'publicações revisadas por pares. 🤓'] },
+      { id: 'contato', sel: '#contato .section-heading', emotion: 'happy', anim: 'wave',
+        lines: ['chegou no contato! fala com ele. 📬', 'fim do tour — manda um oi! 👋', 'bora trocar ideia? é só clicar. 💬'] },
+    ];
+    const presented = new Set<string>();
+
+    async function presentSection(sec: SecScript, tok: symbol): Promise<void> {
+      const target = q(sec.sel);
+      if (!vis(target)) return;
+      await arrive(target!, 'onTop', tok);
+      setEmotion(sec.emotion);
+      say(vary('sec-' + sec.id, sec.lines), 3400);
+      if (sec.special) await sec.special(tok);
+      else {
+        await act(sec.anim, 900, tok);
+        await hold(700, tok);
+      }
+    }
+
+    // 1ª seção ainda-não-apresentada que esteja VISÍVEL (na ordem de scroll)
+    const pendingSection = (): SecScript | null => {
+      for (const s of SECTIONS) {
+        if (presented.has(s.id)) continue;
+        if (vis(q(s.sel))) return s;
+      }
+      return null;
+    };
+
     /* ---------------------------------------------- diretor (priorizado) */
     // mobile-first: os episódios rodam no celular também (só reduced-motion desliga)
     const canPlay = () =>
       !busy && !asleep && !termActive && !reduced && !document.hidden && !scrolling;
 
+    // contabilidade única de estado p/ qualquer "cena" (episódio ou seção):
+    // token, volta pra casa no fim, libera busy — e aborta limpo se o alvo sumir
+    async function runScene(fn: (t: symbol) => Promise<void>): Promise<void> {
+      busy = true;
+      const tok = Symbol();
+      running = tok;
+      try {
+        await fn(tok);
+        if (running === tok) await goHome(tok);
+      } catch {
+        if (running === tok) await goHome(tok).catch(() => snapHome());
+      }
+      hideTool();
+      mischief = false;
+      setState('idle');
+      if (running === tok) running = null;
+      busy = false;
+      lastEpisodeAt = performance.now();
+    }
+
     async function playEpisode(): Promise<void> {
       if (!canPlay()) return;
+      // PRIORIDADE: seção nova à vista ainda não apresentada → apresenta primeiro
+      const sec = pendingSection();
+      if (sec) {
+        presented.add(sec.id);
+        await runScene((t) => presentSection(sec, t));
+        return;
+      }
       // fila de prioridade: só alvos VISÍVEIS; peso × centralidade na viewport
       const pool = EPISODES.map((e) => ({ e, t: e.target() })).filter(
         (x): x is { e: Episode; t: HTMLElement } => x.t !== null,
@@ -529,22 +685,7 @@
       const total = scored.reduce((s, x) => s + x.w, 0);
       let pick = Math.random() * total;
       const ep = (scored.find((x) => (pick -= x.w) < 0) ?? scored[0]!).e;
-      busy = true;
-      const tok = Symbol();
-      running = tok;
-      try {
-        await ep.run(tok);
-        if (running === tok) await goHome(tok);
-      } catch {
-        // alvo saiu da tela no meio → volta pra casa e procura outro
-        if (running === tok) await goHome(tok).catch(() => snapHome());
-      }
-      hideTool();
-      mischief = false;
-      setState('idle');
-      if (running === tok) running = null;
-      busy = false;
-      lastEpisodeAt = performance.now();
+      await runScene(ep.run);
     }
 
     // cancela episódio ao trocar de aba → volta pra casa
@@ -570,8 +711,14 @@
         clearTimeout(scrollSettle);
         scrollSettle = setTimeout(() => {
           scrolling = false;
-          // parou numa seção → interage por ali em ~1.5s (se ocioso há um tempo)
-          if (canPlay() && performance.now() - lastEpisodeAt > 8000) {
+          if (!canPlay()) return;
+          // seção NOVA à vista → apresenta logo (mesmo se acabou de agir);
+          // senão, interage por ali se estiver ocioso há um tempo
+          if (pendingSection()) {
+            setTimeout(() => {
+              if (canPlay()) void playEpisode();
+            }, 900);
+          } else if (performance.now() - lastEpisodeAt > 8000) {
             setTimeout(() => {
               if (canPlay()) void playEpisode();
             }, 1500);
@@ -655,7 +802,7 @@
       running = tok;
       setState('idle');
       setEmotion('worried');
-      say('ops! 😳', 1600, true);
+      say(vary('flee', ['ops! 😳', 'me pegou! 😳', 'eu não tava fazendo nada! 😅', 'foi mal, foi mal! 🫣']), 1600, true);
       sfx('worried');
       await anim('shiver', 500);
       const cornerX = Math.random() < 0.5 ? 8 : innerWidth - robotW() - 8;
@@ -698,7 +845,7 @@
         setEmotion('curious');
         if (startled) {
           anim('shiver', 700);
-          say('opa! acordei. 👀', 2200);
+          say(vary('wake', ['opa! acordei. 👀', 'zzz… hã? já é hora? 😴', 'dormi no ponto. 🥱', 'bom te ver de volta! 👀']), 2200);
         }
       }
       armSleep();
@@ -717,17 +864,22 @@
       '50+ certificações lá embaixo. eu contei uma a uma.',
       '`coffee` no terminal. confia.',
       'às vezes eu passeio pelo site. me acompanha. 🙂',
+      'role a página que eu apresento cada seção. 👇',
+      'digita `sudo` no terminal e vê o que acontece. 😏',
+      'clica em mim várias vezes. eu não mordo. 🤖',
+      'o botão de som ali em cima liga meus efeitos. 🔊',
     ];
-    // clique NORMAL = sempre positivo (aceita carinho); nunca foge aqui
+    // clique NORMAL = sempre positivo (aceita carinho); nunca foge aqui.
+    // cada reação tem 4 falas → o vary() garante que nunca repete a mesma seguida
     const CLICKS: (() => void)[] = [
-      () => { void anim('jump', 700); say('oi! eu sou o b1t. 🤖'); sfx('boop'); },
-      () => { void anim('spin', 800); say('giro cyber! 🌀'); sfx('boop2'); },
-      () => { void anim('dance', 1400); setEmotion('playful'); say('🎵 dança dos bits'); sfx('happy'); },
-      () => { void anim('backflip', 900); setEmotion('proud'); say('mortal! nota 10. 🤸'); sfx('happy'); },
-      () => { void anim('hop', 600); setEmotion('happy'); say('valeu o carinho! 🧡'); sfx('hop'); },
-      () => { void anim('pose', 900); setEmotion('proud'); say('foto? já tô na pose. 📸'); sfx('boop'); },
-      () => { void anim('wobble', 700); setEmotion('happy'); say('cuidado, sou sensível a cócegas. 😄'); sfx('boop2'); },
-      () => { void anim('wave', 800); setEmotion('curious'); say('oi de novo! 👋'); sfx('wave'); },
+      () => { void anim('jump', 700); say(vary('c-oi', ['oi! eu sou o b1t. 🤖', 'e aí, humano! 👋', 'bipe bipe, tô aqui! 🤖', 'salve! b1t na área. ⚡'])); sfx('boop'); },
+      () => { void anim('spin', 800); say(vary('c-spin', ['giro cyber! 🌀', 'rodei igual HD antigo. 💿', '360 no-scope. 🌀', 'tonto agora… 😵‍💫'])); sfx('boop2'); },
+      () => { void anim('dance', 1400); setEmotion('playful'); say(vary('c-dance', ['🎵 dança dos bits', '🎶 no ritmo do clock', '💃 modo festa on', '🕺 bit bit boogie'])); sfx('happy'); },
+      () => { void anim('backflip', 900); setEmotion('proud'); say(vary('c-flip', ['mortal! nota 10. 🤸', 'viu esse salto? 🤸', 'ginástica de kernel. 🤸', 'sem stunt double. 😎'])); sfx('happy'); },
+      () => { void anim('hop', 600); setEmotion('happy'); say(vary('c-hop', ['valeu o carinho! 🧡', 'que fofura, obrigado! 🧡', 'isso me carrega a bateria. 🔋', 'friendship++ 🧡'])); sfx('hop'); },
+      () => { void anim('pose', 900); setEmotion('proud'); say(vary('c-pose', ['foto? já tô na pose. 📸', 'meu ângulo bom. 📸', 'render em 4K, por favor. 🖼️', 'diz "queijo"! 🧀'])); sfx('boop'); },
+      () => { void anim('wobble', 700); setEmotion('happy'); say(vary('c-tickle', ['cuidado, sou sensível a cócegas. 😄', 'kkk para, faz cócega! 😆', 'buffer overflow de risada. 😂', 'hihi, de novo não! 😄'])); sfx('boop2'); },
+      () => { void anim('wave', 800); setEmotion('curious'); say(vary('c-wave', ['oi de novo! 👋', 'tá insistente, hein? 😏', 'a gente já se conhece. 😄', 'presente! 🙋'])); sfx('wave'); },
     ];
     let lastClick = -1;
     hit.addEventListener('click', () => {
@@ -744,7 +896,12 @@
       lastClick = i;
       CLICKS[i]!();
       if (clicks === 5) {
-        say('gostei de você. 🧡 já achou o easter egg do F12?', 5200, true);
+        say(vary('friend5', [
+          'gostei de você. 🧡 já achou o easter egg do F12?',
+          'você é gente boa. 🧡 abre o console (F12)…',
+          'amizade desbloqueada! 🧡 dica: `./pablodlz.sh`',
+          'parça oficial. 🧡 tenta o `matrix` no terminal.',
+        ]), 5200, true);
         dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Carinho', text: 'Você fez amizade com o b1t.' } }));
       }
       if (clicks === 15) {
@@ -774,7 +931,7 @@
       } else if (name === 'matrix' || name === 'cmatrix') {
         setState('shades');
         setEmotion('playful');
-        say('whoa. 🕶️', 3000, true);
+        say(vary('t-matrix', ['whoa. 🕶️', 'entrei na Matrix. 🕶️', 'chuva de bits verde. 💚', 'red pill ou blue pill? 💊']), 3000, true);
         sfx('secret');
         setTimeout(() => setState('idle'), 4200);
       } else if (name === 'help' || name === 'man') {
@@ -784,7 +941,7 @@
         setTimeout(() => setState('idle'), 2600);
       } else if (name === 'coffee') {
         void anim('hop', 700);
-        say('me vê um também? ☕', 3000, true);
+        say(vary('t-coffee', ['me vê um também? ☕', 'cafeína = uptime. ☕', 'sem café não compilo. 😴', 'double espresso, por favor. ☕']), 3000, true);
         sfx('boop2');
       } else {
         if (Math.random() < 0.5) void anim('hop', 600);
@@ -792,12 +949,35 @@
       }
     }) as EventListener);
 
+    // ZOEIRA: usuário digitou um comando que não existe → o b1t caçoa (leve)
+    addEventListener('pablodlz:term-error', ((e: CustomEvent<string>) => {
+      wake(false);
+      if (busy) return;
+      setEmotion('playful');
+      void anim('wobble', 700);
+      sfx('error');
+      const bad = (e.detail || '').slice(0, 18);
+      say(vary('typo', [
+        `"${bad}"? esse comando não existe, chefe. 😏`,
+        'errou feio, errou rude. tenta `help`. 😅',
+        'hmm… nem o Kali conhece esse aí. 🤔',
+        'digitou de olho fechado? 😜 tenta de novo.',
+        'command not found — e a autoestima também. 😂',
+        'quase! só que não. `help` te salva. 🙃',
+      ]), 3600, true);
+    }) as EventListener);
+
     addEventListener('pablodlz:achievement', ((e: CustomEvent<string>) => {
       wake(false);
       setEmotion('proud');
       setState('idle');
       void anim('backflip', 900);
-      say(`conquista: ${e.detail}! 🎉`, 5000, true);
+      say(vary('achv', [
+        `conquista: ${e.detail}! 🎉`,
+        `desbloqueado: ${e.detail}! 🏆`,
+        `+1 troféu: ${e.detail}! 🎊`,
+        `mission passed: ${e.detail}! ✅`,
+      ]), 5000, true);
     }) as EventListener);
 
     /* ---------------------------------------------- idle leve --------
@@ -837,7 +1017,11 @@
     armSleep();
     idleTick();
     if (!reduced) scheduleDirector(); // roda no mobile também (mobile-first)
-    setTimeout(() => say('e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑', 5200), 3500);
+    setTimeout(() => say(vary('boot', [
+      'e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑',
+      'salve! sou o b1t. 🤖 role a página que eu te apresento tudo. 👇',
+      'oi! b1t na área. 🤖 clica em mim ou testa o terminal ali ↑',
+    ]), 5200), 3500);
 
     // garante que a "brincadeira do tema" aconteça (uma vez por sessão), sem
     // depender do sorteio — tenta num momento aleatório da navegação e, se

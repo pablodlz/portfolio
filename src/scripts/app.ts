@@ -553,6 +553,11 @@ const SFX: Record<string, (c: AudioContext) => void> = {
   },
   // "SECRET FOUND": brilho misterioso ascendente (sininhos)
   secret: (c) => [N.A5, N.C6, N.E6, N.A5 * 2].forEach((f, i) => tone(c, { freq: f, type: 'sine', dur: 0.2, gain: 0.036, at: i * 0.08 })),
+  // "DENIED / WRONG": buzz curto e grave descendente (comando inexistente)
+  error: (c) => {
+    tone(c, { freq: 200, type: 'square', dur: 0.12, gain: 0.045, slideTo: 130 });
+    tone(c, { freq: 150, type: 'square', dur: 0.18, gain: 0.04, slideTo: 88, at: 0.11 });
+  },
   click: (c) => tone(c, { freq: 1300, type: 'square', dur: 0.03, gain: 0.03 }),
 };
 

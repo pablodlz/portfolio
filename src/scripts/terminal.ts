@@ -886,6 +886,8 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
       print(`bash: ${head}: command not found`, 't-warn');
       if (s) print(`did you mean:  ${s}`);
       else print('digite "help" para ver todos os comandos.');
+      // o b1t caçoa do comando inexistente (zoeira leve) + som de "negado"
+      dispatchEvent(new CustomEvent('pablodlz:term-error', { detail: head }));
       return;
     }
     usedCmds.add(head);
