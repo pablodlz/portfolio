@@ -152,12 +152,28 @@
       setTimeout(() => setState('idle'), 2400);
     }) as EventListener);
 
-    /* dica única após 20s parado na página */
-    setTimeout(() => {
-      if (!reduced && root.dataset.state === 'idle') {
-        say('psst — o terminal lá em cima é de verdade. digite `help`.');
-      }
-    }, 20000);
+    /* balões recorrentes (PC e celular): a cada ~50s, se acordado */
+    const TIPS = [
+      'psst — o terminal lá em cima é de verdade. digite `help`.',
+      'dica: TAB completa comandos no terminal.',
+      'já tentou `matrix`? 😎',
+      'tem um segredo no código-fonte… F12.',
+      '`./pablodlz.sh` desbloqueia uma conquista.',
+      '50+ certificações lá embaixo. eu contei.',
+      'o botão laranja ali do lado fala comigo não — fala com o Pablo.',
+      '`coffee` no terminal. confia.',
+    ];
+    let tipIdx = Math.floor(Math.random() * TIPS.length);
+    const scheduleTip = (delay: number): void => {
+      setTimeout(() => {
+        if (root.dataset.state === 'idle' && bubble.hidden) {
+          say(TIPS[tipIdx % TIPS.length]!);
+          tipIdx++;
+        }
+        scheduleTip(45000 + Math.random() * 20000);
+      }, delay);
+    };
+    scheduleTip(15000);
   }
 </script>
 

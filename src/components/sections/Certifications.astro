@@ -73,6 +73,8 @@ const linkedinCerts = `${data.profile.profileUrl}details/certifications/`;
       ))}
     </div>
 
+    <p class="cert-swipe-hint" aria-hidden="true">← deslize para navegar →</p>
+
     <ul id="cert-grid" class="cert-grid">
       {files.map((f, i) => {
         const meta = certImage(f.file);
@@ -245,6 +247,39 @@ const linkedinCerts = `${data.profile.profileUrl}details/certifications/`;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
     gap: var(--space-4);
+  }
+
+  .cert-swipe-hint {
+    display: none;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    margin-bottom: var(--space-3);
+  }
+
+  /* mobile: 44 itens empilhados viram um deserto de scroll — carrossel
+     com snap resolve (pedido do Pablo; publicações continuam em lista) */
+  @media (max-width: 700px) {
+    .cert-swipe-hint {
+      display: block;
+    }
+    .cert-grid,
+    .cert-verify-grid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 78%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: var(--space-4);
+      padding-bottom: var(--space-3);
+    }
+    .cert-grid > li,
+    .cert-verify-grid > li {
+      scroll-snap-align: center;
+    }
+    .cert-cta a {
+      min-height: 100%;
+    }
   }
   .cert-trigger {
     position: relative;

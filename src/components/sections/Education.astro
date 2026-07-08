@@ -97,10 +97,22 @@ const rest = education.slice(2);
   }
   .edu-head {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: var(--space-3);
     margin-bottom: var(--space-4);
+  }
+  /* badges longos ("Curso Superior de Tecnologia…") podem quebrar linha —
+     nowrap aqui estourava a largura no mobile */
+  .edu-head :global(.badge) {
+    white-space: normal;
+    line-height: 1.5;
+    text-align: left;
+  }
+  .edu-featured,
+  .edu-radar {
+    min-width: 0;
   }
   .edu-years {
     font-family: var(--font-mono);
@@ -151,9 +163,10 @@ const rest = education.slice(2);
   }
   .edu-rest li {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
-    gap: var(--space-4);
+    gap: var(--space-2) var(--space-4);
     padding: var(--space-3) var(--space-4);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -167,7 +180,7 @@ const rest = education.slice(2);
     font-size: var(--fs-xs);
   }
 
-  .edu-radar {
+  .edu-grid :global(.edu-radar) {
     display: grid;
     gap: var(--space-4);
   }
@@ -180,9 +193,10 @@ const rest = education.slice(2);
   }
   .edu-radar-list li {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2) var(--space-3);
   }
   .edu-radar-name {
     font-family: var(--font-mono);

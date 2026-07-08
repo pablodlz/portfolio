@@ -130,6 +130,10 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     .about-grid {
       grid-template-columns: 1fr;
     }
+    /* mobile: foto/card primeiro, texto depois */
+    .about-text {
+      order: 2;
+    }
   }
 
   .about-text {
@@ -160,8 +164,15 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     flex-wrap: wrap;
     gap: var(--space-2);
   }
+  /* respiro entre as tags e o CTA do currículo (via irmã — o seletor
+     escopado não alcança o <a> interno do Button) */
+  .about-soft {
+    margin-bottom: var(--space-3);
+  }
 
-  .about-card {
+  /* :global obrigatório: classes passadas a componentes filhos não recebem
+     o escopo do pai (bug sistêmico corrigido em toda a base) */
+  .about-grid :global(.about-card) {
     display: grid;
     gap: var(--space-4);
     justify-items: start;
@@ -177,10 +188,6 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     object-fit: cover;
     object-position: center top;
     border: 1px solid var(--border-strong);
-  }
-  /* respiro entre tags comportamentais e o CTA do currículo */
-  .about-card :global(.about-resume) {
-    margin-top: var(--space-4);
   }
   .about-name {
     font-family: var(--font-display);
