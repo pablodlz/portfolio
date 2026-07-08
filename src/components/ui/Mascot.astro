@@ -908,6 +908,19 @@
         friendship = 10;
         dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Melhor Amigo', text: 'Você clicou no b1t 15 vezes. 🧡' } }));
       }
+      if (clicks === 100) {
+        // CONQUISTA MESTRE: fogos no site inteiro 🎆
+        setEmotion('proud');
+        setState('idle');
+        void anim('backflip', 900);
+        say(vary('master', [
+          'CEM cliques?! 🎆 você é LENDA! 🧡',
+          '100!! 🎆 desbloqueou o modo festa! 🎉',
+          'mestre supremo dos cliques! 🎆🏆',
+        ]), 6000, true);
+        dispatchEvent(new CustomEvent('pablodlz:fireworks'));
+        dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Mestre b1t', text: '100 cliques! Fogos pra você. 🎆' } }));
+      }
     });
 
     /* ---------------------------------------------- reações ---------- */

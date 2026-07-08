@@ -428,6 +428,89 @@ function unlockAchievement(name: string, text: string): void {
   playSfx('achievement'); // stinger nostálgico "missão cumprida"
 }
 
+/* ---------- fogos de artifício (conquista MESTRE: 100 cliques no b1t) ----------
+   Camada canvas em tela cheia, sem capturar ponteiro (não atrapalha o uso),
+   one-shot com auto-limpeza. Composição aditiva ('lighter') p/ brilho, sem
+   escurecer a página (fundo transparente). Respeita reduced-motion. */
+let fireworksBusy = false;
+function launchFireworks(duration = 6000): void {
+  if (REDUCED || fireworksBusy) return; // sem animação sob reduced-motion
+  fireworksBusy = true;
+  const c = document.createElement('canvas');
+  c.setAttribute('aria-hidden', 'true');
+  Object.assign(c.style, {
+    position: 'fixed', inset: '0', width: '100vw', height: '100vh',
+    pointerEvents: 'none', zIndex: '9998',
+  });
+  document.body.appendChild(c);
+  const ctx = c.getContext('2d');
+  if (!ctx) { c.remove(); fireworksBusy = false; return; }
+
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  let w = 0;
+  let h = 0;
+  const resize = (): void => {
+    w = innerWidth; h = innerHeight;
+    c.width = w * dpr; c.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  resize();
+  addEventListener('resize', resize);
+
+  // paleta quente ancorada no laranja da marca + dourado/branco (festivo, on-brand)
+  const PALETTE = ['#ff5024', '#ff7a3d', '#ffab38', '#ffd88a', '#ffffff'];
+  interface Spark { x: number; y: number; vx: number; vy: number; life: number; max: number; color: string; r: number }
+  let sparks: Spark[] = [];
+  const small = COARSE; // telas pequenas: menos partículas p/ manter fluido
+
+  const burst = (bx: number, by: number): void => {
+    const color = PALETTE[Math.floor(Math.random() * PALETTE.length)]!;
+    const n = (small ? 26 : 42) + Math.floor(Math.random() * (small ? 14 : 26));
+    const speed = 2.2 + Math.random() * 2.2;
+    for (let i = 0; i < n; i++) {
+      const ang = (Math.PI * 2 * i) / n + Math.random() * 0.16;
+      const sp = speed * (0.5 + Math.random() * 0.7);
+      sparks.push({ x: bx, y: by, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 0, max: 58 + Math.random() * 42, color, r: 1.3 + Math.random() * 1.7 });
+    }
+    dispatchEvent(new CustomEvent('pablodlz:sfx', { detail: 'firework' }));
+  };
+
+  const t0 = performance.now();
+  let last = t0;
+  const frame = (now: number): void => {
+    const dt = Math.min(2.2, (now - last) / 16.67); last = now;
+    ctx.clearRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'lighter';
+    sparks = sparks.filter((s) => s.life < s.max);
+    for (const s of sparks) {
+      s.life += dt;
+      s.vy += 0.035 * dt; // gravidade
+      s.vx *= 0.985; s.vy *= 0.985;
+      s.x += s.vx * dt; s.y += s.vy * dt;
+      ctx.globalAlpha = Math.max(0, 1 - s.life / s.max);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.color;
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    const elapsed = now - t0;
+    if (elapsed < duration && Math.random() < 0.09) {
+      burst(w * (0.12 + Math.random() * 0.76), h * (0.12 + Math.random() * 0.42));
+    }
+    if (elapsed < duration || sparks.length) {
+      requestAnimationFrame(frame);
+    } else {
+      removeEventListener('resize', resize);
+      c.remove();
+      fireworksBusy = false;
+    }
+  };
+  burst(w * 0.3, h * 0.3);
+  burst(w * 0.7, h * 0.28);
+  requestAnimationFrame(frame);
+}
+
 /* ============================================================================
    ÁUDIO — motor de SFX 100% sintetizado (Web Audio; sem arquivos → CSP intacta).
    Identidade: cyber/sci-fi discreto, com stingers inspirados na sensação de
@@ -558,6 +641,11 @@ const SFX: Record<string, (c: AudioContext) => void> = {
     tone(c, { freq: 200, type: 'square', dur: 0.12, gain: 0.045, slideTo: 130 });
     tone(c, { freq: 150, type: 'square', dur: 0.18, gain: 0.04, slideTo: 88, at: 0.11 });
   },
+  // "FIREWORK": assobio subindo + estouro grave (conquista mestre)
+  firework: (c) => {
+    tone(c, { freq: 520, type: 'sine', dur: 0.16, gain: 0.02, slideTo: 1200 });
+    tone(c, { freq: 220, type: 'sawtooth', dur: 0.16, gain: 0.03, slideTo: 60, at: 0.15 });
+  },
   click: (c) => tone(c, { freq: 1300, type: 'square', dur: 0.03, gain: 0.03 }),
 };
 
@@ -579,6 +667,8 @@ function initSound(): void {
   addEventListener('pablodlz:sfx', ((e: CustomEvent<string>) => playSfx(e.detail)) as EventListener);
   addEventListener('pablodlz:unlock', ((e: CustomEvent<{ name: string; text: string }>) =>
     unlockAchievement(e.detail.name, e.detail.text)) as EventListener);
+  // conquista mestre (100 cliques no b1t) → fogos no site inteiro
+  addEventListener('pablodlz:fireworks', () => launchFireworks());
   if (!btn) return;
   btn.setAttribute('aria-pressed', String(sfxOn));
   btn.addEventListener('click', () => {
