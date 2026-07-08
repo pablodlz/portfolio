@@ -937,10 +937,11 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
   };
   body.addEventListener('click', (ev) => {
     if (!(ev.target as HTMLElement).closest('a, button')) input.focus();
+    triggerBoot();
   });
-  // múltiplos gatilhos → boot dispara mesmo se o focus programático falhar
+  // boot no foco do campo ou num toque deliberado (click); NÃO em pointerdown,
+  // senão deslizar o dedo p/ rolar já ativaria o terminal no celular
   input.addEventListener('focus', triggerBoot);
-  body.addEventListener('pointerdown', triggerBoot);
 
   form.addEventListener('submit', (ev) => {
     ev.preventDefault();

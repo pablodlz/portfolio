@@ -92,6 +92,7 @@
     let hiding = false;
     let nearCooldown = false; // evita reagir à proximidade toda hora
     let running: symbol | null = null; // token do episódio atual
+    let lastEpisodeAt = 0;
     let sleepTimer: ReturnType<typeof setTimeout>;
     let bubbleTimer: ReturnType<typeof setTimeout>;
 
@@ -315,8 +316,11 @@
       await p;
     };
 
+    // no mobile os links ficam num dropdown → cai no logo (visível)
+    const navTarget = () => bestOf('.nav-links a') ?? (vis(q('.brand')) ? q('.brand') : null);
+
     async function epMenu(tok: symbol): Promise<void> {
-      const link = bestOf('.nav-links a');
+      const link = navTarget();
       if (!link) return;
       await arrive(link, 'onTop', tok);
       setEmotion('playful');
@@ -455,21 +459,40 @@
       await goStatic(clampX(innerWidth * 0.7), clampY(innerHeight * 0.28), tok);
     }
 
+    // curiosidade genérica: espia qualquer card (publicações, recomendações,
+    // skills, formação) → garante que o b1t interaja com TODAS as seções
+    async function epPeek(tok: symbol): Promise<void> {
+      const card = bestOf('.pub-card, .rec-card, .skill-card, .edu-card');
+      if (!card) return;
+      await arrive(card, Math.random() < 0.5 ? 'left' : 'onTop', tok);
+      setEmotion('curious');
+      await act('lookaround', 1000, tok);
+      say(
+        rnd(['hmm, interessante. 🤔', 'deixa eu espiar… 👀', 'esse aqui é bom. 📌', 'anotado! 🙂', 'boa. continua rolando. 👇']),
+        2800,
+      );
+      await hold(700, tok);
+    }
+
     interface Episode { run: (t: symbol) => Promise<void>; target: () => HTMLElement | null; weight: number }
+    // o contato (FAB) é fixo e sempre visível → só interage com ele quando a
+    // SEÇÃO de contato está à vista (senão dominaria em qualquer lugar)
     const EPISODES: Episode[] = [
-      { run: epMenu, target: () => bestOf('.nav-links a'), weight: 3 },
-      { run: epContact, target: () => (vis(q('#fab-toggle')) ? q('#fab-toggle') : null), weight: 2 },
+      { run: epMenu, target: navTarget, weight: 2 },
+      { run: epContact, target: () => (vis(q('#contato')) && vis(q('#fab-toggle')) ? q('#fab-toggle') : null), weight: 2 },
       { run: epTerminal, target: () => (!termActive && vis(q('.terminal-wrap')) ? q('.terminal-wrap') : null), weight: 3 },
-      { run: epFixCard, target: () => bestOf('#experiencia .job'), weight: 3 },
-      { run: epCert, target: () => bestOf('#certificacoes .cert-trigger'), weight: 2 },
-      { run: epPhoto, target: () => (vis(q('.about-photo')) ? q('.about-photo') : null), weight: 1 },
-      { run: epCross, target: () => (!mobile ? document.body : null), weight: 1 },
+      { run: epFixCard, target: () => bestOf('#experiencia .job'), weight: 4 },
+      { run: epCert, target: () => bestOf('#certificacoes .cert-trigger'), weight: 4 },
+      { run: epPhoto, target: () => (vis(q('.about-photo')) ? q('.about-photo') : null), weight: 3 },
+      { run: epCross, target: () => document.body, weight: 1 },
       { run: epThemePrank, target: () => (!themePranked && !document.documentElement.dataset.userTheme && vis(q('#theme-toggle')) ? q('#theme-toggle') : null), weight: 1 },
+      { run: epPeek, target: () => bestOf('.pub-card, .rec-card, .skill-card, .edu-card'), weight: 4 },
     ];
 
     /* ---------------------------------------------- diretor (priorizado) */
+    // mobile-first: os episódios rodam no celular também (só reduced-motion desliga)
     const canPlay = () =>
-      !busy && !asleep && !termActive && !reduced && !mobile && !document.hidden && !scrolling;
+      !busy && !asleep && !termActive && !reduced && !document.hidden && !scrolling;
 
     async function playEpisode(): Promise<void> {
       if (!canPlay()) return;
@@ -500,6 +523,7 @@
       setState('idle');
       if (running === tok) running = null;
       busy = false;
+      lastEpisodeAt = performance.now();
     }
 
     // cancela episódio ao trocar de aba → volta pra casa
@@ -515,7 +539,7 @@
       busy = false;
     };
     // scroll: NÃO cancela na hora (o robô gruda no alvo enquanto visível); só
-    // marca "rolando" p/ segurar novos episódios até estabilizar
+    // marca "rolando" e, ao ESTABILIZAR numa seção nova, engaja logo ali
     let scrollSettle: ReturnType<typeof setTimeout>;
     addEventListener(
       'scroll',
@@ -523,7 +547,15 @@
         scrolling = true;
         kick();
         clearTimeout(scrollSettle);
-        scrollSettle = setTimeout(() => (scrolling = false), 520);
+        scrollSettle = setTimeout(() => {
+          scrolling = false;
+          // parou numa seção → interage por ali em ~1.5s (se ocioso há um tempo)
+          if (canPlay() && performance.now() - lastEpisodeAt > 8000) {
+            setTimeout(() => {
+              if (canPlay()) void playEpisode();
+            }, 1500);
+          }
+        }, 560);
       },
       { passive: true },
     );
@@ -533,15 +565,15 @@
 
     // WATCHDOG de presença: se ocioso e (parcial) fora da tela, volta pra casa
     setInterval(() => {
-      if (busy || asleep || mobile) return;
+      if (busy || asleep) return;
       const r = hit.getBoundingClientRect();
       const off = r.right < 30 || r.left > innerWidth - 30 || r.bottom < 30 || r.top > innerHeight - 30 || r.top < -4 || r.bottom > innerHeight + 4;
       if (off) snapHome();
     }, 2500);
 
-    // loop do diretor: episódios bem espaçados; se estiver rolando, adia
+    // loop do diretor: episódios espaçados (não cansa), mas não demais
     const scheduleDirector = (): void => {
-      const gap = 15000 + Math.random() * 22000;
+      const gap = 10000 + Math.random() * 13000; // ~10–23s
       setTimeout(async () => {
         if (canPlay()) await playEpisode();
         scheduleDirector();
@@ -593,7 +625,7 @@
     // "pego no flagra": leva um susto, olha p/ você, foge e se esconde num
     // canto por alguns segundos — SÓ acontece quando está aprontando algo.
     async function startleFlee(): Promise<void> {
-      if (hiding || mobile || reduced) return;
+      if (hiding || reduced) return;
       hiding = true;
       running = null; // aborta o episódio de travessura em curso
       mischief = false;
@@ -771,13 +803,13 @@
     setEmotion('curious');
     armSleep();
     idleTick();
-    if (!mobile && !reduced) scheduleDirector();
+    if (!reduced) scheduleDirector(); // roda no mobile também (mobile-first)
     setTimeout(() => say('e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑', 5200), 3500);
 
     // garante que a "brincadeira do tema" aconteça (uma vez), sem depender só
     // do sorteio do diretor — tenta ~70s após a visita, reagendando se ocupado
     const tryThemePrank = (): void => {
-      if (mobile || reduced || themePranked || document.documentElement.dataset.userTheme) return;
+      if (reduced || themePranked || document.documentElement.dataset.userTheme) return;
       if (!canPlay() || !vis(q('#theme-toggle'))) {
         setTimeout(tryThemePrank, 15000);
         return;
@@ -793,7 +825,7 @@
         busy = false;
       });
     };
-    if (!mobile && !reduced) setTimeout(tryThemePrank, 70000 + Math.random() * 20000);
+    if (!reduced) setTimeout(tryThemePrank, 70000 + Math.random() * 20000);
     };
     if ('requestIdleCallback' in window)
       (window as unknown as { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback(boot, { timeout: 1800 });
@@ -834,6 +866,12 @@
     .mascot-svg {
       width: 46px;
       height: 46px;
+    }
+    /* balão com texto menor no celular (.mascot p/ vencer a regra base) */
+    .mascot .mascot-bubble {
+      font-size: 0.68rem;
+      max-width: min(200px, 62vw);
+      padding: 6px 10px;
     }
   }
 

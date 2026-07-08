@@ -648,8 +648,10 @@ function armTerminal(): void {
     const mod = await import('./terminal');
     mod.initTerminal({ unlock: unlockAchievement });
   };
+  // 'click' (não 'pointerdown'): no celular, deslizar o dedo p/ rolar NÃO deve
+  // ativar o terminal — só um toque deliberado (tap) ou focar o campo
   input.addEventListener('focus', load, { once: true });
-  body.addEventListener('pointerdown', load, { once: true });
+  body.addEventListener('click', load, { once: true });
 }
 
 /* ---------- egg do console (v3) ---------- */
