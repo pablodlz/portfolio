@@ -1,4 +1,8 @@
 {
-  "_doc": "Coloque aqui apenas arquivos de audio que VOCE POSSUI ou LICENCIA. Formato: { \"cue\": \"arquivo.ext\" } com o arquivo na mesma pasta (public/audio/). Chaves iniciadas por _ sao ignoradas. Cues suportados: achievement, mission, cheat, theme, save, pickup, secret, error, firework, boop, boop2, hop, scan, worried, happy, wave, click. Exemplo: descomente e ajuste os nomes.",
-  "_exemplo": "\"achievement\": \"mission-passed.mp3\", \"pickup\": \"coin.mp3\", \"save\": \"save.mp3\""
+  "_doc": "Mapa { cue: arquivo } de audio proprio/licenciado (arquivos nesta pasta, same-origin -> CSP 'self' intacta). Chaves com _ sao ignoradas. Sem arquivo, o cue cai no som sintetizado. Cues: achievement, mission, cheat, theme, save, pickup, secret, error, firework, boop, boop2, hop, scan, worried, happy, wave, click.",
+  "click": "tap.mp3",
+  "boop": "tap.mp3",
+  "boop2": "tap.mp3",
+  "hop": "tap.mp3",
+  "wave": "tap.mp3"
 }
