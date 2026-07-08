@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button
+  id="sfx-toggle"
+  class="sfx-toggle"
+  type="button"
+  aria-pressed="false"
+  aria-label="Ativar ou desativar os efeitos sonoros"
+  title="Som"
+>
+  <Icon name="volume" size={18} class="icon-on" />
+  <Icon name="volume-x" size={18} class="icon-off" />
+</button>
+
+<style>
+  .sfx-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      color var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease),
+      background-color var(--dur-2) var(--ease);
+  }
+  .sfx-toggle:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    background: var(--bg-raised);
+  }
+  /* ligado = acento; desligado = neutro */
+  .sfx-toggle[aria-pressed='true'] {
+    color: var(--accent);
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+  }
+  .sfx-toggle .icon-off {
+    display: none;
+  }
+  .sfx-toggle[aria-pressed='false'] .icon-on {
+    display: none;
+  }
+  .sfx-toggle[aria-pressed='false'] .icon-off {
+    display: inline-flex;
+  }
+  :global(html.no-js) .sfx-toggle {
+    display: none;
+  }
+</style>

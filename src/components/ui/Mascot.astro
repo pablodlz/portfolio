@@ -85,6 +85,9 @@
     let friendship = 0;
     let clicks = 0;
     let themePranked = false;
+    let mischief = false; // está aprontando algo → pode ser "pego no flagra"
+    let hiding = false;
+    let nearCooldown = false; // evita reagir à proximidade toda hora
     let running: symbol | null = null; // token do episódio atual
     let sleepTimer: ReturnType<typeof setTimeout>;
     let bubbleTimer: ReturnType<typeof setTimeout>;
@@ -93,14 +96,30 @@
     const rnd = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length)]!;
     const setEmotion = (e: Emotion) => (root.dataset.emotion = e);
     const setState = (s: string) => (root.dataset.state = s);
+    const sfx = (n: string) => dispatchEvent(new CustomEvent('pablodlz:sfx', { detail: n }));
 
     /* ---------------------------------------------- fala ------------- */
-    // o balão só aparece com o robô parado; enquanto anda ele some (nunca desliza)
+    // balão SEMPRE acima do personagem (como em jogos), com posicionamento
+    // inteligente p/ nunca sair da tela; some enquanto anda (nunca desliza).
+    const positionBubble = (): void => {
+      bubble.style.setProperty('--bx', '0px');
+      bubble.classList.remove('is-below');
+      const rr = hit.getBoundingClientRect();
+      const br = bubble.getBoundingClientRect();
+      if (rr.top - br.height - 16 < 8) bubble.classList.add('is-below'); // sem espaço acima → abaixo
+      const cx = rr.left + rr.width / 2;
+      const half = br.width / 2;
+      let bx = 0;
+      if (cx - half < 8) bx = 8 - (cx - half);
+      else if (cx + half > innerWidth - 8) bx = innerWidth - 8 - (cx + half);
+      bubble.style.setProperty('--bx', `${bx}px`);
+    };
     const say = (text: string, ms = 4200, force = false): void => {
       if (asleep) return;
       if (termActive && !force) return;
       bubble.textContent = text;
       bubble.hidden = false;
+      requestAnimationFrame(positionBubble);
       clearTimeout(bubbleTimer);
       bubbleTimer = setTimeout(() => (bubble.hidden = true), ms);
     };
@@ -132,9 +151,17 @@
       root.style.setProperty('--face', String(facing));
     };
 
+    // mantém o robô inteiro dentro da viewport (respeitando margens)
+    const clampX = (x: number) => Math.max(8, Math.min(innerWidth - robotW() - 8, x));
+    const clampY = (y: number) => Math.max(8, Math.min(innerHeight - robotH() - 12, y));
+
     // leva o robô (canto sup-esq dele) até (tx,ty) em coordenadas de viewport
-    const moveTo = async (tx: number, ty: number, tok: symbol, speed = 0.36): Promise<void> => {
+    const moveTo = async (tx: number, ty: number, tok: symbol, speed = 0.36, allowOff = false): Promise<void> => {
       if (running !== tok) return;
+      if (!allowOff) {
+        tx = clampX(tx);
+        ty = clampY(ty);
+      }
       const r = hit.getBoundingClientRect();
       const dx = tx - r.left;
       const dy = ty - r.top;
@@ -235,14 +262,17 @@
       if (!vis(term) || termActive) return;
       const r = term!.getBoundingClientRect();
       setEmotion('playful');
+      mischief = true; // aprontando → pode ser pego no flagra
       await moveTo(r.left + r.width * 0.5 - robotW() / 2, r.top - robotH() + 6, tok); // no topo
       await anim('runover', 900);
       await moveTo(r.left + r.width * 0.5 - robotW() / 2, r.top + 8, tok, 0.7); // pula pra dentro
       await anim('land', 500);
+      sfx('hop');
       term!.querySelector('.terminal')?.classList.add('is-bumped'); // impacto elástico
       setEmotion('worried');
       setState('worried');
       say('opa… baguncei? 😰', 2200, true);
+      sfx('worried');
       await wait(700);
       showTool('🔧');
       await anim('fix', 1200); // "arruma"
@@ -252,9 +282,9 @@
       setEmotion('happy');
       setState('idle');
       say('ufa, tá tudo certo. 😅', 1800, true);
+      sfx('happy');
+      mischief = false;
       await anim('hop', 500);
-      // foge rápido antes que cliquem nele
-      await moveTo(r.right - robotW() - 4, r.top - robotH() + 6, tok, 0.6);
     }
 
     // 4) conserta um card de experiência "torto"
@@ -301,43 +331,51 @@
       await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 8, tok);
       setState('wide');
       await anim('doubletake', 900);
+      sfx('secret');
       say(rnd(['👀 fiu fiu…', '⭐ boss detected.', '👑 o chefe apareceu.']), 3200);
       await wait(1400);
       setState('idle');
     }
 
-    // 7) atravessa a tela via "atalho secreto" (some numa borda, volta na outra)
+    // 7) "atalho secreto": some rapidinho (fade) e reaparece numa borda visível
+    //    já andando pra dentro — nunca fica fora da tela por muito tempo
     async function epCross(tok: symbol): Promise<void> {
-      const midY = innerHeight * (0.35 + Math.random() * 0.4);
-      await moveTo(-robotW() - 10, midY, tok, 0.5); // sai pela esquerda
-      await teleport(innerWidth + 4, midY, tok); // reaparece na direita
-      await moveTo(innerWidth * 0.6, midY, tok, 0.45);
+      const y = clampY(innerHeight * (0.4 + Math.random() * 0.25));
       setEmotion('playful');
+      sfx('scan');
+      const fromRight = Math.random() < 0.5;
+      await teleport(fromRight ? innerWidth - robotW() - 8 : 8, y, tok); // fade → reaparece na borda
       await anim('wobble', 700);
       say('atalho secreto. 🕳️', 2400);
-      await wait(700);
+      await moveTo(innerWidth * (fromRight ? 0.4 : 0.6), y, tok, 0.5);
+      await wait(500);
     }
 
-    // 8) PRANK do tema (raríssimo, uma vez por sessão, só se o usuário ainda
-    //    não mexeu no toggle): espia, corre até o botão, aperta, ri e foge
+    // 8) PRANK do tema (raro, uma vez por sessão, só se o usuário ainda não
+    //    mexeu no toggle): espia, corre, aperta (troca p/ light), ri e FOGE
     async function epThemePrank(tok: symbol): Promise<void> {
       const btn = q('#theme-toggle');
       if (!vis(btn) || themePranked || document.documentElement.dataset.userTheme) return;
       themePranked = true;
+      mischief = true;
       const r = btn!.getBoundingClientRect();
       setEmotion('playful');
       await moveTo(r.left - robotW() - 4, r.top + r.height / 2 - robotH() / 2, tok);
       await anim('peek', 700); // olha pros lados
-      await wait(300);
+      say('ninguém olhando… 👀', 1800);
+      await wait(600);
       await anim('peek', 700);
-      dispatchEvent(new CustomEvent('pablodlz:mascot-theme')); // aperta!
+      dispatchEvent(new CustomEvent('pablodlz:mascot-theme')); // aperta! (dark → light)
+      sfx('theme');
       await anim('hop', 500);
       setEmotion('proud');
-      say('kkkk troquei o tema. 😜', 3200);
+      say('kkkk troquei seu tema. 😜', 3200);
+      sfx('happy');
       await anim('dance', 1400);
       await anim('point', 700); // aponta pro usuário
-      // foge
-      await moveTo(innerWidth * 0.7, r.top + r.height / 2 - robotH() / 2, tok, 0.6);
+      mischief = false;
+      // foge do "flagra"
+      await moveTo(clampX(innerWidth * 0.7), r.top + r.height + 20, tok, 0.7);
     }
 
     interface Episode { run: (t: symbol) => Promise<void>; ok: () => boolean; weight: number }
@@ -383,9 +421,11 @@
     const bail = (): void => {
       if (!busy) return;
       running = null;
+      hiding = false;
+      mischief = false;
       hideTool();
+      root.classList.remove('is-walking', 'is-phase', 'is-hiding');
       setState('idle');
-      root.classList.remove('is-walking', 'is-phase');
       root.style.setProperty('--mdur', '400ms');
       snapHome();
       busy = false;
@@ -394,7 +434,7 @@
     addEventListener(
       'scroll',
       () => {
-        if (busy && Math.abs(scrollY - lastY) > 160) bail();
+        if (busy && !hiding && Math.abs(scrollY - lastY) > 160) bail();
         lastY = scrollY;
       },
       { passive: true },
@@ -402,6 +442,18 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) bail();
     });
+
+    // WATCHDOG de presença: nunca some por muito tempo. Se estiver ocioso e
+    // (parcialmente) fora da tela, volta pra casa suavemente.
+    setInterval(() => {
+      if (busy || asleep || mobile) return;
+      const r = hit.getBoundingClientRect();
+      const off = r.right < 30 || r.left > innerWidth - 30 || r.bottom < 30 || r.top > innerHeight - 30 || r.top < -4 || r.bottom > innerHeight + 4;
+      if (off) {
+        root.style.setProperty('--mdur', '600ms');
+        snapHome();
+      }
+    }, 2500);
 
     // loop do diretor: episódios bem espaçados p/ não cansar
     const scheduleDirector = (): void => {
@@ -425,11 +477,21 @@
             const dx = e.clientX - (r.left + r.width / 2);
             const dy = e.clientY - (r.top + r.height / 2);
             const ang = Math.atan2(dy, dx);
-            const d = Math.min(2.6, Math.hypot(dx, dy) / 80);
-            eyes.style.transform = `translate(${Math.cos(ang) * d}px, ${Math.sin(ang) * d}px)`;
-            // pega-pega: perto e ocioso em casa → foge alguns cm e olha p/ trás
-            if (!busy && !asleep && Math.hypot(dx, dy) < 70 && Math.random() < 0.06) {
-              void flee();
+            const dd = Math.min(2.6, Math.hypot(dx, dy) / 80);
+            eyes.style.transform = `translate(${Math.cos(ang) * dd}px, ${Math.sin(ang) * dd}px)`;
+            const near = Math.hypot(dx, dy) < 78;
+            if (near) {
+              if (mischief && !hiding) {
+                void startleFlee(); // pego no flagra → foge
+              } else if (!busy && !asleep && !nearCooldown) {
+                // comportamento PADRÃO: simpático, nunca foge
+                nearCooldown = true;
+                setTimeout(() => (nearCooldown = false), 4000);
+                setEmotion('happy');
+                void anim(Math.random() < 0.5 ? 'wave' : 'hop', 800);
+                sfx('wave');
+                setTimeout(() => setEmotion('curious'), 1500);
+              }
             }
           });
         },
@@ -444,21 +506,31 @@
       }, 2400);
     }
 
-    async function flee(): Promise<void> {
-      if (busy || mobile || reduced) return;
+    // "pego no flagra": leva um susto, olha p/ você, foge e se esconde num
+    // canto por alguns segundos — SÓ acontece quando está aprontando algo.
+    async function startleFlee(): Promise<void> {
+      if (hiding || mobile || reduced) return;
+      hiding = true;
+      running = null; // aborta o episódio de travessura em curso
+      mischief = false;
       busy = true;
       const tok = Symbol();
       running = tok;
-      setEmotion('playful');
-      const r = hit!.getBoundingClientRect(); // não-nulo (guard inicial); função hoisted
-      const dir = r.left < innerWidth / 2 ? 1 : -1;
-      await moveTo(r.left + dir * (140 + Math.random() * 120), r.top, tok, 0.7);
-      await anim('lookback', 700);
-      if (Math.random() < 0.5) say('quase! 😜', 1800);
-      await wait(500);
+      setState('idle');
+      setEmotion('worried');
+      say('ops! 😳', 1600, true);
+      sfx('worried');
+      await anim('shiver', 500);
+      const cornerX = Math.random() < 0.5 ? 8 : innerWidth - robotW() - 8;
+      await moveTo(cornerX, innerHeight - robotH() - 12, tok, 0.95);
+      root!.classList.add('is-hiding'); // "se esconde" (encolhe/translúcido)
+      await wait(2600);
+      root!.classList.remove('is-hiding');
+      setEmotion('curious');
       if (running === tok) await goHome(tok);
       if (running === tok) running = null;
       busy = false;
+      hiding = false;
     }
 
     /* ---------------------------------------------- piscar / dormir -- */
@@ -509,29 +581,39 @@
       '`coffee` no terminal. confia.',
       'às vezes eu passeio pelo site. me acompanha. 🙂',
     ];
+    // clique NORMAL = sempre positivo (aceita carinho); nunca foge aqui
     const CLICKS: (() => void)[] = [
-      () => { void anim('jump', 700); say('oi! eu sou o b1t. 🤖'); },
-      () => { void anim('spin', 800); say('giro cyber! 🌀'); },
-      () => { void anim('dance', 1400); setEmotion('playful'); say('🎵 dança dos bits'); },
-      () => { void anim('backflip', 900); setEmotion('proud'); say('mortal! nota 10. 🤸'); },
-      () => { void anim('hop', 600); setEmotion('happy'); say('valeu o carinho! 🧡'); },
-      () => { void anim('shiver', 600); setEmotion('curious'); say('ei! me assustou. 😵'); },
-      () => { void anim('pose', 900); setEmotion('proud'); say('foto? já tô na pose. 📸'); },
-      () => { void flee(); },
-      () => { void anim('wobble', 700); say('cuidado, sou sensível a cócegas. 😄'); },
-      () => { void anim('lookback', 800); say('tenta me pegar! 🏃'); },
+      () => { void anim('jump', 700); say('oi! eu sou o b1t. 🤖'); sfx('boop'); },
+      () => { void anim('spin', 800); say('giro cyber! 🌀'); sfx('boop2'); },
+      () => { void anim('dance', 1400); setEmotion('playful'); say('🎵 dança dos bits'); sfx('happy'); },
+      () => { void anim('backflip', 900); setEmotion('proud'); say('mortal! nota 10. 🤸'); sfx('happy'); },
+      () => { void anim('hop', 600); setEmotion('happy'); say('valeu o carinho! 🧡'); sfx('hop'); },
+      () => { void anim('pose', 900); setEmotion('proud'); say('foto? já tô na pose. 📸'); sfx('boop'); },
+      () => { void anim('wobble', 700); setEmotion('happy'); say('cuidado, sou sensível a cócegas. 😄'); sfx('boop2'); },
+      () => { void anim('wave', 800); setEmotion('curious'); say('oi de novo! 👋'); sfx('wave'); },
     ];
     let lastClick = -1;
     hit.addEventListener('click', () => {
       wake(false);
+      // se estiver aprontando algo, um clique também o "pega no flagra"
+      if (mischief || hiding) {
+        void startleFlee();
+        return;
+      }
       clicks++;
       friendship = Math.min(10, friendship + 1);
       let i = Math.floor(Math.random() * CLICKS.length);
       if (i === lastClick) i = (i + 1) % CLICKS.length;
       lastClick = i;
       CLICKS[i]!();
-      if (clicks === 5) say('gostei de você. 🧡 já achou o easter egg do F12?', 5200, true);
-      if (clicks === 12) { say('amizade MÁXIMA. 🎉', 5200, true); friendship = 10; }
+      if (clicks === 5) {
+        say('gostei de você. 🧡 já achou o easter egg do F12?', 5200, true);
+        dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Carinho', text: 'Você fez amizade com o b1t.' } }));
+      }
+      if (clicks === 15) {
+        friendship = 10;
+        dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Melhor Amigo', text: 'Você clicou no b1t 15 vezes. 🧡' } }));
+      }
     });
 
     /* ---------------------------------------------- reações ---------- */
@@ -550,19 +632,23 @@
       if (name === 'nmap' || name === 'rustscan' || name === 'nuclei' || cat === 'pentest') {
         setState('scanning');
         void anim('scan', 1600);
+        sfx('scan');
         setTimeout(() => setState('idle'), 1600);
       } else if (name === 'matrix' || name === 'cmatrix') {
         setState('shades');
         setEmotion('playful');
         say('whoa. 🕶️', 3000, true);
+        sfx('secret');
         setTimeout(() => setState('idle'), 4200);
       } else if (name === 'help' || name === 'man') {
         setState('sign');
         void anim('wave', 900);
+        sfx('boop');
         setTimeout(() => setState('idle'), 2600);
       } else if (name === 'coffee') {
         void anim('hop', 700);
         say('me vê um também? ☕', 3000, true);
+        sfx('boop2');
       } else {
         if (Math.random() < 0.5) void anim('hop', 600);
         setEmotion('excited');
@@ -599,6 +685,27 @@
     idleTick();
     if (!mobile && !reduced) scheduleDirector();
     setTimeout(() => say('e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑', 5200), 3500);
+
+    // garante que a "brincadeira do tema" aconteça (uma vez), sem depender só
+    // do sorteio do diretor — tenta ~70s após a visita, reagendando se ocupado
+    const tryThemePrank = (): void => {
+      if (mobile || reduced || themePranked || document.documentElement.dataset.userTheme) return;
+      if (!canPlay() || !vis(q('#theme-toggle'))) {
+        setTimeout(tryThemePrank, 15000);
+        return;
+      }
+      busy = true;
+      const tok = Symbol();
+      running = tok;
+      void epThemePrank(tok).then(() => {
+        if (running === tok) return goHome(tok);
+      }).then(() => {
+        if (running === tok) running = null;
+        setState('idle');
+        busy = false;
+      });
+    };
+    if (!mobile && !reduced) setTimeout(tryThemePrank, 70000 + Math.random() * 20000);
   }
 </script>
 
@@ -775,16 +882,42 @@
   /* balão some enquanto anda → nunca "desliza junto" */
   .mascot.is-walking .mascot-bubble, .mascot.is-phase .mascot-bubble { opacity: 0; }
 
-  /* ---------------- balão ---------------- */
+  /* "pego no flagra" → se esconde (encolhe e fica translúcido, espiando) */
+  .mascot.is-hiding .mascot-body { opacity: 0.35; scale: 0.78; transition: opacity .3s var(--ease), scale .3s var(--ease); }
+
+  /* ---------------- balão (SEMPRE acima, como em jogos) ---------------- */
   .mascot-bubble {
-    max-width: min(240px, 72vw); padding: 8px 12px;
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    transform: translateX(calc(-50% + var(--bx, 0px)));
+    transform-origin: bottom center;
+    width: max-content; /* tamanho proporcional ao texto */
+    max-width: min(240px, 72vw);
+    padding: 8px 12px;
     background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--accent-border); border-radius: var(--radius-md); border-bottom-left-radius: 4px;
+    border: 1px solid var(--accent-border); border-radius: var(--radius-md);
     font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text);
     box-shadow: var(--shadow-lightbox); transition: opacity 200ms var(--ease);
-    animation: m-bubble-in var(--dur-2) var(--ease);
+    animation: m-bubble-pop 340ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
-  @keyframes m-bubble-in { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: none; } }
+  /* cauda apontando pro robô */
+  .mascot-bubble::after {
+    content: ''; position: absolute; left: 50%; bottom: -5px;
+    translate: calc(-50% - var(--bx, 0px)) 0;
+    border: 5px solid transparent; border-top-color: var(--glass);
+  }
+  .mascot-bubble.is-below {
+    bottom: auto; top: calc(100% + 12px); transform-origin: top center;
+  }
+  .mascot-bubble.is-below::after {
+    bottom: auto; top: -5px; border-top-color: transparent; border-bottom-color: var(--glass);
+  }
+  @keyframes m-bubble-pop {
+    0% { opacity: 0; transform: translateX(calc(-50% + var(--bx, 0px))) translateY(6px) scale(0.8); }
+    60% { opacity: 1; transform: translateX(calc(-50% + var(--bx, 0px))) translateY(-2px) scale(1.04); }
+    100% { opacity: 1; transform: translateX(calc(-50% + var(--bx, 0px))) scale(1); }
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .mascot { transition: none; }

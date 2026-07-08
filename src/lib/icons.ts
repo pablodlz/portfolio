@@ -38,6 +38,8 @@ export const ICON_PATHS = {
   cube: 'M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM3.3 7 12 12l8.7-5M12 22V12',
   trophy: 'M8 21h8m-4-4v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 4H4a1 1 0 0 0-1 1c0 2 1.3 3.4 3.5 4M17 4h3a1 1 0 0 1 1 1c0 2-1.3 3.4-3.5 4',
   'arrow-right': 'M5 12h14m-7-7 7 7-7 7',
+  volume: 'M11 5 6 9H2v6h4l5 4V5zm4.5 3.5a5 5 0 0 1 0 7m2.5-10a9 9 0 0 1 0 13',
+  'volume-x': 'M11 5 6 9H2v6h4l5 4V5zM22 9l-6 6m0-6 6 6',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

@@ -892,6 +892,9 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
     if (usedCmds.size === 10) opts.unlock('Explorador', 'Dez comandos diferentes. Você explora de verdade.');
     // avisa o mascote p/ reagir ao comando (visor no nmap, óculos no matrix…)
     dispatchEvent(new CustomEvent('pablodlz:term', { detail: { name: head, cat: cmd.cat } }));
+    // feedback sonoro: click discreto por comando; sparkle nos "especiais"
+    const special = head === './pablodlz.sh' || head === 'secret' || head === 'easteregg';
+    dispatchEvent(new CustomEvent('pablodlz:sfx', { detail: special ? 'secret' : 'click' }));
     busy = true;
     input!.setAttribute('aria-busy', 'true'); // não-nulo garantido pelo guard inicial
     try {

@@ -423,6 +423,129 @@ function unlockAchievement(name: string, text: string): void {
   clearTimeout(achievementTimer);
   achievementTimer = setTimeout(() => achievementEl?.classList.remove('is-in'), 5200);
   dispatchEvent(new CustomEvent('pablodlz:achievement', { detail: name }));
+  playSfx('achievement'); // stinger nostálgico "missão cumprida"
+}
+
+/* ============================================================================
+   ÁUDIO — motor de SFX 100% sintetizado (Web Audio; sem arquivos → CSP intacta).
+   Identidade: cyber/sci-fi discreto, com stingers inspirados na sensação de
+   "missão cumprida" de GTA:SA (originais, não samples). Toggle persistente.
+   ============================================================================ */
+let audioCtx: AudioContext | null = null;
+let master: GainNode | null = null;
+let sfxOn = (() => {
+  try {
+    return localStorage.getItem('sfx') !== 'off';
+  } catch {
+    return true;
+  }
+})();
+const sfxLast: Record<string, number> = {};
+
+function ensureCtx(): AudioContext | null {
+  if (!sfxOn) return null;
+  if (!audioCtx) {
+    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctor) return null;
+    try {
+      audioCtx = new Ctor();
+      master = audioCtx.createGain();
+      master.gain.value = 0.5; // volume global baixo
+      master.connect(audioCtx.destination);
+    } catch {
+      return null;
+    }
+  }
+  if (audioCtx.state === 'suspended') void audioCtx.resume().catch(() => {});
+  return audioCtx;
+}
+
+interface ToneOpts {
+  freq: number;
+  type?: OscillatorType;
+  dur?: number;
+  gain?: number;
+  at?: number;
+  slideTo?: number;
+}
+function tone(ctx: AudioContext, o: ToneOpts): void {
+  const t0 = ctx.currentTime + (o.at ?? 0);
+  const dur = o.dur ?? 0.12;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = o.type ?? 'sine';
+  osc.frequency.setValueAtTime(o.freq, t0);
+  if (o.slideTo) osc.frequency.exponentialRampToValueAtTime(o.slideTo, t0 + dur);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(o.gain ?? 0.08, t0 + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  osc.connect(g).connect(master!);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.03);
+}
+const jitter = (n: number, amt = 30) => n + (Math.random() * 2 - 1) * amt;
+
+const SFX: Record<string, (c: AudioContext) => void> = {
+  // b1t
+  boop: (c) => tone(c, { freq: jitter(680), type: 'triangle', dur: 0.09, gain: 0.06 }),
+  boop2: (c) => {
+    tone(c, { freq: 520, type: 'square', dur: 0.05, gain: 0.045 });
+    tone(c, { freq: jitter(820), type: 'square', dur: 0.06, gain: 0.045, at: 0.05 });
+  },
+  hop: (c) => tone(c, { freq: 400, type: 'sine', dur: 0.13, gain: 0.06, slideTo: jitter(760, 60) }),
+  scan: (c) => tone(c, { freq: 280, type: 'sawtooth', dur: 0.4, gain: 0.035, slideTo: 1300 }),
+  worried: (c) => tone(c, { freq: 520, type: 'sine', dur: 0.22, gain: 0.05, slideTo: 230 }),
+  happy: (c) => [523, 659, 784].forEach((f, i) => tone(c, { freq: f, type: 'triangle', dur: 0.1, gain: 0.05, at: i * 0.06 })),
+  wave: (c) => tone(c, { freq: jitter(900), type: 'sine', dur: 0.08, gain: 0.04 }),
+  theme: (c) => {
+    tone(c, { freq: 300, type: 'sine', dur: 0.32, gain: 0.05, slideTo: 980 });
+    tone(c, { freq: 600, type: 'triangle', dur: 0.18, gain: 0.03, at: 0.2 });
+  },
+  // site / gamificação (estilo GTA:SA, original)
+  secret: (c) => [880, 1175, 1568, 2093].forEach((f, i) => tone(c, { freq: f, type: 'sine', dur: 0.16, gain: 0.04, at: i * 0.07 })),
+  mission: (c) => [392, 523, 659].forEach((f, i) => tone(c, { freq: f, type: 'square', dur: 0.14, gain: 0.045, at: i * 0.1 })),
+  achievement: (c) => {
+    // arpejo ascendente resolvido + baixo quente → "missão cumprida"
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((f, i) => {
+      tone(c, { freq: f, type: 'triangle', dur: 0.24, gain: 0.06, at: i * 0.12 });
+      tone(c, { freq: f / 2, type: 'sine', dur: 0.24, gain: 0.03, at: i * 0.12 });
+    });
+    tone(c, { freq: 1046.5, type: 'triangle', dur: 0.5, gain: 0.05, at: 0.48 });
+  },
+  click: (c) => tone(c, { freq: 1300, type: 'square', dur: 0.03, gain: 0.03 }),
+};
+
+function playSfx(name: string): void {
+  const c = ensureCtx();
+  if (!c || !SFX[name]) return;
+  const now = performance.now();
+  if (now - (sfxLast[name] ?? 0) < 80) return; // anti-spam
+  sfxLast[name] = now;
+  try {
+    SFX[name]!(c);
+  } catch {
+    /* áudio indisponível: silêncio */
+  }
+}
+
+function initSound(): void {
+  const btn = document.getElementById('sfx-toggle');
+  addEventListener('pablodlz:sfx', ((e: CustomEvent<string>) => playSfx(e.detail)) as EventListener);
+  addEventListener('pablodlz:unlock', ((e: CustomEvent<{ name: string; text: string }>) =>
+    unlockAchievement(e.detail.name, e.detail.text)) as EventListener);
+  if (!btn) return;
+  btn.setAttribute('aria-pressed', String(sfxOn));
+  btn.addEventListener('click', () => {
+    sfxOn = !sfxOn;
+    btn.setAttribute('aria-pressed', String(sfxOn));
+    try {
+      localStorage.setItem('sfx', sfxOn ? 'on' : 'off');
+    } catch {
+      /* sem storage: vale para a sessão */
+    }
+    if (sfxOn) playSfx('boop2'); // confirma ligando (o clique é o gesto do usuário)
+  });
 }
 
 
@@ -543,6 +666,7 @@ function consoleEgg(): void {
 
 // crítico p/ conteúdo e interação — roda já
 initTheme();
+initSound();
 initReveal();
 initMail();
 initCertFilter();
