@@ -542,7 +542,50 @@ function ensureCtx(): AudioContext | null {
     }
   }
   if (audioCtx.state === 'suspended') void audioCtx.resume().catch(() => {});
+  void loadSamples(audioCtx); // carrega arquivos licenciados (se houver), uma vez
   return audioCtx;
+}
+
+/* ---------- camada de SAMPLES (opcional) ----------------------------------
+   Se o DONO do site colocar arquivos de áudio que ELE POSSUI/LICENCIA em
+   public/audio/ + um manifest.json { cue: arquivo }, o motor toca esses
+   arquivos no lugar da síntese. Same-origin → CSP 'self' intacta, zero
+   terceiros. Sem manifest/arquivos, cai no fallback sintetizado (nada muda). */
+const sampleBuffers = new Map<string, AudioBuffer>();
+let samplesTried = false;
+async function loadSamples(ctx: AudioContext): Promise<void> {
+  if (samplesTried) return;
+  samplesTried = true;
+  const base = import.meta.env.BASE_URL.replace(/\/?$/, '/'); // garante 1 barra final
+  try {
+    const res = await fetch(`${base}audio/manifest.json`);
+    if (!res.ok) return; // sem manifest → só síntese
+    const map = (await res.json()) as Record<string, string>;
+    await Promise.all(
+      Object.entries(map)
+        .filter(([cue, file]) => !cue.startsWith('_') && typeof file === 'string' && file)
+        .map(async ([cue, file]) => {
+          try {
+            const r = await fetch(`${base}audio/${file}`);
+            if (!r.ok) return;
+            sampleBuffers.set(cue, await ctx.decodeAudioData(await r.arrayBuffer()));
+          } catch {
+            /* arquivo ausente/inválido: mantém a síntese p/ esse cue */
+          }
+        }),
+    );
+  } catch {
+    /* sem rede/manifest: segue 100% na síntese */
+  }
+}
+function playSample(name: string): boolean {
+  const buf = sampleBuffers.get(name);
+  if (!buf || !audioCtx || !master) return false;
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  src.connect(master);
+  src.start();
+  return true;
 }
 
 interface ToneOpts {
@@ -651,12 +694,13 @@ const SFX: Record<string, (c: AudioContext) => void> = {
 
 function playSfx(name: string): void {
   const c = ensureCtx();
-  if (!c || !SFX[name]) return;
+  if (!c) return;
   const now = performance.now();
   if (now - (sfxLast[name] ?? 0) < 80) return; // anti-spam
   sfxLast[name] = now;
   try {
-    SFX[name]!(c);
+    if (playSample(name)) return; // arquivo licenciado tem prioridade sobre a síntese
+    SFX[name]?.(c);
   } catch {
     /* áudio indisponível: silêncio */
   }
