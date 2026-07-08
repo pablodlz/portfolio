@@ -955,18 +955,28 @@
         friendship = 10;
         dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Melhor Amigo', text: 'Você clicou no b1t 15 vezes. 🧡' } }));
       }
-      if (clicks === 100) {
+      if (clicks === 30) {
+        setEmotion('happy');
+        void anim('hop', 600);
+        say(vary('fan30', [
+          '30 cliques! você é fã raiz. 🧡',
+          'trinta! meu maior fã. 🌟',
+          'para tudo — 30 cliques?! você é dedicado. 🙌',
+        ]), 4200, true);
+        dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Fã de Carteirinha', text: '30 cliques no b1t. Fã raiz. 🧡' } }));
+      }
+      if (clicks === 50) {
         // CONQUISTA MESTRE: fogos no site inteiro 🎆
         setEmotion('proud');
         setState('idle');
         void anim('backflip', 900);
         say(vary('master', [
-          'CEM cliques?! 🎆 você é LENDA! 🧡',
-          '100!! 🎆 desbloqueou o modo festa! 🎉',
+          'CINQUENTA cliques?! 🎆 você é LENDA! 🧡',
+          '50!! 🎆 desbloqueou o modo festa! 🎉',
           'mestre supremo dos cliques! 🎆🏆',
         ]), 6000, true);
         dispatchEvent(new CustomEvent('pablodlz:fireworks'));
-        dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Mestre b1t', text: '100 cliques! Fogos pra você. 🎆' } }));
+        dispatchEvent(new CustomEvent('pablodlz:unlock', { detail: { name: 'Mestre b1t', text: '50 cliques! Fogos pra você. 🎆' } }));
       }
     });
 
