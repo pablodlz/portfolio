@@ -427,6 +427,17 @@
     z-index: 80;
     pointer-events: none;
   }
+
+  /* ---------- inclinação proposital de card que o b1t "conserta" (v5) ---------- */
+  .is-mascot-tilt {
+    transform: rotate(1.3deg);
+    transition: transform 0.5s var(--ease);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .is-mascot-tilt {
+      transform: none;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

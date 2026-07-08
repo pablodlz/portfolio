@@ -113,6 +113,19 @@ const { title = 'bash — pablodlz', ariaLabel, spotlight = false, class: classN
     overflow: hidden;
     font-size: var(--fs-small);
   }
+  /* impacto elástico quando o b1t "pula" no terminal (v5) */
+  .terminal.is-bumped {
+    animation: term-bump 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes term-bump {
+    0% { transform: scale(1, 1); }
+    30% { transform: scale(1.015, 0.94); }
+    60% { transform: scale(0.992, 1.02); }
+    100% { transform: scale(1, 1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .terminal.is-bumped { animation: none; }
+  }
   .terminal-bar {
     display: flex;
     align-items: center;

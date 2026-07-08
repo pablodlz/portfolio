@@ -24,7 +24,13 @@ function initTheme(): void {
   const btn = document.getElementById('theme-toggle');
   if (!btn) return;
   btn.setAttribute('aria-pressed', String(document.documentElement.dataset.theme === 'light'));
-  btn.addEventListener('click', () =>
+  btn.addEventListener('click', () => {
+    // marca que o usuário se importa com o tema → o b1t não apronta com o toggle
+    document.documentElement.dataset.userTheme = '1';
+    setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+  });
+  // o mascote pode "apertar" o toggle (raro); reusa o mesmo caminho de tema
+  addEventListener('pablodlz:mascot-theme', () =>
     setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'),
   );
 }

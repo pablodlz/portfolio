@@ -1,11 +1,12 @@
 ---
 /**
- * b1t — o pet cyber do portfólio (v4). Um pequeno robô com personalidade:
- * emoções que mudam com o tempo e as ações, dezenas de micro-animações
- * ociosas, passeia pela lateral, segue/foge do cursor, reage ao terminal
- * (visor no `nmap`, óculos no `matrix`, plaquinha no `help`) e recompensa
- * quem explora com comportamentos raros. Tudo em transform/opacity (GPU),
- * desligado sob prefers-reduced-motion e sem roaming no mobile.
+ * b1t — o pet cyber que HABITA o portfólio (v5). Além das emoções e reações,
+ * ele agora navega livremente até elementos reais (menu, terminal, botão de
+ * contato, toggle de tema, cards, foto, certificados) e encena pequenas
+ * histórias com começo-meio-fim. Um "diretor" sorteia episódios espaçados,
+ * respeitando o que está visível. Tudo em transform/opacity (GPU); desligado
+ * em mobile (coarse) e sob prefers-reduced-motion; nunca bloqueia cliques
+ * (só o próprio robô captura ponteiro) nem cobre texto por muito tempo.
  */
 ---
 
@@ -13,167 +14,405 @@
   <button type="button" class="mascot-hit" aria-label="b1t, o pet do site — clique para brincar">
     <span class="mascot-body">
       <svg class="mascot-svg" viewBox="0 0 72 72" width="60" height="60" aria-hidden="true">
-        <!-- antena -->
         <line class="m-antenna-stem" x1="36" y1="14" x2="36" y2="7" stroke="var(--border-strong)" stroke-width="2" />
         <circle class="m-antenna" cx="36" cy="6" r="3" fill="var(--accent)" />
-        <!-- corpo -->
         <rect class="m-shell" x="12" y="14" width="48" height="40" rx="13" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="2" />
-        <!-- visor -->
         <rect class="m-visor" x="18" y="22" width="36" height="18" rx="9" fill="var(--bg)" stroke="var(--accent-border)" stroke-width="1.5" />
-        <!-- olhos -->
         <g class="m-eyes">
           <circle class="m-eye" cx="29" cy="31" r="3.4" fill="var(--accent)" />
           <circle class="m-eye" cx="43" cy="31" r="3.4" fill="var(--accent)" />
         </g>
-        <!-- olhos dormindo -->
         <g class="m-eyes-sleep">
           <line x1="25" y1="31" x2="33" y2="31" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
           <line x1="39" y1="31" x2="47" y2="31" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
         </g>
-        <!-- olhos empolgado (^ ^) -->
         <g class="m-eyes-excited">
           <path d="M25 32l4-4 4 4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
           <path d="M39 32l4-4 4 4" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
         </g>
-        <!-- blush -->
+        <g class="m-eyes-wide">
+          <circle cx="29" cy="31" r="4.6" fill="none" stroke="var(--accent)" stroke-width="2" />
+          <circle cx="29" cy="31" r="1.8" fill="var(--accent)" />
+          <circle cx="43" cy="31" r="4.6" fill="none" stroke="var(--accent)" stroke-width="2" />
+          <circle cx="43" cy="31" r="1.8" fill="var(--accent)" />
+        </g>
         <g class="m-blush">
           <ellipse cx="24" cy="36" rx="3" ry="1.8" fill="var(--accent)" opacity="0.5" />
           <ellipse cx="48" cy="36" rx="3" ry="1.8" fill="var(--accent)" opacity="0.5" />
         </g>
-        <!-- boca -->
         <path class="m-mouth" d="M31 45h10" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" fill="none" />
         <path class="m-mouth-happy" d="M30 44q6 6 12 0" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" />
-        <!-- óculos escuros (matrix) -->
+        <path class="m-mouth-worried" d="M30 46q6 -5 12 0" stroke="var(--warn, var(--accent))" stroke-width="2" stroke-linecap="round" fill="none" />
         <g class="m-shades">
           <rect x="19" y="27" width="15" height="8" rx="2" fill="#0a0a0a" stroke="var(--accent)" stroke-width="1" />
           <rect x="38" y="27" width="15" height="8" rx="2" fill="#0a0a0a" stroke="var(--accent)" stroke-width="1" />
           <line x1="34" y1="30" x2="38" y2="30" stroke="var(--accent)" stroke-width="1.5" />
         </g>
-        <!-- barra de scan (nmap) -->
         <rect class="m-scan" x="18" y="22" width="36" height="3" rx="1.5" fill="var(--accent)" opacity="0" />
-        <!-- pés -->
         <rect class="m-foot m-foot-l" x="22" y="56" width="9" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
         <rect class="m-foot m-foot-r" x="41" y="56" width="9" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
       </svg>
-      <!-- plaquinha "Need assistance?" (help) -->
       <span class="mascot-sign" aria-hidden="true">Need assistance?</span>
+      <span class="mascot-tool" aria-hidden="true"></span>
     </span>
   </button>
   <p id="mascot-bubble" class="mascot-bubble" role="status" hidden></p>
 </div>
 
 <script>
-  type Emotion = 'curious' | 'happy' | 'sleepy' | 'excited' | 'proud' | 'playful' | 'neutral';
+  type Emotion = 'curious' | 'happy' | 'sleepy' | 'excited' | 'proud' | 'playful' | 'worried' | 'neutral';
 
   const root = document.getElementById('mascot');
   const hit = root?.querySelector<HTMLElement>('.mascot-hit');
-  const body = root?.querySelector<HTMLElement>('.mascot-body');
+  const bodyEl = root?.querySelector<HTMLElement>('.mascot-body');
   const eyes = root?.querySelector<SVGGElement>('.m-eyes');
+  const tool = root?.querySelector<HTMLElement>('.mascot-tool');
   const bubble = document.getElementById('mascot-bubble');
 
-  if (root && hit && body && eyes && bubble) {
+  if (root && hit && bodyEl && eyes && tool && bubble) {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = matchMedia('(pointer: coarse)').matches;
+    const mobile = coarse || innerWidth < 900;
     root.hidden = false;
 
-    /* ------------------------------------------------ estado ------------ */
+    /* ---------------------------------------------- estado ----------- */
+    let mx = 0;
+    let my = 0;
+    let facing = 1;
+    let busy = false;
     let asleep = false;
-    let busy = false; // executando uma animação/estado que não deve ser interrompido
     let termActive = false;
+    let friendship = 0;
     let clicks = 0;
-    let friendship = 0; // sobe com interações; desbloqueia comportamentos raros
+    let themePranked = false;
+    let running: symbol | null = null; // token do episódio atual
     let sleepTimer: ReturnType<typeof setTimeout>;
     let bubbleTimer: ReturnType<typeof setTimeout>;
-    let roamX = 0;
 
-    const maxRoam = () => Math.min(innerWidth * 0.42, 520);
+    const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, reduced ? 0 : ms));
     const rnd = <T,>(a: T[]): T => a[Math.floor(Math.random() * a.length)]!;
+    const setEmotion = (e: Emotion) => (root.dataset.emotion = e);
+    const setState = (s: string) => (root.dataset.state = s);
 
-    /* ------------------------------------------------ fala -------------- */
+    /* ---------------------------------------------- fala ------------- */
+    // o balão só aparece com o robô parado; enquanto anda ele some (nunca desliza)
     const say = (text: string, ms = 4200, force = false): void => {
       if (asleep) return;
-      if (termActive && !force) return; // não compete com quem digita no terminal
-      if (!atHome) walkHome(); // volta pro bloco pra falar (o balão é fixo lá)
+      if (termActive && !force) return;
       bubble.textContent = text;
       bubble.hidden = false;
       clearTimeout(bubbleTimer);
       bubbleTimer = setTimeout(() => (bubble.hidden = true), ms);
     };
 
-    const setEmotion = (e: Emotion): void => {
-      root.dataset.emotion = e;
-    };
-    const setState = (s: string): void => {
-      root.dataset.state = s;
-    };
+    /* ---------------------------------------------- animação one-shot */
+    const anim = (name: string, ms = 900): Promise<void> =>
+      new Promise((res) => {
+        if (reduced) return res();
+        bodyEl.classList.add(`is-${name}`);
+        setTimeout(() => {
+          bodyEl.classList.remove(`is-${name}`);
+          res();
+        }, ms);
+      });
 
-    /* ------------------------------------------------ animações --------- */
-    // dispara uma animação de uso único no corpo do mascote
-    const anim = (name: string, ms = 900, lock = false): void => {
-      if (reduced) return;
-      if (lock) busy = true;
-      body.classList.add(`is-${name}`);
-      setTimeout(() => {
-        body.classList.remove(`is-${name}`);
-        if (lock) busy = false;
-      }, ms);
+    const showTool = (emoji: string) => {
+      tool.textContent = emoji;
+      tool.classList.add('is-on');
     };
+    const hideTool = () => tool.classList.remove('is-on');
 
-    const IDLE_ANIMS = coarse
-      ? ['hop', 'wobble', 'blink2', 'lookaround', 'spin']
-      : ['hop', 'wobble', 'stretch', 'lookaround', 'spin', 'jump', 'pose', 'tumble', 'blink2'];
-    // comportamentos raros — só depois de o visitante criar vínculo (friendship)
-    const RARE_ANIMS = ['dance', 'backflip', 'slip', 'shiver'];
+    /* ---------------------------------------------- movimento -------- */
+    const robotH = () => hit.offsetHeight || 60;
+    const robotW = () => hit.offsetWidth || 60;
+    const homePos = () => ({ x: 14, y: innerHeight - 14 - robotH() });
 
-    /* ------------------------------------------------ passeio ----------- */
-    let atHome = true;
-    let returnTimer: ReturnType<typeof setTimeout>;
-    const DROP = 14; // desce do "bloco" pra andar no chão
-    const setRoam = (x: number, y: number, dur: number): void => {
-      root.style.setProperty('--roam-x', `${x}px`);
-      root.style.setProperty('--roam-y', `${y}px`);
-      root.style.setProperty('--roam-dur', `${dur}ms`);
-    };
-    const walkDur = (dist: number): number => Math.min(4200, Math.round(6 * dist + 700));
-
-    const walkOut = (): void => {
-      if (reduced || coarse || asleep || busy || !atHome) return;
-      const x = 70 + Math.random() * (maxRoam() - 70);
-      roamX = x;
-      atHome = false;
-      const dur = walkDur(x);
-      setRoam(0, DROP, 320); // 1) desce do bloco
-      setTimeout(() => {
-        setRoam(x, DROP, dur); // 2) caminha
-        root.classList.add('is-walking');
-        setTimeout(() => root.classList.remove('is-walking'), dur);
-      }, 320);
-      clearTimeout(returnTimer);
-      returnTimer = setTimeout(walkHome, 320 + dur + 2600 + Math.random() * 3600);
+    const face = (dir: number) => {
+      facing = dir < 0 ? -1 : 1;
+      root.style.setProperty('--face', String(facing));
     };
 
-    const walkHome = (): void => {
-      if (reduced || coarse || atHome) return;
-      clearTimeout(returnTimer);
-      const dur = walkDur(roamX);
-      setRoam(0, DROP, dur); // 1) caminha de volta
+    // leva o robô (canto sup-esq dele) até (tx,ty) em coordenadas de viewport
+    const moveTo = async (tx: number, ty: number, tok: symbol, speed = 0.36): Promise<void> => {
+      if (running !== tok) return;
+      const r = hit.getBoundingClientRect();
+      const dx = tx - r.left;
+      const dy = ty - r.top;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 2) return;
+      face(dx);
+      mx += dx;
+      my += dy;
+      const dur = Math.max(420, Math.min(3200, dist / speed + 260));
+      root.style.setProperty('--mdur', `${dur}ms`);
+      root.style.setProperty('--mx', `${mx}px`);
+      root.style.setProperty('--my', `${my}px`);
       root.classList.add('is-walking');
-      setTimeout(() => {
-        root.classList.remove('is-walking');
-        setRoam(0, 0, 320); // 2) sobe de volta pro bloco
-        atHome = true;
-        roamX = 0;
-      }, dur);
+      await wait(dur);
+      root.classList.remove('is-walking');
     };
 
-    // (removido a pedido do Pablo) as partículas de texto solto viravam poluição;
-    // agora só o balão comunica. Mantido como no-op p/ não mexer nos call sites.
-    const holo = (_n = 6, _glyphs: string[] = []): void => {
-      void _n;
-      void _glyphs;
+    const goHome = async (tok: symbol): Promise<void> => {
+      const h = homePos();
+      await moveTo(h.x, h.y, tok, 0.5);
     };
 
-    /* ------------------------------------------------ olhos seguem ------ */
+    // teleporte "atalho secreto": some numa borda, reaparece na outra
+    const teleport = async (tx: number, ty: number, tok: symbol): Promise<void> => {
+      if (running !== tok) return;
+      root.style.setProperty('--mdur', '260ms');
+      root.classList.add('is-phase');
+      await wait(260);
+      const r = hit.getBoundingClientRect();
+      mx += tx - r.left;
+      my += ty - r.top;
+      root.style.setProperty('--mdur', '0ms');
+      root.style.setProperty('--mx', `${mx}px`);
+      root.style.setProperty('--my', `${my}px`);
+      await wait(30);
+      root.classList.remove('is-phase');
+      await wait(260);
+    };
+
+    const snapHome = (): void => {
+      const h = homePos();
+      const r = hit.getBoundingClientRect();
+      mx += h.x - r.left;
+      my += h.y - r.top;
+      root.style.setProperty('--mdur', '0ms');
+      root.style.setProperty('--mx', `${mx}px`);
+      root.style.setProperty('--my', `${my}px`);
+      root.classList.remove('is-walking');
+    };
+
+    /* ---------------------------------------------- alvos ------------ */
+    const vis = (el: Element | null): el is HTMLElement => {
+      if (!el) return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.top < innerHeight - 40 && r.bottom > 60 && r.left < innerWidth && r.right > 0;
+    };
+    const q = (sel: string) => document.querySelector<HTMLElement>(sel);
+    const qa = (sel: string) => [...document.querySelectorAll<HTMLElement>(sel)].filter(vis);
+
+    /* ============================================================ EPISÓDIOS
+       cada um é uma pequena história (começo → meio → fim). alive() deixa
+       de valer se o usuário rolar muito ou a aba ocultar → o robô volta pra casa. */
+
+    // 1) senta no menu, balança as pernas e tira poeira
+    async function epMenu(tok: symbol): Promise<void> {
+      const link = rnd(qa('.nav-links a'));
+      if (!link) return;
+      const r = link.getBoundingClientRect();
+      await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 10, tok);
+      setEmotion('playful');
+      await anim('sit', 600);
+      await anim('legswing', 1400);
+      showTool('🧹');
+      await anim('dust', 1100);
+      hideTool();
+      say('poeirinha zero. ✨', 2600);
+      await wait(900);
+    }
+
+    // 2) vai até o botão de contato, aponta e bate pra chamar atenção
+    async function epContact(tok: symbol): Promise<void> {
+      const fab = q('#fab-toggle');
+      if (!vis(fab)) return;
+      const r = fab!.getBoundingClientRect();
+      await moveTo(r.left - robotW() - 6, r.top + r.height / 2 - robotH() / 2, tok);
+      setEmotion('excited');
+      await anim('point', 900);
+      await anim('knock', 700);
+      await anim('knock', 700);
+      say('clica aqui pra falar com o Pablo! 👉', 3200);
+      await wait(1200);
+    }
+
+    // 3) apronta no terminal: pula dentro, dá um impacto elástico, percebe a
+    //    bagunça, arruma preocupado, confere, sorri aliviado e foge
+    async function epTerminal(tok: symbol): Promise<void> {
+      const term = q('.terminal-wrap');
+      if (!vis(term) || termActive) return;
+      const r = term!.getBoundingClientRect();
+      setEmotion('playful');
+      await moveTo(r.left + r.width * 0.5 - robotW() / 2, r.top - robotH() + 6, tok); // no topo
+      await anim('runover', 900);
+      await moveTo(r.left + r.width * 0.5 - robotW() / 2, r.top + 8, tok, 0.7); // pula pra dentro
+      await anim('land', 500);
+      term!.querySelector('.terminal')?.classList.add('is-bumped'); // impacto elástico
+      setEmotion('worried');
+      setState('worried');
+      say('opa… baguncei? 😰', 2200, true);
+      await wait(700);
+      showTool('🔧');
+      await anim('fix', 1200); // "arruma"
+      hideTool();
+      setTimeout(() => term!.querySelector('.terminal')?.classList.remove('is-bumped'), 300);
+      await anim('check', 700); // confere
+      setEmotion('happy');
+      setState('idle');
+      say('ufa, tá tudo certo. 😅', 1800, true);
+      await anim('hop', 500);
+      // foge rápido antes que cliquem nele
+      await moveTo(r.right - robotW() - 4, r.top - robotH() + 6, tok, 0.6);
+    }
+
+    // 4) conserta um card de experiência "torto"
+    async function epFixCard(tok: symbol): Promise<void> {
+      const card = rnd(qa('#experiencia .job'));
+      if (!card) return;
+      card.classList.add('is-mascot-tilt'); // inclinação sutil e proposital
+      const r = card.getBoundingClientRect();
+      setEmotion('curious');
+      await moveTo(r.left - robotW() + 8, r.top + r.height / 2 - robotH() / 2, tok);
+      say('ei… tá torto isso. 🤨', 2200);
+      await anim('push', 1100); // empurra
+      card.classList.remove('is-mascot-tilt'); // alinha
+      await anim('dust', 900); // limpa as mãos
+      setEmotion('proud');
+      await anim('pose', 900); // trabalho concluído
+      say('alinhado. de nada. 😎', 2600);
+      await wait(800);
+    }
+
+    // 5) inspeciona um certificado com lupa e carimba "Approved"
+    async function epCert(tok: symbol): Promise<void> {
+      const cert = rnd(qa('#certificacoes .cert-trigger'));
+      if (!cert) return;
+      const r = cert.getBoundingClientRect();
+      await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 12, tok);
+      setEmotion('curious');
+      showTool('🔍');
+      await anim('inspect', 1400);
+      hideTool();
+      showTool('✅');
+      await anim('stamp', 800);
+      hideTool();
+      setEmotion('proud');
+      say('Approved. selo do b1t. 🏅', 2800);
+      await wait(900);
+    }
+
+    // 6) reage à foto do Pablo (raro): olhos arregalados + "boss detected"
+    async function epPhoto(tok: symbol): Promise<void> {
+      const photo = q('.about-photo');
+      if (!vis(photo)) return;
+      const r = photo!.getBoundingClientRect();
+      await moveTo(r.left + r.width / 2 - robotW() / 2, r.top - robotH() + 8, tok);
+      setState('wide');
+      await anim('doubletake', 900);
+      say(rnd(['👀 fiu fiu…', '⭐ boss detected.', '👑 o chefe apareceu.']), 3200);
+      await wait(1400);
+      setState('idle');
+    }
+
+    // 7) atravessa a tela via "atalho secreto" (some numa borda, volta na outra)
+    async function epCross(tok: symbol): Promise<void> {
+      const midY = innerHeight * (0.35 + Math.random() * 0.4);
+      await moveTo(-robotW() - 10, midY, tok, 0.5); // sai pela esquerda
+      await teleport(innerWidth + 4, midY, tok); // reaparece na direita
+      await moveTo(innerWidth * 0.6, midY, tok, 0.45);
+      setEmotion('playful');
+      await anim('wobble', 700);
+      say('atalho secreto. 🕳️', 2400);
+      await wait(700);
+    }
+
+    // 8) PRANK do tema (raríssimo, uma vez por sessão, só se o usuário ainda
+    //    não mexeu no toggle): espia, corre até o botão, aperta, ri e foge
+    async function epThemePrank(tok: symbol): Promise<void> {
+      const btn = q('#theme-toggle');
+      if (!vis(btn) || themePranked || document.documentElement.dataset.userTheme) return;
+      themePranked = true;
+      const r = btn!.getBoundingClientRect();
+      setEmotion('playful');
+      await moveTo(r.left - robotW() - 4, r.top + r.height / 2 - robotH() / 2, tok);
+      await anim('peek', 700); // olha pros lados
+      await wait(300);
+      await anim('peek', 700);
+      dispatchEvent(new CustomEvent('pablodlz:mascot-theme')); // aperta!
+      await anim('hop', 500);
+      setEmotion('proud');
+      say('kkkk troquei o tema. 😜', 3200);
+      await anim('dance', 1400);
+      await anim('point', 700); // aponta pro usuário
+      // foge
+      await moveTo(innerWidth * 0.7, r.top + r.height / 2 - robotH() / 2, tok, 0.6);
+    }
+
+    interface Episode { run: (t: symbol) => Promise<void>; ok: () => boolean; weight: number }
+    const EPISODES: Episode[] = [
+      { run: epMenu, ok: () => qa('.nav-links a').length > 0, weight: 3 },
+      { run: epContact, ok: () => vis(q('#fab-toggle')), weight: 2 },
+      { run: epTerminal, ok: () => vis(q('.terminal-wrap')) && !termActive, weight: 3 },
+      { run: epFixCard, ok: () => qa('#experiencia .job').length > 0, weight: 3 },
+      { run: epCert, ok: () => qa('#certificacoes .cert-trigger').length > 0, weight: 2 },
+      { run: epPhoto, ok: () => vis(q('.about-photo')), weight: 1 },
+      { run: epCross, ok: () => !mobile, weight: 2 },
+      { run: epThemePrank, ok: () => vis(q('#theme-toggle')) && !themePranked && !document.documentElement.dataset.userTheme, weight: 1 },
+    ];
+
+    /* ---------------------------------------------- diretor ---------- */
+    const canPlay = () =>
+      !busy && !asleep && !termActive && !reduced && !mobile && !document.hidden;
+
+    async function playEpisode(): Promise<void> {
+      if (!canPlay()) return;
+      const pool = EPISODES.filter((e) => e.ok());
+      if (!pool.length) return;
+      // seleção ponderada
+      const total = pool.reduce((s, e) => s + e.weight, 0);
+      let pick = Math.random() * total;
+      const ep = pool.find((e) => (pick -= e.weight) < 0) ?? pool[0]!;
+      busy = true;
+      const tok = Symbol();
+      running = tok;
+      try {
+        await ep.run(tok);
+        if (running === tok) await goHome(tok);
+      } catch {
+        /* nada */
+      }
+      hideTool();
+      setState('idle');
+      if (running === tok) running = null;
+      busy = false;
+    }
+
+    // aborta episódio ao rolar muito ou trocar de aba → volta pra casa
+    const bail = (): void => {
+      if (!busy) return;
+      running = null;
+      hideTool();
+      setState('idle');
+      root.classList.remove('is-walking', 'is-phase');
+      root.style.setProperty('--mdur', '400ms');
+      snapHome();
+      busy = false;
+    };
+    let lastY = scrollY;
+    addEventListener(
+      'scroll',
+      () => {
+        if (busy && Math.abs(scrollY - lastY) > 160) bail();
+        lastY = scrollY;
+      },
+      { passive: true },
+    );
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) bail();
+    });
+
+    // loop do diretor: episódios bem espaçados p/ não cansar
+    const scheduleDirector = (): void => {
+      const gap = 15000 + Math.random() * 22000; // episódios bem espaçados
+      setTimeout(async () => {
+        await playEpisode();
+        scheduleDirector();
+      }, gap);
+    };
+
+    /* ---------------------------------------------- olhos / proximidade */
     if (!reduced && !coarse) {
       let raf = 0;
       addEventListener(
@@ -188,20 +427,15 @@
             const ang = Math.atan2(dy, dx);
             const d = Math.min(2.6, Math.hypot(dx, dy) / 80);
             eyes.style.transform = `translate(${Math.cos(ang) * d}px, ${Math.sin(ang) * d}px)`;
-            // proximidade → reação ocasional
-            const near = Math.hypot(dx, dy) < 90;
-            if (near && !busy && !asleep && root.dataset.state !== 'near') {
-              setState('near');
-              anim(Math.random() < 0.5 ? 'wave' : 'hop', 800); // reage sem sair do lugar
-            } else if (!near && root.dataset.state === 'near') {
-              setState('idle');
+            // pega-pega: perto e ocioso em casa → foge alguns cm e olha p/ trás
+            if (!busy && !asleep && Math.hypot(dx, dy) < 70 && Math.random() < 0.06) {
+              void flee();
             }
           });
         },
         { passive: true },
       );
     } else if (!reduced && coarse) {
-      // touch: olhar curioso autônomo
       setInterval(() => {
         if (asleep) return;
         const ang = Math.random() * Math.PI * 2;
@@ -210,7 +444,24 @@
       }, 2400);
     }
 
-    // piscar
+    async function flee(): Promise<void> {
+      if (busy || mobile || reduced) return;
+      busy = true;
+      const tok = Symbol();
+      running = tok;
+      setEmotion('playful');
+      const r = hit!.getBoundingClientRect(); // não-nulo (guard inicial); função hoisted
+      const dir = r.left < innerWidth / 2 ? 1 : -1;
+      await moveTo(r.left + dir * (140 + Math.random() * 120), r.top, tok, 0.7);
+      await anim('lookback', 700);
+      if (Math.random() < 0.5) say('quase! 😜', 1800);
+      await wait(500);
+      if (running === tok) await goHome(tok);
+      if (running === tok) running = null;
+      busy = false;
+    }
+
+    /* ---------------------------------------------- piscar / dormir -- */
     if (!reduced) {
       setInterval(() => {
         if (!asleep && !busy) {
@@ -219,61 +470,6 @@
         }
       }, 3600);
     }
-
-    /* ------------------------------------------------ ciclo ocioso ------ */
-    const ANTICS: { text: string; anim?: string; emo?: Emotion; holo?: boolean }[] = [
-      { text: 'encontrei uma vuln… era só um typo. 🐛', anim: 'lookaround', emo: 'curious' },
-      { text: 'plantei uma flag: CTF solved. 🚩', anim: 'pose', emo: 'proud', holo: true },
-      { text: 'firewall de brincadeira montado. 🧱', anim: 'wobble' },
-      { text: 'apagando meus rastros… 🧹', anim: 'spin' },
-      { text: 'escondi um secret.txt por aqui. 🤫', emo: 'playful' },
-      { text: 'scan holográfico ativado. 🔍', anim: 'scan', holo: true },
-      { text: 'tropecei num cabo imaginário. 🤖', anim: 'slip' },
-      { text: 'deploy sexta? eu vivo perigosamente.', emo: 'playful' },
-      { text: 'psst — digite `help` no terminal ↑', anim: 'hop' },
-      { text: 'já clicou em mim? tenho vários truques. 😉', anim: 'jump' },
-    ];
-
-    // dicas úteis (as "de antes") — voltam junto com as travessuras novas
-    const TIPS = [
-      'psst — o terminal aí em cima é de verdade. digite `help`.',
-      'dica: TAB completa comandos no terminal.',
-      'já tentou `matrix`? 😎',
-      'tem um segredo no código-fonte… F12.',
-      '`./pablodlz.sh` desbloqueia uma conquista.',
-      '50+ certificações lá embaixo. eu contei uma a uma.',
-      '`coffee` no terminal. confia.',
-      'experimenta `neofetch` — fica lindo.',
-    ];
-
-    const idleTick = (): void => {
-      const delay = 5200 + Math.random() * 7000;
-      setTimeout(() => {
-        if (!asleep && !busy && root.dataset.state === 'idle' && atHome) {
-          const roll = Math.random();
-          if (!coarse && roll < 0.22) {
-            walkOut(); // sai pra passear (desce do bloco, anda, volta e sobe)
-          } else if (roll < 0.42) {
-            // travessura com fala
-            const a = rnd(ANTICS);
-            if (a.emo) setEmotion(a.emo);
-            if (a.anim) anim(a.anim, a.anim === 'scan' ? 1400 : 900);
-            if (a.holo) holo();
-            say(a.text, 3600);
-          } else if (roll < 0.64) {
-            // dica útil (as de antes)
-            say(rnd(TIPS), 4200);
-          } else {
-            // animação ociosa pura (raras liberadas pelo vínculo)
-            const pool = friendship >= 4 ? [...IDLE_ANIMS, ...RARE_ANIMS] : IDLE_ANIMS;
-            anim(rnd(pool));
-          }
-        }
-        idleTick();
-      }, delay);
-    };
-
-    /* ------------------------------------------------ dormir/acordar ---- */
     const armSleep = (): void => {
       clearTimeout(sleepTimer);
       sleepTimer = setTimeout(() => {
@@ -283,9 +479,8 @@
         setTimeout(() => {
           asleep = true;
           setState('sleep');
-          walkHome(); // volta pro bloco pra dormir
         }, 1100);
-      }, 38000);
+      }, 45000);
     };
     const wake = (startled = false): void => {
       if (asleep) {
@@ -294,7 +489,7 @@
         setEmotion('curious');
         if (startled) {
           anim('shiver', 700);
-          say('opa! acordei. 👀', 2400);
+          say('opa! acordei. 👀', 2200);
         }
       }
       armSleep();
@@ -303,46 +498,58 @@
       addEventListener(ev, () => wake(ev === 'keydown' || ev === 'click'), { passive: true }),
     );
 
-    /* ------------------------------------------------ clique ------------ */
-    const CLICK_REACTIONS: (() => void)[] = [
-      () => { anim('jump', 700); say('oi! eu sou o b1t. 🤖'); },
-      () => { anim('spin', 800); holo(); say('giro cyber! 🌀'); },
-      () => { anim('dance', 1400); setEmotion('playful'); say('🎵 dança dos bits'); },
-      () => { anim('backflip', 900); say('mortal! nota 10. 🤸'); setEmotion('proud'); },
-      () => { anim('scan', 1400); holo(4, ['0', '1']); say('escaneando você… 100% dev. ✅'); },
-      () => { anim('hop', 600); setEmotion('happy'); holo(4); say('valeu o carinho! 🧡'); },
-      () => { anim('shiver', 600); say('ei! me assustou. 😵'); setEmotion('curious'); },
-      () => { anim('pose', 900); setEmotion('proud'); say('foto? já tô na pose. 📸'); },
-      () => { anim('wobble', 700); say('cuidado, sou sensível a cócegas. 😄'); },
-      () => { anim('hackpose', 1200); holo(8, ['{', '}', '<', '>', '/', '01']); say('acesso concedido a… um sorriso. 😎'); },
+    /* ---------------------------------------------- clique ----------- */
+    const TIPS = [
+      'psst — o terminal aí em cima é de verdade. digite `help`.',
+      'dica: TAB completa comandos no terminal.',
+      'já tentou `matrix`? 😎',
+      'tem um segredo no código-fonte… F12.',
+      '`./pablodlz.sh` desbloqueia uma conquista.',
+      '50+ certificações lá embaixo. eu contei uma a uma.',
+      '`coffee` no terminal. confia.',
+      'às vezes eu passeio pelo site. me acompanha. 🙂',
     ];
-    let lastReaction = -1;
+    const CLICKS: (() => void)[] = [
+      () => { void anim('jump', 700); say('oi! eu sou o b1t. 🤖'); },
+      () => { void anim('spin', 800); say('giro cyber! 🌀'); },
+      () => { void anim('dance', 1400); setEmotion('playful'); say('🎵 dança dos bits'); },
+      () => { void anim('backflip', 900); setEmotion('proud'); say('mortal! nota 10. 🤸'); },
+      () => { void anim('hop', 600); setEmotion('happy'); say('valeu o carinho! 🧡'); },
+      () => { void anim('shiver', 600); setEmotion('curious'); say('ei! me assustou. 😵'); },
+      () => { void anim('pose', 900); setEmotion('proud'); say('foto? já tô na pose. 📸'); },
+      () => { void flee(); },
+      () => { void anim('wobble', 700); say('cuidado, sou sensível a cócegas. 😄'); },
+      () => { void anim('lookback', 800); say('tenta me pegar! 🏃'); },
+    ];
+    let lastClick = -1;
     hit.addEventListener('click', () => {
       wake(false);
       clicks++;
       friendship = Math.min(10, friendship + 1);
-      let i = Math.floor(Math.random() * CLICK_REACTIONS.length);
-      if (i === lastReaction) i = (i + 1) % CLICK_REACTIONS.length;
-      lastReaction = i;
-      CLICK_REACTIONS[i]!();
-      // marcos de amizade
+      let i = Math.floor(Math.random() * CLICKS.length);
+      if (i === lastClick) i = (i + 1) % CLICKS.length;
+      lastClick = i;
+      CLICKS[i]!();
       if (clicks === 5) say('gostei de você. 🧡 já achou o easter egg do F12?', 5200, true);
-      if (clicks === 12) { say('nível de amizade: MÁXIMO. desbloqueei truques novos! 🎉', 5200, true); friendship = 10; }
+      if (clicks === 12) { say('amizade MÁXIMA. 🎉', 5200, true); friendship = 10; }
     });
 
-    /* ------------------------------------------------ reações ao terminal */
+    /* ---------------------------------------------- reações ---------- */
     addEventListener('pablodlz:term-active', ((e: CustomEvent<boolean>) => {
       termActive = e.detail;
-      if (termActive) bubble.hidden = true; // some enquanto o usuário digita
+      if (termActive) {
+        bubble.hidden = true;
+        if (busy) bail();
+      }
     }) as EventListener);
 
     addEventListener('pablodlz:term', ((e: CustomEvent<{ name: string; cat: string }>) => {
       wake(false);
+      if (busy) return;
       const { name, cat } = e.detail;
       if (name === 'nmap' || name === 'rustscan' || name === 'nuclei' || cat === 'pentest') {
         setState('scanning');
-        anim('scan', 1600);
-        holo(5, ['◇', '·', '⬡']);
+        void anim('scan', 1600);
         setTimeout(() => setState('idle'), 1600);
       } else if (name === 'matrix' || name === 'cmatrix') {
         setState('shades');
@@ -351,41 +558,51 @@
         setTimeout(() => setState('idle'), 4200);
       } else if (name === 'help' || name === 'man') {
         setState('sign');
-        anim('wave', 900);
+        void anim('wave', 900);
         setTimeout(() => setState('idle'), 2600);
       } else if (name === 'coffee') {
-        anim('hop', 700);
+        void anim('hop', 700);
         say('me vê um também? ☕', 3000, true);
       } else {
-        // comando válido qualquer → comemora discreto
-        if (Math.random() < 0.6) anim('hop', 600);
+        if (Math.random() < 0.5) void anim('hop', 600);
         setEmotion('excited');
       }
     }) as EventListener);
 
-    /* ------------------------------------------------ conquistas -------- */
     addEventListener('pablodlz:achievement', ((e: CustomEvent<string>) => {
       wake(false);
       setEmotion('proud');
       setState('idle');
-      anim('backflip', 900);
-      holo(10);
+      void anim('backflip', 900);
       say(`conquista: ${e.detail}! 🎉`, 5000, true);
     }) as EventListener);
 
-    /* ------------------------------------------------ boot -------------- */
+    /* ---------------------------------------------- idle leve -------- */
+    const IDLE = mobile
+      ? ['hop', 'wobble', 'blink2', 'lookaround', 'spin']
+      : ['hop', 'wobble', 'stretch', 'lookaround', 'spin', 'jump', 'pose', 'blink2'];
+    const idleTick = (): void => {
+      setTimeout(() => {
+        if (!asleep && !busy && root.dataset.state === 'idle') {
+          const roll = Math.random();
+          if (roll < 0.4) say(rnd(TIPS), 4200);
+          else void anim(rnd(IDLE));
+        }
+        idleTick();
+      }, 9000 + Math.random() * 9000);
+    };
+
+    /* ---------------------------------------------- boot ------------- */
+    addEventListener('resize', () => { if (!busy) snapHome(); });
     setEmotion('curious');
     armSleep();
     idleTick();
-    setTimeout(() => say('e aí! sou o b1t 🤖 clica em mim ou explora o terminal ↑', 5200), 3500);
-    // recompensa por permanência
-    setTimeout(() => { if (!asleep) { friendship = Math.max(friendship, 5); say('curtindo a visita? 🧡 tem muito easter egg escondido.', 4600); } }, 90000);
+    if (!mobile && !reduced) scheduleDirector();
+    setTimeout(() => say('e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑', 5200), 3500);
   }
 </script>
 
 <style>
-  /* container FIXO — nunca se move. O balão vive aqui e por isso fica estático:
-     só o robô (.mascot-hit) passeia, então o balão nunca "anda junto". */
   .mascot {
     position: fixed;
     left: 14px;
@@ -394,13 +611,20 @@
     display: grid;
     justify-items: start;
     gap: var(--space-2);
-    /* sem realce azul de seleção/tap ao clicar — a identidade é laranja */
     user-select: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
+    pointer-events: none; /* nunca bloqueia a UI; só o robô captura clique */
+    transform: translate(var(--mx, 0px), var(--my, 0px));
+    transition: transform var(--mdur, 3s) cubic-bezier(0.45, 0, 0.4, 1);
+    will-change: transform;
   }
   .mascot[hidden] {
     display: none;
+  }
+  .mascot.is-phase {
+    opacity: 0;
+    transition: transform var(--mdur, 260ms) linear, opacity 220ms ease;
   }
   @media (max-width: 900px) {
     .mascot {
@@ -413,19 +637,14 @@
     }
   }
 
-  /* só o robô recebe o transform do passeio (translate = flutuar;
-     transform = passear). Ao sair, "desce do bloco" (roam-y); ao voltar, sobe. */
   .mascot-hit {
     position: relative;
     cursor: pointer;
     border-radius: var(--radius-lg);
+    pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
     animation: m-float 6s ease-in-out infinite;
-    transform: translate(var(--roam-x, 0px), var(--roam-y, 0px));
-    transition: transform var(--roam-dur, 3s) cubic-bezier(0.5, 0, 0.5, 1);
-    will-change: transform;
   }
-  /* foco por teclado: contorno laranja (nunca azul do browser) */
   .mascot-hit:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
@@ -436,15 +655,15 @@
     transform-origin: 50% 90%;
     will-change: transform;
   }
-  @keyframes m-float {
-    0%, 100% { translate: 0 0; }
-    50% { translate: 0 -4px; }
+  .mascot-svg {
+    transform: scaleX(var(--face, 1));
+    transition: transform 0.18s var(--ease);
   }
+  @keyframes m-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
 
-  /* ---------------- traços por emoção ---------------- */
+  /* traços por emoção / estado */
   .m-eyes { transition: transform 120ms linear; transform-origin: 36px 31px; }
-  .m-eyes-sleep, .m-eyes-excited, .m-mouth-happy, .m-blush, .m-shades { opacity: 0; }
-
+  .m-eyes-sleep, .m-eyes-excited, .m-eyes-wide, .m-mouth-happy, .m-mouth-worried, .m-blush, .m-shades { opacity: 0; }
   .mascot.is-blink .m-eyes { transform: scaleY(0.12); }
   .m-antenna { animation: m-ping 2.4s var(--ease) infinite; transform-origin: 36px 6px; }
   @keyframes m-ping { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
@@ -459,108 +678,93 @@
   .mascot[data-emotion='proud'] .m-blush { opacity: 1; }
   .mascot[data-emotion='excited'] .m-eyes { opacity: 0; }
   .mascot[data-emotion='excited'] .m-eyes-excited { opacity: 1; }
+  .mascot[data-emotion='worried'] .m-mouth { opacity: 0; }
+  .mascot[data-emotion='worried'] .m-mouth-worried { opacity: 1; }
 
-  /* ---------------- estados ---------------- */
   .mascot[data-state='sleep'] .m-eyes { opacity: 0; }
   .mascot[data-state='sleep'] .m-eyes-sleep { opacity: 1; }
   .mascot[data-state='sleep'] .mascot-hit { animation-duration: 9s; filter: saturate(0.6) brightness(0.85); }
   .mascot[data-state='sleep'] .m-mouth, .mascot[data-state='sleep'] .m-mouth-happy { opacity: 0; }
-
   .mascot[data-state='shades'] .m-shades { opacity: 1; }
   .mascot[data-state='shades'] .m-eyes { opacity: 0; }
-
-  .mascot[data-state='scanning'] .m-visor,
-  .mascot[data-state='sign'] .mascot-sign { }
+  .mascot[data-state='wide'] .m-eyes { opacity: 0; }
+  .mascot[data-state='wide'] .m-eyes-wide { opacity: 1; }
+  .mascot[data-state='scanning'] .m-scan { animation: m-scan 0.8s var(--ease) 2; }
+  .is-scan .m-scan { animation: m-scan 0.8s var(--ease) 2; }
+  @keyframes m-scan { 0% { opacity: 0.85; transform: translateY(0); } 100% { opacity: 0; transform: translateY(16px); } }
 
   /* plaquinha "Need assistance?" */
   .mascot-sign {
-    position: absolute;
-    left: 50%;
-    top: -14px;
-    translate: -50% -100%;
-    padding: 4px 9px;
-    background: var(--accent);
-    color: var(--on-accent);
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    font-weight: 700;
-    white-space: nowrap;
-    border-radius: var(--radius-sm);
-    opacity: 0;
-    scale: 0.6;
-    transform-origin: bottom center;
-    transition: opacity var(--dur-2) var(--ease), scale var(--dur-2) var(--ease);
-    pointer-events: none;
+    position: absolute; left: 50%; top: -14px; translate: -50% -100%;
+    padding: 4px 9px; background: var(--accent); color: var(--on-accent);
+    font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700;
+    white-space: nowrap; border-radius: var(--radius-sm);
+    opacity: 0; scale: 0.6; transform-origin: bottom center;
+    transition: opacity var(--dur-2) var(--ease), scale var(--dur-2) var(--ease); pointer-events: none;
   }
-  .mascot-sign::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -4px;
-    translate: -50% 0;
-    border: 4px solid transparent;
-    border-top-color: var(--accent);
-  }
+  .mascot-sign::after { content: ''; position: absolute; left: 50%; bottom: -4px; translate: -50% 0; border: 4px solid transparent; border-top-color: var(--accent); }
   .mascot[data-state='sign'] .mascot-sign { opacity: 1; scale: 1; }
 
-  /* barra de scan (nmap) */
-  .mascot[data-state='scanning'] .m-scan { animation: m-scan 0.8s var(--ease) 2; }
-  .is-scan .m-scan { animation: m-scan 0.8s var(--ease) 2; }
-  @keyframes m-scan {
-    0% { opacity: 0.85; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(16px); }
+  /* ferramenta de historinha (lupa, carimbo, etc.) — some sozinha */
+  .mascot-tool {
+    position: absolute; right: -6px; top: 6px; font-size: 0.9rem;
+    opacity: 0; scale: 0.4; transform-origin: center;
+    transition: opacity 200ms var(--ease), scale 200ms var(--ease); pointer-events: none;
   }
+  .mascot-tool.is-on { opacity: 1; scale: 1; }
 
-  /* ---------------- animações de uso único (no .mascot-body) ---------------- */
+  /* ---------------- animações one-shot (no .mascot-body) ---------------- */
   .is-hop { animation: m-hop 0.6s var(--ease); }
   @keyframes m-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-11px); } }
-
   .is-jump { animation: m-jump 0.7s var(--ease); }
   @keyframes m-jump { 0%, 100% { transform: translateY(0) scale(1); } 45% { transform: translateY(-16px) scale(1.05, 0.95); } }
-
   .is-spin { animation: m-spin 0.8s var(--ease); }
   @keyframes m-spin { to { transform: rotateY(360deg); } }
-
   .is-wobble { animation: m-wobble 0.7s var(--ease); }
   @keyframes m-wobble { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-9deg); } 75% { transform: rotate(9deg); } }
-
   .is-stretch { animation: m-stretch 0.9s var(--ease); }
   @keyframes m-stretch { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.12) translateY(-4px); } }
-
   .is-lookaround { animation: m-look 1.2s var(--ease); }
   @keyframes m-look { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
-
   .is-pose { animation: m-pose 0.9s var(--ease); }
   @keyframes m-pose { 0% { transform: rotate(0); } 30% { transform: rotate(-8deg) translateX(-3px); } 100% { transform: rotate(0); } }
-
-  .is-tumble { animation: m-tumble 0.9s var(--ease); }
-  @keyframes m-tumble { 0% { transform: rotate(0); } 100% { transform: rotate(-360deg); } }
-
   .is-dance { animation: m-dance 1.4s var(--ease); }
-  @keyframes m-dance {
-    0%, 100% { transform: rotate(0) translateY(0); }
-    20% { transform: rotate(-10deg) translateY(-4px); }
-    40% { transform: rotate(8deg) translateY(0); }
-    60% { transform: rotate(-8deg) translateY(-4px); }
-    80% { transform: rotate(10deg) translateY(0); }
-  }
-
+  @keyframes m-dance { 0%, 100% { transform: rotate(0) translateY(0); } 20% { transform: rotate(-10deg) translateY(-4px); } 40% { transform: rotate(8deg); } 60% { transform: rotate(-8deg) translateY(-4px); } 80% { transform: rotate(10deg); } }
   .is-backflip { animation: m-backflip 0.9s var(--ease); }
   @keyframes m-backflip { 0% { transform: rotate(0) translateY(0); } 50% { transform: rotate(-180deg) translateY(-20px); } 100% { transform: rotate(-360deg) translateY(0); } }
-
-  .is-slip { animation: m-slip 0.9s var(--ease); }
-  @keyframes m-slip { 0% { transform: rotate(0) translateX(0); } 30% { transform: rotate(18deg) translateX(6px) translateY(3px); } 60% { transform: rotate(-6deg); } 100% { transform: rotate(0); } }
-
   .is-shiver { animation: m-shiver 0.6s linear; }
   @keyframes m-shiver { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-3px); } 40% { transform: translateX(3px); } 60% { transform: translateX(-2px); } 80% { transform: translateX(2px); } }
-
   .is-yawn { animation: m-stretch 1.2s var(--ease); }
   .is-wave { animation: m-wobble 0.8s var(--ease); }
   .is-blink2 .m-eyes { animation: m-dblink 0.5s steps(1) 1; }
   @keyframes m-dblink { 0%, 100% { opacity: 1; } 25%, 75% { opacity: 0.15; } }
 
-  .is-hackpose { animation: m-hackpose 1.2s var(--ease); }
-  @keyframes m-hackpose { 0% { transform: translateY(0); } 20% { transform: translateY(-8px) rotate(-6deg); } 60% { transform: translateY(-8px) rotate(6deg); } 100% { transform: translateY(0); } }
+  /* animações de historinha */
+  .is-sit { animation: m-sit 0.6s var(--ease); }
+  @keyframes m-sit { to { transform: translateY(4px) scaleY(0.92); } }
+  .is-legswing { animation: m-legswing 0.5s ease-in-out 3; transform-origin: 50% 40%; }
+  @keyframes m-legswing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+  .is-dust { animation: m-dust 0.28s ease-in-out 4; }
+  @keyframes m-dust { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px) rotate(4deg); } }
+  .is-point { animation: m-point 0.9s var(--ease); }
+  @keyframes m-point { 0%, 100% { transform: rotate(0); } 40% { transform: rotate(-14deg) translateX(-4px); } }
+  .is-knock { animation: m-knock 0.35s ease-in-out 2; }
+  @keyframes m-knock { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+  .is-runover { animation: m-look 0.9s var(--ease) 2; }
+  .is-land { animation: m-land 0.5s var(--ease); }
+  @keyframes m-land { 0% { transform: translateY(-8px); } 40% { transform: translateY(2px) scaleY(0.82) scaleX(1.12); } 100% { transform: translateY(0); } }
+  .is-fix { animation: m-knock 0.3s ease-in-out 4; }
+  .is-check { animation: m-look 0.7s var(--ease); }
+  .is-push { animation: m-push 0.55s ease-in-out 2; }
+  @keyframes m-push { 0%, 100% { transform: translateX(0) rotate(0); } 50% { transform: translateX(7px) rotate(6deg); } }
+  .is-inspect { animation: m-look 0.7s ease-in-out 2; }
+  .is-stamp { animation: m-stamp 0.4s var(--ease) 2; }
+  @keyframes m-stamp { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(6px) scaleY(0.85); } }
+  .is-doubletake { animation: m-doubletake 0.9s var(--ease); }
+  @keyframes m-doubletake { 0%, 100% { transform: translateX(0) scale(1); } 20% { transform: translateX(-5px); } 50% { transform: translateX(3px) scale(1.08); } }
+  .is-peek { animation: m-look 0.7s ease-in-out; }
+  .is-lookback { animation: m-lookback 0.7s var(--ease); }
+  @keyframes m-lookback { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-14deg) scaleX(-1); } }
 
   /* passo (durante o passeio) — corpo balança e as patinhas dão passos */
   .mascot.is-walking .mascot-body { animation: m-walk 0.34s ease-in-out infinite; }
@@ -568,28 +772,23 @@
   .mascot.is-walking .m-foot-l { animation: m-step 0.34s ease-in-out infinite; }
   .mascot.is-walking .m-foot-r { animation: m-step 0.34s ease-in-out infinite; animation-delay: 0.17s; }
   @keyframes m-step { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3.5px); } }
+  /* balão some enquanto anda → nunca "desliza junto" */
+  .mascot.is-walking .mascot-bubble, .mascot.is-phase .mascot-bubble { opacity: 0; }
 
   /* ---------------- balão ---------------- */
   .mascot-bubble {
-    max-width: min(240px, 72vw);
-    padding: 8px 12px;
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--accent-border);
-    border-radius: var(--radius-md);
-    border-bottom-left-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    color: var(--text);
-    box-shadow: var(--shadow-lightbox);
+    max-width: min(240px, 72vw); padding: 8px 12px;
+    background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--accent-border); border-radius: var(--radius-md); border-bottom-left-radius: 4px;
+    font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text);
+    box-shadow: var(--shadow-lightbox); transition: opacity 200ms var(--ease);
     animation: m-bubble-in var(--dur-2) var(--ease);
   }
   @keyframes m-bubble-in { from { opacity: 0; transform: translateY(6px) scale(0.96); } to { opacity: 1; transform: none; } }
 
   @media (prefers-reduced-motion: reduce) {
     .mascot { transition: none; }
-    .mascot-hit, .m-antenna, .mascot-body { animation: none !important; }
+    .mascot-hit, .m-antenna, .mascot-body, .mascot-svg { animation: none !important; }
     .mascot-bubble { animation: none; }
   }
 </style>
