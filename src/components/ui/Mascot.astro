@@ -817,6 +817,40 @@
       hiding = false;
     }
 
+    // ATORDOADO: clicou demais em sequência (>10 seguidas) → fica tonto/cansado
+    // e NÃO aceita cliques até a animação acabar (desafio a mais p/ chegar a 100)
+    let stunned = false;
+    async function stun(): Promise<void> {
+      if (stunned || reduced) return;
+      stunned = true;
+      running = null; // interrompe episódio/travessura em curso
+      hiding = false;
+      mischief = false;
+      busy = true;
+      hideTool();
+      setState('dizzy');
+      setEmotion('worried');
+      showTool('💫');
+      say(vary('stun', [
+        'ei… calma! 😵‍💫 me deixou tonto.',
+        'aiai… tô zonzo de tanto clique. 🥴',
+        'chega, chega! preciso respirar. 😵',
+        'buffer de carinho lotado! deixa eu recuperar. 😵‍💫',
+      ]), 2600, true);
+      sfx('worried');
+      await anim('dizzy', 2400);
+      hideTool();
+      setState('idle');
+      setEmotion('curious');
+      busy = false;
+      stunned = false;
+      say(vary('stun-back', [
+        'ufa, recuperei! 😌 pode continuar. 🧡',
+        'pronto, voltei ao normal! 😊',
+        'ok ok, tô melhor. manda ver. 💪',
+      ]), 2200);
+    }
+
     /* ---------------------------------------------- piscar / dormir -- */
     if (!reduced) {
       setInterval(() => {
@@ -882,11 +916,24 @@
       () => { void anim('wave', 800); setEmotion('curious'); say(vary('c-wave', ['oi de novo! 👋', 'tá insistente, hein? 😏', 'a gente já se conhece. 😄', 'presente! 🙋'])); sfx('wave'); },
     ];
     let lastClick = -1;
+    let rapidCount = 0;
+    let lastClickAt = 0;
     hit.addEventListener('click', () => {
       wake(false);
+      // atordoado: ignora cliques até a animação de cansaço terminar
+      if (stunned) return;
       // se estiver aprontando algo, um clique também o "pega no flagra"
       if (mischief || hiding) {
         void startleFlee();
+        return;
+      }
+      // cliques SEGUIDOS (rápidos): >10 em sequência → atordoa (desafio p/ os 100)
+      const now = performance.now();
+      rapidCount = now - lastClickAt < 1200 ? rapidCount + 1 : 1;
+      lastClickAt = now;
+      if (rapidCount > 10) {
+        rapidCount = 0;
+        void stun();
         return;
       }
       clicks++;
@@ -1243,6 +1290,16 @@
   .is-wave { animation: m-wobble 0.8s var(--ease); }
   .is-blink2 .m-eyes { animation: m-dblink 0.5s steps(1) 1; }
   @keyframes m-dblink { 0%, 100% { opacity: 1; } 25%, 75% { opacity: 0.15; } }
+  /* atordoado/cansado: balança zonzo (clicou demais, seguidas) */
+  .is-dizzy { animation: m-dizzy 0.9s ease-in-out infinite; transform-origin: 50% 62%; }
+  @keyframes m-dizzy {
+    0% { transform: rotate(-12deg) translateY(0); }
+    25% { transform: rotate(0) translateY(-2px); }
+    50% { transform: rotate(12deg) translateY(0); }
+    75% { transform: rotate(0) translateY(-2px); }
+    100% { transform: rotate(-12deg) translateY(0); }
+  }
+  .is-dizzy .m-eyes { animation: m-dblink 0.4s steps(1) infinite; }
 
   /* animações de historinha */
   .is-sit { animation: m-sit 0.6s var(--ease); }

@@ -144,6 +144,23 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
     'publicacoes': [`(${td.pubs} posts — digite \`publications\`)`],
     '.flag': ['🔒 permission denied — execute ./pablodlz.sh primeiro'],
   };
+  // caminhos absolutos clássicos (easter eggs de pentest) — tudo FAKE, nada real
+  const absFiles: Record<string, string[]> = {
+    '/etc/passwd': [
+      'root:x:0:0:root:/root:/bin/bash',
+      'daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin',
+      'www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin',
+      'pablodlz:x:1337:1337:Pablo Galerani,SOC Analyst:/home/pablodlz:/bin/pablosh',
+      'b1t:x:1000:1000:o mascote do site:/home/b1t:/bin/boop',
+      'nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin',
+      '# psst: nada sensível por aqui — site 100% estático, 0 segredos. 😉',
+    ],
+    '/etc/shadow': ['cat: /etc/shadow: Permissão negada. (boa tentativa 😏 — mas nem root escapa do hardening)'],
+    '/etc/hosts': ['127.0.0.1  localhost', '127.0.1.1  portfolio', '::1  localhost ip6-localhost', '185.199.108.153  pablodlz.github.io'],
+    '/etc/os-release': ['PRETTY_NAME="KaliOS 3.0 (portfolio-hardened)"', 'ID=pablosh', 'HOME_URL="https://pablodlz.github.io/portfolio/"'],
+    '/proc/version': ['Linux version 6.6.6-pablosh (b1t@portfolio) — compilado com muito café ☕'],
+    '/root/flag.txt': ['🔒 Permissão negada. dica: `./pablodlz.sh` desbloqueia a flag de verdade. 😉'],
+  };
   let cwdPath: string[] = [];
   const cwd = () => '~' + (cwdPath.length ? '/' + cwdPath.join('/') : '');
   const nodeAt = (parts: string[]): FsNode | null => {
@@ -459,6 +476,12 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
         const name = c.args[0];
         if (!name) return void c.print('uso: cat <arquivo>', 't-warn');
         if (name === '.flag' && flagUnlocked) return void c.print(`FLAG{${td.mail.u}}`.replace(td.mail.u, decodeFlag()), 't-accent');
+        // caminhos absolutos (/etc/passwd etc.) — easter eggs fake
+        if (name.startsWith('/')) {
+          const abs = absFiles[name];
+          if (abs) return abs.forEach((l) => c.print(l));
+          return void c.print(`cat: ${name}: No such file or directory`, 't-warn');
+        }
         const node = nodeAt([...cwdPath, name]);
         if (Array.isArray(node)) return node.forEach((l) => c.print(l));
         c.print(`cat: ${name}: arquivo não encontrado`, 't-warn');
