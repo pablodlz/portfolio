@@ -552,18 +552,23 @@ function ensureCtx(): AudioContext | null {
    arquivos no lugar da síntese. Same-origin → CSP 'self' intacta, zero
    terceiros. Sem manifest/arquivos, cai no fallback sintetizado (nada muda). */
 const sampleBuffers = new Map<string, AudioBuffer>();
-const sampleOffsets = new Map<string, number>(); // silêncio inicial a pular (s)
+const sampleOffsets = new Map<string, number>(); // ponto de início (s) = ataque
 let samplesTried = false;
-// detecta o silêncio no começo do arquivo (padding do encoder MP3) → tocamos a
-// partir daí p/ o som sair NO clique, sem atraso perceptível
-function leadingSilence(buf: AudioBuffer): number {
-  const thresh = 0.008;
+// o som só "estoura" no PICO do arquivo (antes disso há silêncio + subida
+// gradual do MP3) → começamos a tocar logo antes do pico p/ o impacto sair NO
+// clique, sem atraso. Um fade-in de 3ms no playSample evita o estalo.
+function attackOffset(buf: AudioBuffer): number {
   const chans: Float32Array[] = [];
   for (let ch = 0; ch < buf.numberOfChannels; ch++) chans.push(buf.getChannelData(ch));
   const n = buf.length;
+  let peak = 0;
+  for (const data of chans) for (let i = 0; i < n; i++) { const a = Math.abs(data[i]!); if (a > peak) peak = a; }
+  if (peak <= 0) return 0;
+  // primeiro ponto que já está "alto" (70% do pico) = borda do ataque
+  const target = peak * 0.7;
   for (let i = 0; i < n; i++) {
     for (const data of chans) {
-      if (Math.abs(data[i]!) > thresh) return Math.max(0, i / buf.sampleRate - 0.003); // 3ms de folga p/ não cortar o ataque
+      if (Math.abs(data[i]!) >= target) return Math.max(0, i / buf.sampleRate - 0.006); // 6ms de pré-ataque
     }
   }
   return 0;
@@ -585,7 +590,7 @@ async function loadSamples(ctx: AudioContext): Promise<void> {
             if (!r.ok) return;
             const buf = await ctx.decodeAudioData(await r.arrayBuffer());
             sampleBuffers.set(cue, buf);
-            sampleOffsets.set(cue, leadingSilence(buf));
+            sampleOffsets.set(cue, attackOffset(buf));
           } catch {
             /* arquivo ausente/inválido: mantém a síntese p/ esse cue */
           }
@@ -600,8 +605,19 @@ function playSample(name: string): boolean {
   if (!buf || !audioCtx || !master) return false;
   const src = audioCtx.createBufferSource();
   src.buffer = buf;
-  src.connect(master);
-  src.start(0, sampleOffsets.get(name) ?? 0); // pula o silêncio inicial → sem atraso
+  const offset = sampleOffsets.get(name) ?? 0;
+  if (offset > 0) {
+    // começamos no meio da onda (no ataque) → fade-in de 3ms evita "clique"
+    const g = audioCtx.createGain();
+    const t = audioCtx.currentTime;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(1, t + 0.003);
+    src.connect(g);
+    g.connect(master);
+  } else {
+    src.connect(master);
+  }
+  src.start(0, offset); // começa no ataque → impacto sai no clique, sem atraso
   return true;
 }
 
