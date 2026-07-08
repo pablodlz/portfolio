@@ -47,6 +47,7 @@
 
   if (root && bubble && eyes) {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const coarse = matchMedia('(pointer: coarse)').matches;
     let idleTimer: ReturnType<typeof setTimeout>;
     let bubbleTimer: ReturnType<typeof setTimeout>;
 
@@ -61,8 +62,8 @@
       root.dataset.state = s;
     };
 
-    /* olhos seguem o cursor */
-    if (!reduced) {
+    /* olhos: seguem o cursor (desktop) ou vagueiam curiosos (touch) */
+    if (!reduced && !coarse) {
       let raf = 0;
       addEventListener(
         'pointermove',
@@ -80,6 +81,16 @@
         },
         { passive: true },
       );
+    } else if (!reduced && coarse) {
+      setInterval(() => {
+        if (root.dataset.state === 'sleep') return;
+        const ang = Math.random() * Math.PI * 2;
+        const dist = Math.random() * 2.2;
+        eyes.style.transform = `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px)`;
+      }, 2400);
+    }
+
+    if (!reduced) {
 
       /* piscar de vez em quando */
       setInterval(() => {
@@ -160,9 +171,15 @@
     justify-items: start;
     gap: var(--space-2);
   }
+  /* mobile: presente também — menor e com balão contido na tela */
   @media (max-width: 900px) {
     .mascot {
-      display: none;
+      left: 10px;
+      bottom: 10px;
+    }
+    .mascot-svg {
+      width: 46px;
+      height: 46px;
     }
   }
 
@@ -261,7 +278,7 @@
   }
 
   .mascot-bubble {
-    max-width: 230px;
+    max-width: min(230px, 72vw);
     padding: 8px 12px;
     background: var(--glass);
     backdrop-filter: blur(10px);
