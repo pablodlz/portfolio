@@ -32,7 +32,7 @@ function excerpt(p: TPublication): string {
 <section id="publicacoes" class="section publications">
   <div class="container">
     <SectionHeading
-      eyebrow="feed"
+      eyebrow="publications"
       title="Publicações"
       description="Marcos e conteúdo compartilhados com a comunidade no LinkedIn."
     />
@@ -49,7 +49,9 @@ function excerpt(p: TPublication): string {
             rel="noopener noreferrer"
             aria-label={`Abrir publicação no LinkedIn: ${p.title}`}
           >
-            <Image src={pubImage(p.image)} alt="" width={640} height={360} class="pub-cover" loading="lazy" />
+            <span class="pub-cover-box">
+              <Image src={pubImage(p.image)} alt="" width={640} height={360} class="pub-cover" loading="lazy" />
+            </span>
             <div class="pub-body">
               <Badge tone={cat.tone}>{cat.label}</Badge>
               <h3>{p.title}</h3>
@@ -83,7 +85,9 @@ function excerpt(p: TPublication): string {
             rel="noopener noreferrer"
             aria-label={`Abrir publicação no LinkedIn: ${p.title}`}
           >
-            <Image src={pubImage(p.image)} alt="" width={480} height={270} class="pub-cover" loading="lazy" />
+            <span class="pub-cover-box">
+              <Image src={pubImage(p.image)} alt="" width={480} height={270} class="pub-cover" loading="lazy" />
+            </span>
             <div class="pub-body">
               <Badge tone={cat.tone}>{cat.label}</Badge>
               <h3 class="pub-title-sm">{p.title}</h3>
@@ -154,23 +158,38 @@ function excerpt(p: TPublication): string {
     border-radius: var(--radius-lg);
     overflow: hidden;
     color: inherit;
-    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+    transition:
+      border-color var(--dur-2) var(--ease),
+      transform var(--dur-2) var(--ease),
+      box-shadow var(--dur-2) var(--ease);
   }
   .pub-card:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-2px);
+    border-color: var(--accent-border);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px -18px var(--accent-soft), 0 8px 24px rgba(0, 0, 0, 0.25);
     text-decoration: none;
     color: inherit;
   }
 
-  :global(.pub-cover) {
-    width: 100%;
-    height: auto;
+  /* v3: letterbox — a imagem aparece INTEIRA, sem corte algum */
+  .pub-cover-box {
+    display: grid;
+    place-items: center;
     aspect-ratio: 16 / 9;
-    object-fit: cover;
-    /* rostos ficam no terço superior das capas do LinkedIn — nunca cortar */
-    object-position: center top;
+    padding: var(--space-2);
+    background:
+      radial-gradient(60% 80% at 50% 50%, var(--accent-soft), transparent 75%),
+      var(--bg-raised-2);
     border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+  :global(.pub-cover) {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
   }
 
   .pub-body {

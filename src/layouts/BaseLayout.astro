@@ -10,6 +10,29 @@ import '../styles/global.css';
 import themeInit from '../scripts/theme-init.js?raw';
 import { data } from '../lib/data';
 import { withBase } from '../lib/url';
+import Mascot from '../components/ui/Mascot.astro';
+import ContactFab from '../components/ui/ContactFab.astro';
+
+// Easter egg p/ quem inspeciona o código (v3): parece um vazamento por
+// 2 segundos, se revela brincadeira assinada por um blue teamer.
+// (comentário estático de build — não é dado; compressHTML preserva via set:html)
+const sourceEgg = `<!--
+┌─────────────────────────────────────────────────────────────────────┐
+│  ⚠  INCIDENT-0000 · "credencial exposta no front"                   │
+│                                                                     │
+│  AWS_SECRET_ACCESS_KEY = "TmFvIGUgdW1hIGNoYXZlIHJlYWwuIEUgdW0gZWFz  │
+│                           dGVyIGVnZyBkZSB1bSBjYXJhIGRlIGJsdWUgdGVh  │
+│                           bSA7KQ=="                                 │
+│                                                                     │
+│  Decodificou o base64? Então já sabe: NÃO é uma vulnerabilidade.    │
+│  Este site é 100% estático — sem backend, sem .env, sem segredos.   │
+│  CSP estrita, zero terceiros, código aberto p/ auditoria:           │
+│  https://github.com/pablodlz/portfolio                              │
+│                                                                     │
+│  Gostou de fuçar? Você é dos meus. Digite \`secret\` no terminal    │
+│  do hero e me chama: portfólio de @pablodlz, SOC Analyst.  🏴       │
+└─────────────────────────────────────────────────────────────────────┘
+-->`;
 
 interface Props {
   title?: string;
@@ -17,7 +40,7 @@ interface Props {
 }
 
 const {
-  title = `${data.profile.fullName} — ${data.profile.role}`,
+  title = `${data.profile.fullName} • Cybersecurity Analyst`,
   description = data.about.summary,
 } = Astro.props;
 
@@ -65,8 +88,11 @@ const ogImage = new URL(withBase('/og.png'), Astro.site);
     <meta name="twitter:image" content={ogImage} />
   </head>
   <body>
+    <Fragment set:html={sourceEgg} />
     <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
     <slot />
+    <Mascot />
+    <ContactFab />
     <script src="../scripts/app.ts"></script>
   </body>
 </html>

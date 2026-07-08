@@ -11,7 +11,7 @@ const COLLAPSE_AFTER = 3;
 <section id="experiencia" class="section">
   <div class="container">
     <SectionHeading
-      eyebrow="story so far"
+      eyebrow="timeline"
       title="Experiência"
       description="Da base técnica à operação de segurança — a trilha completa."
     />
@@ -107,12 +107,14 @@ const COLLAPSE_AFTER = 3;
     width: 10px;
     height: 10px;
     border-radius: var(--radius-pill);
-    background: var(--border-strong);
+    background: var(--accent);
+    opacity: 0.55;
     outline: 4px solid var(--bg);
   }
   .timeline-dot--current {
-    background: var(--ok);
-    box-shadow: 0 0 0 5px var(--ok-soft);
+    background: var(--accent);
+    opacity: 1;
+    box-shadow: 0 0 0 5px var(--accent-soft);
   }
 
   .job {

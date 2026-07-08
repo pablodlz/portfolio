@@ -4,7 +4,7 @@ import type { IconName } from '../../lib/icons';
 
 interface Props {
   href: string;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'cta';
   icon?: IconName;
   external?: boolean;
   /** força download do href (ex.: currículo PDF) */
@@ -83,5 +83,59 @@ const downloadAttrs = download ? { download: true } : {};
   .btn--ghost:hover {
     color: var(--text);
     background: var(--bg-raised-2);
+  }
+
+  /* CTA premium: primário + shimmer periódico varrendo o botão */
+  .btn--cta {
+    position: relative;
+    overflow: hidden;
+    background: var(--accent);
+    color: var(--on-accent);
+    box-shadow: 0 0 0 0 var(--accent-soft);
+    animation: cta-glow 3.2s var(--ease) infinite;
+  }
+  .btn--cta:hover {
+    background: var(--accent-hover);
+    color: var(--on-accent);
+  }
+  .btn--cta::after {
+    content: '';
+    position: absolute;
+    inset: -40% auto;
+    width: 36%;
+    transform: translateX(-220%) skewX(-18deg);
+    background: linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+    animation: cta-shimmer 3.2s var(--ease) infinite;
+  }
+  @keyframes cta-shimmer {
+    0%,
+    55% {
+      transform: translateX(-220%) skewX(-18deg);
+    }
+    85%,
+    100% {
+      transform: translateX(420%) skewX(-18deg);
+    }
+  }
+  @keyframes cta-glow {
+    0%,
+    55%,
+    100% {
+      box-shadow: 0 0 0 0 var(--accent-soft);
+    }
+    72% {
+      box-shadow: 0 0 24px 2px var(--accent-soft);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn--cta,
+    .btn--cta::after {
+      animation: none;
+    }
   }
 </style>

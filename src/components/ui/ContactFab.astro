@@ -1,0 +1,149 @@
+---
+/**
+ * Botão flutuante de contato (v3) — estilo widget de suporte, lado direito.
+ * Painel glass com ações rápidas; fecha com Esc ou clique fora.
+ */
+import { data, obfuscatedEmail } from '../../lib/data';
+import { withBase } from '../../lib/url';
+import Icon from './Icon.astro';
+
+const { profile } = data;
+const mail = obfuscatedEmail();
+---
+
+<div class="fab-wrap">
+  <div id="fab-panel" class="fab-panel" hidden aria-label="Contato rápido">
+    <p class="fab-title">Vamos conversar?</p>
+    <a class="fab-item js-mail" data-u={mail.u} data-d={mail.d} href="#contato">
+      <Icon name="mail" size={17} />
+      <span class="js-mail-addr">Enviar e-mail</span>
+    </a>
+    <a class="fab-item" href={profile.contact.linkedin} target="_blank" rel="noopener noreferrer">
+      <Icon name="linkedin" size={17} />
+      LinkedIn
+    </a>
+    <a class="fab-item" href={profile.contact.github} target="_blank" rel="noopener noreferrer">
+      <Icon name="github" size={17} />
+      GitHub
+    </a>
+    <a class="fab-item" href={withBase(`/${profile.resume}`)} download>
+      <Icon name="download" size={17} />
+      Baixar currículo
+    </a>
+  </div>
+
+  <button
+    id="fab-toggle"
+    class="fab-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="fab-panel"
+    aria-label="Abrir contato rápido"
+  >
+    <span class="fab-icon-open"><Icon name="mail" size={22} /></span>
+    <span class="fab-icon-close"><Icon name="close" size={22} /></span>
+  </button>
+</div>
+
+<script>
+  const btn = document.getElementById('fab-toggle');
+  const panel = document.getElementById('fab-panel');
+  if (btn && panel) {
+    const setOpen = (open: boolean): void => {
+      panel.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', open ? 'Fechar contato rápido' : 'Abrir contato rápido');
+    };
+    btn.addEventListener('click', () => setOpen(panel.hidden));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) setOpen(false);
+    });
+    document.addEventListener('click', (e) => {
+      if (!panel.hidden && !(e.target as HTMLElement).closest('.fab-wrap')) setOpen(false);
+    });
+  }
+</script>
+
+<style>
+  .fab-wrap {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 75;
+    display: grid;
+    justify-items: end;
+    gap: var(--space-3);
+  }
+
+  .fab-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: var(--on-accent);
+    cursor: pointer;
+    box-shadow: 0 8px 24px -6px var(--accent-border);
+    transition: background-color var(--dur-2) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .fab-toggle:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+  }
+  .fab-icon-close {
+    display: none;
+  }
+  .fab-toggle[aria-expanded='true'] .fab-icon-open {
+    display: none;
+  }
+  .fab-toggle[aria-expanded='true'] .fab-icon-close {
+    display: inline-flex;
+  }
+
+  .fab-panel {
+    display: grid;
+    gap: var(--space-1);
+    min-width: 230px;
+    padding: var(--space-3);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lightbox);
+  }
+  .fab-panel[hidden] {
+    display: none;
+  }
+  .fab-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    padding: var(--space-1) var(--space-2);
+  }
+  .fab-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 10px var(--space-3);
+    border-radius: var(--radius-md);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    transition: background-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease);
+  }
+  .fab-item:hover {
+    text-decoration: none;
+    color: var(--text);
+    background: var(--accent-soft);
+  }
+  .fab-item :global(svg) {
+    color: var(--accent);
+    flex: none;
+  }
+</style>

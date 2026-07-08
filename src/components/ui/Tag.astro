@@ -8,17 +8,23 @@ const { class: className } = Astro.props;
 <span class:list={['tag', className]}><slot /></span>
 
 <style>
+  /* v3: identidade única — toda tag na cor de acento */
   .tag {
     display: inline-flex;
     align-items: center;
     padding: 2px 10px;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--bg-raised-2);
-    color: var(--text-2);
+    border: 1px solid var(--accent-border);
+    background: var(--accent-soft);
+    color: var(--accent);
     font-size: var(--fs-xs);
     font-weight: 500;
     line-height: 1.7;
     white-space: nowrap;
+    transition: border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .tag:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
   }
 </style>

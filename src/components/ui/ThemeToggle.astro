@@ -14,6 +14,7 @@ import Icon from './Icon.astro';
 </button>
 
 <style>
+  /* v3: toggle na cor de acento */
   .theme-toggle {
     display: inline-flex;
     align-items: center;
@@ -21,19 +22,19 @@ import Icon from './Icon.astro';
     width: 36px;
     height: 36px;
     border-radius: var(--radius-md);
-    border: 1px solid var(--border);
-    color: var(--text-2);
-    background: transparent;
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+    background: var(--accent-soft);
     cursor: pointer;
     transition:
       color var(--dur-2) var(--ease),
       border-color var(--dur-2) var(--ease),
-      background-color var(--dur-2) var(--ease);
+      background-color var(--dur-2) var(--ease),
+      transform var(--dur-1) var(--ease);
   }
   .theme-toggle:hover {
-    color: var(--text);
-    border-color: var(--border-strong);
-    background: var(--bg-raised);
+    border-color: var(--accent);
+    transform: translateY(-1px) rotate(12deg);
   }
 
   /* dark mostra o sol (ação: ir p/ claro); light mostra a lua */

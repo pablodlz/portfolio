@@ -17,6 +17,19 @@ segurança → QA → CI/CD.
 > seções compactadas. QA v2: **desktop 100×4; mobile 97/100/100/100** (mesmo teto de
 > font-swap do v1 + CSS crítico maior; CLS 0, TBT 0); `npm audit` 0; CSP inalterada
 > (terminal/partículas/toast 100% no bundle próprio, sem style inline).
+>
+> **Polimento v3 (08/jul/2026):** paleta 100% laranja (badges/tags/dots/toggle —
+> semântica por FORMA: preenchido vs outline); terminal expandido (~28 comandos,
+> TAB-autocomplete, histórico ↑↓, aliases, neofetch/matrix/hack/coffee ASCII, 5
+> conquistas); mascote interativo **b1t** (segue cursor, dorme, comemora conquistas
+> — oculto <900px e sob reduced-motion); botão flutuante de contato (painel glass);
+> mouse trail canvas sutil (só pointer fino); glow follow-mouse nos cards (CSSOM,
+> CSP-safe); publicações em letterbox (imagem 100% visível); recomendações compactas
+> 3-col c/ avatar + expandir + CTA; foto nova (img/profile-v3.png); CTA shimmer no
+> currículo; orbes de profundidade nas seções; easter egg INCIDENT-0000 no código-fonte
+> (auto-desmentido) + banner no console; título "Pablo de Souza Galerani • Cybersecurity
+> Analyst"; footer line de marca. QA v3: **desktop 100×4; mobile 99/100/100/100**
+> (CLS ≈0, TBT 39ms); 0 violações CSP; 0 erros de console.
 
 ## Fase 2 — Fundação
 

@@ -44,17 +44,16 @@ const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props
     border-radius: var(--radius-pill);
     background: var(--border-strong);
   }
+  /* v3: chrome monocromático + um toque de acento (paleta única) */
   .terminal-dots i:first-child {
-    background: var(--crit);
-    opacity: 0.75;
+    background: var(--accent);
   }
   .terminal-dots i:nth-child(2) {
-    background: var(--warn);
-    opacity: 0.75;
+    background: var(--accent);
+    opacity: 0.45;
   }
   .terminal-dots i:last-child {
-    background: var(--ok);
-    opacity: 0.75;
+    background: var(--border-strong);
   }
   .terminal-title {
     font-family: var(--font-mono);
@@ -121,7 +120,8 @@ const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props
     font-weight: 600;
   }
   .terminal-body :global(.t-warn) {
-    color: var(--warn);
+    color: var(--accent);
+    opacity: 0.85;
   }
   .terminal-body :global(.t-form) {
     display: flex;

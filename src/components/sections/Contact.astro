@@ -29,7 +29,7 @@ const SOCIAL_ICON: Record<string, IconName> = {
       <Button href="#contato" class="js-mail" data-u={mail.u} data-d={mail.d} variant="primary" icon="mail">
         <span class="js-mail-addr">Enviar e-mail</span>
       </Button>
-      <Button href={withBase(`/${profile.resume}`)} variant="secondary" icon="download" download>
+      <Button href={withBase(`/${profile.resume}`)} variant="cta" icon="download" download>
         Currículo
       </Button>
       <Button href={profile.contact.github} variant="secondary" icon="github" external>GitHub</Button>

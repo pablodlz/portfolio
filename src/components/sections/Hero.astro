@@ -17,6 +17,20 @@ const termLines = about.easterEgg.content.map((line, i) => ({
   accent: line.startsWith('┌') || line.startsWith('└'),
   i,
 }));
+
+// Dados reais p/ os comandos do terminal (via atributo — escapado pelo Astro).
+const termData = {
+  role: profile.role,
+  company: profile.company.split(' ')[0],
+  github: profile.contact.github,
+  linkedin: profile.contact.linkedin,
+  socials: profile.socials.map((s) => ({ name: s.name, url: s.url })),
+  topSkills: data.topSkills,
+  resume: withBase(`/${profile.resume}`),
+  certs: data.certifications.displayTotal,
+  pubs: data.publications.length,
+  location: profile.location,
+};
 ---
 
 <section id="top" class="hero atmosphere">
@@ -40,10 +54,10 @@ const termLines = about.easterEgg.content.map((line, i) => ({
       <p class="hero-headline reveal" data-ri="1">{profile.headline}</p>
 
       <div class="hero-ctas reveal" data-ri="2">
-        <Button href="#contato" variant="primary" icon="mail">Contato</Button>
-        <Button href={withBase(`/${profile.resume}`)} variant="secondary" icon="download" download>
-          Currículo
+        <Button href={withBase(`/${profile.resume}`)} variant="cta" icon="download" download>
+          Baixar currículo
         </Button>
+        <Button href="#contato" variant="secondary" icon="mail">Contato</Button>
         <Button href={profile.contact.github} variant="secondary" icon="github" external>
           GitHub
         </Button>
@@ -57,7 +71,7 @@ const termLines = about.easterEgg.content.map((line, i) => ({
       <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal interativo com easter egg">
         <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} data-ri={l.i}>{l.text}</span>)}</pre>
         <pre class="t-out" role="log" aria-live="polite"></pre>
-        <form class="t-form">
+        <form class="t-form" data-term={JSON.stringify(termData)}>
           <label class="visually-hidden" for="term-input">
             Terminal interativo — digite um comando e pressione Enter. Dica: help
           </label>

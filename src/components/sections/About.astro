@@ -8,7 +8,7 @@ import Badge from '../ui/Badge.astro';
 import Tag from '../ui/Tag.astro';
 import Button from '../ui/Button.astro';
 import Icon from '../ui/Icon.astro';
-import profilePhoto from '../../../img/image.jpeg';
+import profilePhoto from '../../../img/profile-v3.png';
 
 const { profile, about, recommendationsReceived } = data;
 const others = recommendationsReceived.total - recommendationsReceived.highlighted.length;
@@ -24,8 +24,8 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
 
     <div class="about-grid">
       <div class="about-text reveal">
-        {about.bio.map((p, i) => (
-          <p class={i === 0 ? 'about-summary' : 'about-bio'}>{p}</p>
+        {about.bio.map((p) => (
+          <p class="about-bio">{p}</p>
         ))}
 
         <h3>No dia a dia</h3>
@@ -47,8 +47,8 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
         <Image
           src={profilePhoto}
           alt={`Foto de ${profile.fullName}`}
-          width={720}
-          height={720}
+          width={520}
+          height={500}
           class="about-photo"
         />
         <div class="about-card-head">
@@ -77,7 +77,7 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
         </ul>
         <Button
           href={withBase(`/${profile.resume}`)}
-          variant="secondary"
+          variant="cta"
           icon="download"
           download
           class="about-resume"
@@ -90,21 +90,32 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     <div class="about-recs">
       {recommendationsReceived.highlighted.map((rec, i) => (
         <Card as="article" class="rec-card reveal" data-ri={i}>
-          <blockquote>
+          <header class="rec-head">
+            <span class="rec-avatar" aria-hidden="true">{rec.author.charAt(0)}</span>
+            <span class="rec-id">
+              <cite class="rec-name">{rec.author}</cite>
+              <span class="rec-role">{rec.authorTitle}</span>
+            </span>
+          </header>
+          <blockquote class="rec-quote">
             <p>“{rec.text}”</p>
           </blockquote>
-          <footer>
-            <cite>{rec.author}</cite>
-            <span>{rec.authorTitle}</span>
-          </footer>
+          <button type="button" class="rec-more" aria-expanded="false">Ver recomendação</button>
         </Card>
       ))}
-    </div>
-    <p class="about-recs-more reveal">
-      <a href={profile.profileUrl} target="_blank" rel="noopener noreferrer">
-        +{others} outras recomendações no LinkedIn ↗
+
+      <a
+        class="rec-cta reveal"
+        data-ri="2"
+        href={`${profile.profileUrl}details/recommendations/`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span class="rec-cta-n">+{others}</span>
+        <span class="rec-cta-text">outras recomendações<br />no LinkedIn</span>
+        <span class="rec-cta-go">Ver todas <Icon name="arrow-right" size={15} /></span>
       </a>
-    </p>
+    </div>
   </div>
 </section>
 
@@ -125,8 +136,10 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     display: grid;
     gap: var(--space-4);
   }
-  .about-summary {
-    font-size: var(--fs-body-lg);
+  /* v3: tamanho único em todo o bloco de texto (consistência) */
+  .about-bio,
+  .about-daily {
+    font-size: var(--fs-body);
     color: var(--text-2);
   }
   .about-text h3 {
@@ -135,7 +148,6 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
   .about-daily {
     display: grid;
     gap: var(--space-3);
-    color: var(--text-2);
     padding-left: 1.1rem;
     list-style: '▸  ';
   }
@@ -166,9 +178,9 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     object-position: center top;
     border: 1px solid var(--border-strong);
   }
-  .about-bio {
-    color: var(--text-2);
-    font-size: var(--fs-small);
+  /* respiro entre tags comportamentais e o CTA do currículo */
+  .about-card :global(.about-resume) {
+    margin-top: var(--space-4);
   }
   .about-name {
     font-family: var(--font-display);
@@ -196,36 +208,126 @@ const others = recommendationsReceived.total - recommendationsReceived.highlight
     flex: none;
   }
 
+  /* v3: recomendações compactas em 3 colunas (estilo reviews SaaS) */
   .about-recs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-5);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
     margin-top: var(--space-7);
+    align-items: start;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1000px) {
+    .about-recs {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 680px) {
     .about-recs {
       grid-template-columns: 1fr;
     }
   }
-  .rec-card blockquote p {
-    color: var(--text-2);
-    font-size: var(--fs-small);
-  }
-  .rec-card footer {
-    margin-top: var(--space-4);
+
+  .about-recs :global(.rec-card) {
+    padding: var(--space-4);
     display: grid;
+    gap: var(--space-3);
+    align-content: start;
   }
-  .rec-card cite {
+  .rec-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .rec-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: var(--radius-pill);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-weight: 700;
+  }
+  .rec-id {
+    display: grid;
+    min-width: 0;
+  }
+  .rec-name {
     font-style: normal;
     font-weight: 600;
     font-size: var(--fs-small);
   }
-  .rec-card footer span {
+  .rec-role {
     color: var(--text-3);
     font-size: var(--fs-xs);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
-  .about-recs-more {
-    margin-top: var(--space-4);
+  .rec-quote p {
+    color: var(--text-2);
     font-size: var(--fs-small);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .about-recs :global(.rec-card.is-open) .rec-quote p {
+    -webkit-line-clamp: unset;
+  }
+  .rec-more {
+    width: fit-content;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  .rec-more:hover {
+    color: var(--accent-hover);
+  }
+
+  .rec-cta {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: var(--space-2);
+    min-height: 100%;
+    padding: var(--space-4);
+    border: 1px dashed var(--accent-border);
+    border-radius: var(--radius-lg);
+    background: var(--accent-soft);
+    color: inherit;
+    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+  }
+  .rec-cta:hover {
+    text-decoration: none;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    color: inherit;
+  }
+  .rec-cta-n {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .rec-cta-text {
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+  .rec-cta-go {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
   }
 </style>

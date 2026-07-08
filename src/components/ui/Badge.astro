@@ -29,30 +29,21 @@ const { tone = 'neutral', dot = false, pulse = false, class: className } = Astro
     line-height: 1.6;
     white-space: nowrap;
   }
-  .badge--accent {
+  /* v3: paleta única — todos os tons de destaque rendem laranja.
+     Semântica preservada pela FORMA: ok/accent/info/crit = preenchido,
+     warn ("em andamento") = outline. */
+  .badge--accent,
+  .badge--ok,
+  .badge--info,
+  .badge--crit {
     background: var(--accent-soft);
     border-color: var(--accent-border);
     color: var(--accent);
   }
-  .badge--ok {
-    background: var(--ok-soft);
-    border-color: transparent;
-    color: var(--ok);
-  }
   .badge--warn {
-    background: var(--warn-soft);
-    border-color: transparent;
-    color: var(--warn);
-  }
-  .badge--crit {
-    background: var(--crit-soft);
-    border-color: transparent;
-    color: var(--crit);
-  }
-  .badge--info {
-    background: var(--info-soft);
-    border-color: transparent;
-    color: var(--info);
+    background: transparent;
+    border-color: var(--accent-border);
+    color: var(--accent);
   }
 
   .badge-dot {

@@ -1,0 +1,288 @@
+---
+/**
+ * b1t — mascote cyber do site (v3). Robô minimal com visor laranja:
+ * observa o cursor, pisca, dorme na inatividade, comemora conquistas,
+ * solta dicas ocasionais. Decorativo+interativo; some em telas pequenas
+ * e fica estático sob prefers-reduced-motion. Zero dependências.
+ */
+---
+
+<div id="mascot" class="mascot" data-state="idle">
+  <button type="button" class="mascot-hit" aria-label="b1t, o mascote do site — clique para interagir">
+    <svg class="mascot-svg" viewBox="0 0 64 64" width="58" height="58" aria-hidden="true">
+      <!-- antena -->
+      <line x1="32" y1="10" x2="32" y2="4" stroke="var(--border-strong)" stroke-width="2" />
+      <circle class="mascot-antenna" cx="32" cy="4" r="3" fill="var(--accent)" />
+      <!-- corpo -->
+      <rect x="10" y="10" width="44" height="38" rx="12" fill="var(--bg-raised)" stroke="var(--border-strong)" stroke-width="2" />
+      <!-- visor -->
+      <rect x="16" y="18" width="32" height="16" rx="8" fill="var(--bg)" stroke="var(--accent-border)" stroke-width="1.5" />
+      <!-- olhos -->
+      <g class="mascot-eyes">
+        <circle class="mascot-eye" cx="26" cy="26" r="3.2" fill="var(--accent)" />
+        <circle class="mascot-eye" cx="38" cy="26" r="3.2" fill="var(--accent)" />
+      </g>
+      <!-- olhos dormindo (traços) -->
+      <g class="mascot-eyes-sleep">
+        <line x1="22.5" y1="26" x2="29.5" y2="26" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
+        <line x1="34.5" y1="26" x2="41.5" y2="26" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" />
+      </g>
+      <!-- boca -->
+      <path class="mascot-mouth" d="M27 40h10" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" fill="none" />
+      <path class="mascot-mouth-happy" d="M26 39q6 6 12 0" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" fill="none" />
+      <!-- pés -->
+      <rect x="20" y="50" width="8" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <rect x="36" y="50" width="8" height="6" rx="3" fill="var(--bg-raised-2)" stroke="var(--border-strong)" stroke-width="1.5" />
+      <!-- linha de scan -->
+      <rect class="mascot-scanline" x="16" y="18" width="32" height="3" rx="1.5" fill="var(--accent)" opacity="0" />
+    </svg>
+  </button>
+  <p id="mascot-bubble" class="mascot-bubble" role="status" hidden></p>
+</div>
+
+<script>
+  const root = document.getElementById('mascot');
+  const bubble = document.getElementById('mascot-bubble');
+  const eyes = root?.querySelector<SVGGElement>('.mascot-eyes');
+
+  if (root && bubble && eyes) {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let idleTimer: ReturnType<typeof setTimeout>;
+    let bubbleTimer: ReturnType<typeof setTimeout>;
+
+    const say = (text: string, ms = 4200): void => {
+      bubble.textContent = text;
+      bubble.hidden = false;
+      clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(() => (bubble.hidden = true), ms);
+    };
+
+    const setState = (s: string): void => {
+      root.dataset.state = s;
+    };
+
+    /* olhos seguem o cursor */
+    if (!reduced) {
+      let raf = 0;
+      addEventListener(
+        'pointermove',
+        (e) => {
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            raf = 0;
+            const r = root.getBoundingClientRect();
+            const dx = e.clientX - (r.left + r.width / 2);
+            const dy = e.clientY - (r.top + r.height / 2);
+            const ang = Math.atan2(dy, dx);
+            const dist = Math.min(2.4, Math.hypot(dx, dy) / 90);
+            eyes.style.transform = `translate(${Math.cos(ang) * dist}px, ${Math.sin(ang) * dist}px)`;
+          });
+        },
+        { passive: true },
+      );
+
+      /* piscar de vez em quando */
+      setInterval(() => {
+        if (root.dataset.state !== 'sleep') {
+          root.classList.add('is-blink');
+          setTimeout(() => root.classList.remove('is-blink'), 160);
+        }
+      }, 3800);
+
+      /* scan ocasional */
+      setInterval(() => {
+        if (root.dataset.state === 'idle' && Math.random() < 0.5) {
+          setState('scan');
+          setTimeout(() => setState('idle'), 1600);
+        }
+      }, 14000);
+    }
+
+    /* dormir na inatividade, acordar com atividade */
+    const rearm = (): void => {
+      if (root.dataset.state === 'sleep') {
+        setState('idle');
+        say('acordei. algum alerta? 👀', 2600);
+      }
+      clearTimeout(idleTimer);
+      idleTimer = setTimeout(() => {
+        setState('sleep');
+        say('zZz… monitorando em standby', 3000);
+      }, 35000);
+    };
+    ['pointermove', 'scroll', 'keydown', 'click'].forEach((ev) =>
+      addEventListener(ev, rearm, { passive: true }),
+    );
+    rearm();
+
+    /* clique: feliz + mensagem */
+    const CLICK_MSGS = [
+      'oi! eu sou o b1t 🤖',
+      'dica: digite `matrix` no terminal',
+      'tem flag escondida por aqui…',
+      '50+ certificações. eu conferi uma por uma.',
+      'já inspecionou o código-fonte? 😏',
+      'sudo make me a sandwich → permission denied',
+      'shift à noite, CTF de dia.',
+      'experimenta `neofetch` no terminal!',
+    ];
+    let msgIdx = Math.floor(Math.random() * CLICK_MSGS.length);
+    root.querySelector('.mascot-hit')?.addEventListener('click', () => {
+      setState('happy');
+      say(CLICK_MSGS[msgIdx % CLICK_MSGS.length]!);
+      msgIdx++;
+      setTimeout(() => setState('idle'), 1400);
+    });
+
+    /* comemora conquistas do terminal */
+    addEventListener('pablodlz:achievement', ((e: CustomEvent<string>) => {
+      setState('happy');
+      say(`conquista: ${e.detail}! 🎉`, 5000);
+      setTimeout(() => setState('idle'), 2400);
+    }) as EventListener);
+
+    /* dica única após 20s parado na página */
+    setTimeout(() => {
+      if (!reduced && root.dataset.state === 'idle') {
+        say('psst — o terminal lá em cima é de verdade. digite `help`.');
+      }
+    }, 20000);
+  }
+</script>
+
+<style>
+  .mascot {
+    position: fixed;
+    left: 14px;
+    bottom: 14px;
+    z-index: 70;
+    display: grid;
+    justify-items: start;
+    gap: var(--space-2);
+  }
+  @media (max-width: 900px) {
+    .mascot {
+      display: none;
+    }
+  }
+
+  .mascot-hit {
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    transition: transform var(--dur-2) var(--ease);
+    animation: mascot-float 6s ease-in-out infinite;
+  }
+  .mascot-hit:hover {
+    transform: translateY(-3px);
+  }
+  @keyframes mascot-float {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    50% {
+      translate: 0 -4px;
+    }
+  }
+
+  .mascot-antenna {
+    animation: mascot-ping 2.4s var(--ease) infinite;
+    transform-origin: 32px 4px;
+  }
+  @keyframes mascot-ping {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .mascot-eyes {
+    transition: transform 120ms linear;
+  }
+  .mascot-eyes-sleep,
+  .mascot-mouth-happy {
+    opacity: 0;
+  }
+
+  /* piscar */
+  .mascot.is-blink .mascot-eyes {
+    transform: scaleY(0.12);
+    transform-origin: 32px 26px;
+  }
+
+  /* dormindo */
+  .mascot[data-state='sleep'] .mascot-eyes {
+    opacity: 0;
+  }
+  .mascot[data-state='sleep'] .mascot-eyes-sleep {
+    opacity: 1;
+  }
+  .mascot[data-state='sleep'] .mascot-hit {
+    animation-duration: 9s;
+    filter: saturate(0.6) brightness(0.85);
+  }
+
+  /* feliz */
+  .mascot[data-state='happy'] .mascot-mouth {
+    opacity: 0;
+  }
+  .mascot[data-state='happy'] .mascot-mouth-happy {
+    opacity: 1;
+  }
+  .mascot[data-state='happy'] .mascot-hit {
+    animation: mascot-bounce 500ms var(--ease) 2;
+  }
+  @keyframes mascot-bounce {
+    0%,
+    100% {
+      translate: 0 0;
+    }
+    45% {
+      translate: 0 -9px;
+    }
+  }
+
+  /* scan */
+  .mascot[data-state='scan'] .mascot-scanline {
+    animation: mascot-scan 1.5s var(--ease) 1;
+  }
+  @keyframes mascot-scan {
+    0% {
+      opacity: 0.7;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(13px);
+    }
+  }
+
+  .mascot-bubble {
+    max-width: 230px;
+    padding: 8px 12px;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+    border-bottom-left-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text);
+    box-shadow: var(--shadow-lightbox);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mascot-hit,
+    .mascot-antenna {
+      animation: none;
+    }
+    .mascot[data-state='happy'] .mascot-hit,
+    .mascot[data-state='scan'] .mascot-scanline {
+      animation: none;
+    }
+  }
+</style>
