@@ -216,7 +216,7 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
     ];
   };
   const neofetch = (): string[] => [
-    '       _____           pablodlz@portfolio',
+    '       _____           root@kali',
     '      /  __ \\          ─────────────────────────',
     "      | |  \\/          OS......: KaliOS 3.0 (portfolio-hardened)",
     '      | |  __          Host....: GitHub Pages · static',
@@ -865,7 +865,8 @@ export function initTerminal(opts: { unlock: (name: string, text: string) => voi
 
   async function exec(rawLine: string): Promise<void> {
     const raw = rawLine.trim();
-    print(`pablodlz@portfolio:${cwd()}$ ${raw}`, 't-cmd');
+    // prompt casa com o título fixo da janela (root@kali), não o usuário do SO
+    print(`root@kali:${cwd()}# ${raw}`, 't-cmd');
     if (!raw) return;
     const lower = raw.toLowerCase();
     const resolvedFull = ALIASES[lower] ?? lower;

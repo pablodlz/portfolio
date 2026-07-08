@@ -93,6 +93,7 @@
     const say = (text: string, ms = 4200, force = false): void => {
       if (asleep) return;
       if (termActive && !force) return; // não compete com quem digita no terminal
+      if (!atHome) walkHome(); // volta pro bloco pra falar (o balão é fixo lá)
       bubble.textContent = text;
       bubble.hidden = false;
       clearTimeout(bubbleTimer);
@@ -125,30 +126,51 @@
     const RARE_ANIMS = ['dance', 'backflip', 'slip', 'shiver'];
 
     /* ------------------------------------------------ passeio ----------- */
-    const roamTo = (x: number, dur = 3200): void => {
-      if (reduced || coarse) return;
-      roamX = Math.max(0, Math.min(maxRoam(), x));
+    let atHome = true;
+    let returnTimer: ReturnType<typeof setTimeout>;
+    const DROP = 14; // desce do "bloco" pra andar no chão
+    const setRoam = (x: number, y: number, dur: number): void => {
+      root.style.setProperty('--roam-x', `${x}px`);
+      root.style.setProperty('--roam-y', `${y}px`);
       root.style.setProperty('--roam-dur', `${dur}ms`);
-      root.style.setProperty('--roam-x', `${roamX}px`);
-      root.classList.add('is-walking');
-      setTimeout(() => root.classList.remove('is-walking'), dur);
+    };
+    const walkDur = (dist: number): number => Math.min(4200, Math.round(6 * dist + 700));
+
+    const walkOut = (): void => {
+      if (reduced || coarse || asleep || busy || !atHome) return;
+      const x = 70 + Math.random() * (maxRoam() - 70);
+      roamX = x;
+      atHome = false;
+      const dur = walkDur(x);
+      setRoam(0, DROP, 320); // 1) desce do bloco
+      setTimeout(() => {
+        setRoam(x, DROP, dur); // 2) caminha
+        root.classList.add('is-walking');
+        setTimeout(() => root.classList.remove('is-walking'), dur);
+      }, 320);
+      clearTimeout(returnTimer);
+      returnTimer = setTimeout(walkHome, 320 + dur + 2600 + Math.random() * 3600);
     };
 
-    /* ------------------------------------------------ holo particles ---- */
-    const holo = (n = 6, glyphs = ['◇', '·', '△', '01', '10', '⬡']): void => {
-      if (reduced) return;
-      for (let i = 0; i < n; i++) {
-        const p = document.createElement('span');
-        p.className = 'mascot-holo';
-        p.textContent = rnd(glyphs);
-        const ang = Math.random() * Math.PI * 2;
-        const dist = 26 + Math.random() * 34;
-        p.style.setProperty('--hx', `${Math.cos(ang) * dist}px`);
-        p.style.setProperty('--hy', `${Math.sin(ang) * dist - 10}px`);
-        p.style.setProperty('--hd', `${400 + Math.random() * 400}ms`);
-        body.appendChild(p);
-        setTimeout(() => p.remove(), 900);
-      }
+    const walkHome = (): void => {
+      if (reduced || coarse || atHome) return;
+      clearTimeout(returnTimer);
+      const dur = walkDur(roamX);
+      setRoam(0, DROP, dur); // 1) caminha de volta
+      root.classList.add('is-walking');
+      setTimeout(() => {
+        root.classList.remove('is-walking');
+        setRoam(0, 0, 320); // 2) sobe de volta pro bloco
+        atHome = true;
+        roamX = 0;
+      }, dur);
+    };
+
+    // (removido a pedido do Pablo) as partículas de texto solto viravam poluição;
+    // agora só o balão comunica. Mantido como no-op p/ não mexer nos call sites.
+    const holo = (_n = 6, _glyphs: string[] = []): void => {
+      void _n;
+      void _glyphs;
     };
 
     /* ------------------------------------------------ olhos seguem ------ */
@@ -170,13 +192,7 @@
             const near = Math.hypot(dx, dy) < 90;
             if (near && !busy && !asleep && root.dataset.state !== 'near') {
               setState('near');
-              if (Math.random() < 0.5) {
-                anim('wave', 800);
-              } else if (Math.random() < 0.4) {
-                // foge de brincadeira
-                roamTo(roamX > maxRoam() / 2 ? roamX - 120 : roamX + 120, 700);
-                anim('hop', 700);
-              }
+              anim(Math.random() < 0.5 ? 'wave' : 'hop', 800); // reage sem sair do lugar
             } else if (!near && root.dataset.state === 'near') {
               setState('idle');
             }
@@ -218,21 +234,35 @@
       { text: 'já clicou em mim? tenho vários truques. 😉', anim: 'jump' },
     ];
 
+    // dicas úteis (as "de antes") — voltam junto com as travessuras novas
+    const TIPS = [
+      'psst — o terminal aí em cima é de verdade. digite `help`.',
+      'dica: TAB completa comandos no terminal.',
+      'já tentou `matrix`? 😎',
+      'tem um segredo no código-fonte… F12.',
+      '`./pablodlz.sh` desbloqueia uma conquista.',
+      '50+ certificações lá embaixo. eu contei uma a uma.',
+      '`coffee` no terminal. confia.',
+      'experimenta `neofetch` — fica lindo.',
+    ];
+
     const idleTick = (): void => {
       const delay = 5200 + Math.random() * 7000;
       setTimeout(() => {
-        if (!asleep && !busy && root.dataset.state === 'idle') {
+        if (!asleep && !busy && root.dataset.state === 'idle' && atHome) {
           const roll = Math.random();
-          if (!coarse && roll < 0.28) {
-            // passeia para um novo ponto
-            roamTo(Math.random() * maxRoam(), 2600 + Math.random() * 1800);
-          } else if (roll < 0.5) {
-            // pequena travessura com fala
+          if (!coarse && roll < 0.22) {
+            walkOut(); // sai pra passear (desce do bloco, anda, volta e sobe)
+          } else if (roll < 0.42) {
+            // travessura com fala
             const a = rnd(ANTICS);
             if (a.emo) setEmotion(a.emo);
             if (a.anim) anim(a.anim, a.anim === 'scan' ? 1400 : 900);
             if (a.holo) holo();
             say(a.text, 3600);
+          } else if (roll < 0.64) {
+            // dica útil (as de antes)
+            say(rnd(TIPS), 4200);
           } else {
             // animação ociosa pura (raras liberadas pelo vínculo)
             const pool = friendship >= 4 ? [...IDLE_ANIMS, ...RARE_ANIMS] : IDLE_ANIMS;
@@ -253,7 +283,7 @@
         setTimeout(() => {
           asleep = true;
           setState('sleep');
-          roamTo(0, 1200); // volta pra casa pra dormir
+          walkHome(); // volta pro bloco pra dormir
         }, 1100);
       }, 38000);
     };
@@ -354,6 +384,8 @@
 </script>
 
 <style>
+  /* container FIXO — nunca se move. O balão vive aqui e por isso fica estático:
+     só o robô (.mascot-hit) passeia, então o balão nunca "anda junto". */
   .mascot {
     position: fixed;
     left: 14px;
@@ -362,9 +394,10 @@
     display: grid;
     justify-items: start;
     gap: var(--space-2);
-    transform: translateX(var(--roam-x, 0px));
-    transition: transform var(--roam-dur, 3s) cubic-bezier(0.5, 0, 0.5, 1);
-    will-change: transform;
+    /* sem realce azul de seleção/tap ao clicar — a identidade é laranja */
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
   .mascot[hidden] {
     display: none;
@@ -380,11 +413,22 @@
     }
   }
 
+  /* só o robô recebe o transform do passeio (translate = flutuar;
+     transform = passear). Ao sair, "desce do bloco" (roam-y); ao voltar, sobe. */
   .mascot-hit {
     position: relative;
     cursor: pointer;
     border-radius: var(--radius-lg);
+    -webkit-tap-highlight-color: transparent;
     animation: m-float 6s ease-in-out infinite;
+    transform: translate(var(--roam-x, 0px), var(--roam-y, 0px));
+    transition: transform var(--roam-dur, 3s) cubic-bezier(0.5, 0, 0.5, 1);
+    will-change: transform;
+  }
+  /* foco por teclado: contorno laranja (nunca azul do browser) */
+  .mascot-hit:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
   }
   .mascot-body {
     position: relative;
@@ -518,25 +562,12 @@
   .is-hackpose { animation: m-hackpose 1.2s var(--ease); }
   @keyframes m-hackpose { 0% { transform: translateY(0); } 20% { transform: translateY(-8px) rotate(-6deg); } 60% { transform: translateY(-8px) rotate(6deg); } 100% { transform: translateY(0); } }
 
-  /* passo (durante o passeio) */
-  .mascot.is-walking .mascot-body { animation: m-walk 0.42s ease-in-out infinite; }
-  @keyframes m-walk { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-3px); } }
-
-  /* ---------------- partículas holográficas ---------------- */
-  .mascot-holo {
-    position: absolute;
-    left: 50%;
-    top: 40%;
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    color: var(--accent);
-    pointer-events: none;
-    animation: m-holo var(--hd, 700ms) var(--ease) forwards;
-  }
-  @keyframes m-holo {
-    0% { opacity: 0.9; transform: translate(-50%, -50%); }
-    100% { opacity: 0; transform: translate(calc(-50% + var(--hx)), calc(-50% + var(--hy))); }
-  }
+  /* passo (durante o passeio) — corpo balança e as patinhas dão passos */
+  .mascot.is-walking .mascot-body { animation: m-walk 0.34s ease-in-out infinite; }
+  @keyframes m-walk { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(3deg) translateY(-2px); } }
+  .mascot.is-walking .m-foot-l { animation: m-step 0.34s ease-in-out infinite; }
+  .mascot.is-walking .m-foot-r { animation: m-step 0.34s ease-in-out infinite; animation-delay: 0.17s; }
+  @keyframes m-step { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3.5px); } }
 
   /* ---------------- balão ---------------- */
   .mascot-bubble {

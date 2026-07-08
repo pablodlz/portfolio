@@ -436,6 +436,8 @@ function initTerminalInvite(input: HTMLInputElement): void {
 
   const PHRASES = [
     'digite help e pressione Enter',
+    'tente ./pablodlz.sh',
+    'explore: matrix · coffee · secret',
     'tente nmap · sqlmap · matrix',
     'explore: about · skills · resume',
   ];
