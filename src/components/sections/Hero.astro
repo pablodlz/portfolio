@@ -1,0 +1,118 @@
+---
+import { data } from '../../lib/data';
+import Button from '../ui/Button.astro';
+import Badge from '../ui/Badge.astro';
+import Terminal from '../ui/Terminal.astro';
+
+const { profile, about } = data;
+// Subtítulo: headline + primeira frase do summary (recorte, não invenção).
+const firstSentence = about.summary.split('. ')[0] + '.';
+const [firstName, ...restName] = profile.fullName.split(' ');
+
+// Linhas do terminal preparadas aqui (template fica simples p/ o compilador).
+const termLines = about.easterEgg.content.map((line, i) => ({
+  text: line === '' ? ' ' : line,
+  accent: line.startsWith('┌') || line.startsWith('└'),
+  i,
+}));
+---
+
+<section id="top" class="hero atmosphere">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="reveal" style="--reveal-index: 0">
+        <Badge tone="accent" dot pulse>SOC ANALYST @ CLAVIS — NA ATIVA</Badge>
+      </p>
+
+      <h1 class="reveal" style="--reveal-index: 1">
+        <span class="text-gradient">{firstName}</span><br />
+        <span class="text-accent">{restName.join(' ')}</span>
+      </h1>
+
+      <p class="hero-sub reveal" style="--reveal-index: 2">
+        {firstSentence}
+      </p>
+
+      <p class="hero-headline reveal" style="--reveal-index: 3">{profile.headline}</p>
+
+      <div class="hero-ctas reveal" style="--reveal-index: 4">
+        <Button href="#contato" variant="primary" icon="mail">Contato</Button>
+        <Button href={profile.contact.github} variant="secondary" icon="github" external>
+          GitHub
+        </Button>
+        <Button href={profile.contact.linkedin} variant="secondary" icon="linkedin" external>
+          LinkedIn
+        </Button>
+      </div>
+    </div>
+
+    <div class="hero-terminal reveal" style="--reveal-index: 5">
+      <Terminal title="root@kali: ~/pablodlz" ariaLabel="Terminal decorativo com easter egg">
+        <pre>{termLines.map((l) => <span class={l.accent ? 't-line t-accent' : 't-line'} style={`--t-index: ${l.i}`}>{l.text}</span>)}<span class="t-line" style={`--t-index: ${termLines.length}`}><span class="t-accent">&#10095;</span> <span class="t-cursor" aria-hidden="true"></span></span></pre>
+      </Terminal>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(4.5rem, 11vw, 8.5rem) var(--section-pad);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    gap: var(--space-8);
+    align-items: center;
+  }
+  @media (max-width: 960px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-7);
+    }
+  }
+
+  .hero-copy {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+  }
+  .hero-sub {
+    font-size: var(--fs-body-lg);
+    color: var(--text-2);
+    max-width: 34rem;
+  }
+  .hero-headline {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    letter-spacing: 0.02em;
+  }
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  /* linhas do terminal "digitam" em cascata */
+  .t-line {
+    display: block;
+    opacity: 0;
+    animation: t-line-in 300ms var(--ease) forwards;
+    animation-delay: calc(400ms + var(--t-index, 0) * 140ms);
+  }
+  @keyframes t-line-in {
+    to {
+      opacity: 1;
+    }
+  }
+  html.no-js .t-line {
+    opacity: 1;
+    animation: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .t-line {
+      opacity: 1;
+      animation: none;
+    }
+  }
+</style>

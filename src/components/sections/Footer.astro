@@ -1,0 +1,132 @@
+---
+import { data, obfuscatedEmail } from '../../lib/data';
+import { withBase } from '../../lib/url';
+
+const year = new Date().getFullYear();
+const mail = obfuscatedEmail();
+const repoUrl = `${data.profile.contact.github}/portfolio`;
+
+const SECTION_LINKS = [
+  { href: '#sobre', label: 'Sobre' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#experiencia', label: 'Experiência' },
+  { href: '#formacao', label: 'Formação' },
+  { href: '#projetos', label: 'Projetos' },
+  { href: '#certificacoes', label: 'Certificações' },
+  { href: '#publicacoes', label: 'Publicações' },
+  { href: '#contato', label: 'Contato' },
+];
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-id">
+        <p class="footer-brand">pg<span class="text-accent">_</span></p>
+        <p class="footer-role">{data.profile.fullName}<br />{data.profile.role}</p>
+        <p class="footer-copy">© {year} — todos os direitos reservados</p>
+      </div>
+
+      <nav aria-label="Rodapé" class="footer-nav">
+        <p class="footer-heading">Seções</p>
+        <ul>
+          {SECTION_LINKS.map((l) => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="footer-meta">
+        <p class="footer-heading">Meta</p>
+        <ul>
+          <li>
+            <a href={data.profile.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+          </li>
+          <li>
+            <a href={data.profile.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          </li>
+          <li>
+            <a class="js-mail" data-u={mail.u} data-d={mail.d} href="#contato">E-mail</a>
+          </li>
+          <li><a href={withBase('/.well-known/security.txt')}>security.txt</a></li>
+          <li>
+            <a href={`${repoUrl}/blob/main/SECURITY.md`} target="_blank" rel="noopener noreferrer">
+              Política de segurança
+            </a>
+          </li>
+          <li>
+            <a href={repoUrl} target="_blank" rel="noopener noreferrer">Código-fonte deste site ↗</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer-line">
+      built with Astro · 0 trackers · CSP strict · open-source e auditável · feito em Jacarezinho-PR
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-block: var(--space-7) var(--space-6);
+    background: var(--bg-raised);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--space-6);
+  }
+  @media (max-width: 760px) {
+    .footer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .footer-brand {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  .footer-role {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    margin-top: var(--space-2);
+  }
+  .footer-copy {
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    margin-top: var(--space-4);
+  }
+
+  .footer-heading {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    margin-bottom: var(--space-3);
+  }
+  .footer-nav ul,
+  .footer-meta ul {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .footer a {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+  .footer a:hover {
+    color: var(--accent);
+  }
+
+  .footer-line {
+    margin-top: var(--space-7);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+</style>

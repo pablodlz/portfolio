@@ -1,0 +1,7 @@
+# security.txt — RFC 9116
+# Site estático pessoal de Pablo de Souza Galerani (SOC Analyst).
+Contact: mailto:pablogalerani@gmail.com
+Expires: 2027-07-07T00:00:00.000Z
+Preferred-Languages: pt, en
+Canonical: https://pablodlz.github.io/portfolio/.well-known/security.txt
+Policy: https://github.com/pablodlz/portfolio/blob/main/SECURITY.md

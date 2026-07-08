@@ -1,0 +1,205 @@
+---
+import { data } from '../../lib/data';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import Tag from '../ui/Tag.astro';
+
+const { education, about } = data;
+const featured = education.slice(0, 2);
+const rest = education.slice(2);
+---
+
+<section id="formacao" class="section">
+  <div class="container">
+    <SectionHeading
+      eyebrow="education"
+      title="Formação"
+      description="Pós em Cibersegurança Ofensiva e tecnólogo em Segurança da Informação."
+    />
+
+    <div class="edu-grid">
+      <div class="edu-featured">
+        {featured.map((ed, i) => (
+          <Card as="article" class="edu-card reveal" style={`--reveal-index: ${i}`}>
+            <div class="edu-head">
+              <Badge tone="accent">{ed.degree}</Badge>
+              <time class="edu-years">{ed.startYear}–{ed.endYear}</time>
+            </div>
+            <h3>{ed.field}</h3>
+            <p class="edu-inst">{ed.institution}</p>
+            <details class="edu-details">
+              <summary>Ver ementa</summary>
+              <p>{ed.description}</p>
+            </details>
+            {ed.skills.length > 0 && (
+              <ul class="edu-skills" aria-label="Competências">
+                {ed.skills.map((s) => (
+                  <li><Tag>{s}</Tag></li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        ))}
+
+        <ul class="edu-rest reveal" style="--reveal-index: 2">
+          {rest.map((ed) => (
+            <li>
+              <div>
+                <p class="edu-rest-field">{ed.field}</p>
+                <p class="edu-rest-inst">{ed.institution}</p>
+              </div>
+              <time class="edu-years">{ed.startYear}–{ed.endYear}</time>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <Card class="edu-radar reveal" style="--reveal-index: 1">
+        <h3 class="edu-radar-title">Radar de certificações</h3>
+        <ul class="edu-radar-list">
+          {about.certificacoesEmAndamento.map((c) => (
+            <li>
+              <span class="edu-radar-name">{c.name}</span>
+              <Badge tone={c.status === 'concluída' ? 'ok' : 'warn'} dot>
+                {c.status}
+              </Badge>
+            </li>
+          ))}
+        </ul>
+        <p class="edu-radar-sub">Próximos alvos</p>
+        <ul class="edu-radar-goals" aria-label="Metas futuras de certificação">
+          {about.metasFuturas.map((m) => (
+            <li><Tag>alvo: {m}</Tag></li>
+          ))}
+        </ul>
+      </Card>
+    </div>
+  </div>
+</section>
+
+<style>
+  .edu-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .edu-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .edu-featured {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .edu-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .edu-years {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+  .edu-inst {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    margin-top: 2px;
+  }
+
+  .edu-details {
+    margin-top: var(--space-3);
+  }
+  .edu-details summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    list-style: none;
+    width: fit-content;
+  }
+  .edu-details summary::-webkit-details-marker {
+    display: none;
+  }
+  .edu-details summary::after {
+    content: ' ↓';
+  }
+  .edu-details[open] summary::after {
+    content: ' ↑';
+  }
+  .edu-details p {
+    margin-top: var(--space-3);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+  .edu-skills {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .edu-rest {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .edu-rest li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+  .edu-rest-field {
+    font-weight: 500;
+    font-size: var(--fs-small);
+  }
+  .edu-rest-inst {
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+  }
+
+  .edu-radar {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .edu-radar-title {
+    font-size: var(--fs-h3);
+  }
+  .edu-radar-list {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .edu-radar-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .edu-radar-name {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .edu-radar-sub {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+    margin-top: var(--space-2);
+  }
+  .edu-radar-goals {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+</style>

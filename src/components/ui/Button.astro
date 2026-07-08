@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+import type { IconName } from '../../lib/icons';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  icon?: IconName;
+  external?: boolean;
+  class?: string;
+  /** atributos data-* extras (ex.: mailto ofuscado) */
+  [key: `data-${string}`]: string | undefined;
+}
+
+const { href, variant = 'primary', icon, external = false, class: className, ...rest } = Astro.props;
+const externalAttrs = external ? { target: '_blank', rel: 'noopener noreferrer' } : {};
+---
+
+<a class:list={['btn', `btn--${variant}`, className]} {href} {...externalAttrs} {...rest}>
+  {icon && <Icon name={icon} size={18} />}
+  <slot />
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    font-size: var(--fs-small);
+    line-height: 1;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+      background-color var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease),
+      color var(--dur-2) var(--ease),
+      transform var(--dur-1) var(--ease);
+  }
+  .btn:hover {
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .btn--primary {
+    background: var(--accent);
+    color: var(--on-accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-hover);
+    color: var(--on-accent);
+  }
+
+  .btn--secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn--secondary:hover {
+    color: var(--text);
+    border-color: var(--text-3);
+    background: var(--bg-raised);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: var(--text-2);
+    padding-inline: var(--space-3);
+  }
+  .btn--ghost:hover {
+    color: var(--text);
+    background: var(--bg-raised-2);
+  }
+</style>

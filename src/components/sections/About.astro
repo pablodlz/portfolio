@@ -1,0 +1,209 @@
+---
+import { Image } from 'astro:assets';
+import { data } from '../../lib/data';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import Tag from '../ui/Tag.astro';
+import Icon from '../ui/Icon.astro';
+import profilePhoto from '../../../img/image.jpeg';
+
+const { profile, about, recommendationsReceived } = data;
+const others = recommendationsReceived.total - recommendationsReceived.highlighted.length;
+---
+
+<section id="sobre" class="section">
+  <div class="container">
+    <SectionHeading
+      eyebrow="whoami"
+      title="Sobre"
+      description="Segurança como ofício e como padrão de qualidade."
+    />
+
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p class="about-summary">{about.summary}</p>
+
+        <h3>No dia a dia</h3>
+        <ul class="about-daily">
+          {about.experiencia.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+
+        <h3>Stack em uso</h3>
+        <ul class="about-pills" aria-label="Principais competências">
+          {data.topSkills.map((s) => (
+            <li><Tag>{s}</Tag></li>
+          ))}
+        </ul>
+      </div>
+
+      <Card class="about-card reveal" style="--reveal-index: 1">
+        <Image
+          src={profilePhoto}
+          alt={`Foto de ${profile.fullName}`}
+          width={320}
+          height={320}
+          class="about-photo"
+        />
+        <div class="about-card-head">
+          <p class="about-name">{profile.shortName}</p>
+          <p class="about-role">{profile.role}</p>
+          <Badge tone="ok" dot>Na ativa @ {profile.company.split(' ')[0]}</Badge>
+        </div>
+        <ul class="about-facts">
+          <li>
+            <Icon name="map-pin" size={16} />
+            {profile.location}
+          </li>
+          <li>
+            <Icon name="languages" size={16} />
+            {profile.languages.map((l) => l.name).join(' · ')}
+          </li>
+          <li>
+            <Icon name="activity" size={16} />
+            {profile.followers.toLocaleString('pt-BR')} seguidores no LinkedIn
+          </li>
+        </ul>
+        <ul class="about-soft" aria-label="Competências comportamentais">
+          {about.habilidades.map((h) => (
+            <li><Tag>{h}</Tag></li>
+          ))}
+        </ul>
+      </Card>
+    </div>
+
+    <div class="about-recs">
+      {recommendationsReceived.highlighted.map((rec, i) => (
+        <Card as="article" class="rec-card reveal" style={`--reveal-index: ${i}`}>
+          <blockquote>
+            <p>“{rec.text}”</p>
+          </blockquote>
+          <footer>
+            <cite>{rec.author}</cite>
+            <span>{rec.authorTitle}</span>
+          </footer>
+        </Card>
+      ))}
+    </div>
+    <p class="about-recs-more reveal">
+      <a href={profile.profileUrl} target="_blank" rel="noopener noreferrer">
+        +{others} outras recomendações no LinkedIn ↗
+      </a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .about-text {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .about-summary {
+    font-size: var(--fs-body-lg);
+    color: var(--text-2);
+  }
+  .about-text h3 {
+    margin-top: var(--space-3);
+  }
+  .about-daily {
+    display: grid;
+    gap: var(--space-3);
+    color: var(--text-2);
+    padding-left: 1.1rem;
+    list-style: '▸  ';
+  }
+  .about-daily li::marker {
+    color: var(--accent);
+  }
+  .about-pills,
+  .about-soft {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .about-card {
+    display: grid;
+    gap: var(--space-4);
+    justify-items: start;
+  }
+  :global(.about-photo) {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-lg);
+    object-fit: cover;
+    border: 1px solid var(--border-strong);
+  }
+  .about-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+  .about-role {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    margin-bottom: var(--space-2);
+  }
+  .about-facts {
+    display: grid;
+    gap: var(--space-2);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+  .about-facts li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .about-facts :global(svg) {
+    color: var(--text-3);
+    flex: none;
+  }
+
+  .about-recs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+  @media (max-width: 900px) {
+    .about-recs {
+      grid-template-columns: 1fr;
+    }
+  }
+  .rec-card blockquote p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+  .rec-card footer {
+    margin-top: var(--space-4);
+    display: grid;
+  }
+  .rec-card cite {
+    font-style: normal;
+    font-weight: 600;
+    font-size: var(--fs-small);
+  }
+  .rec-card footer span {
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+  }
+  .about-recs-more {
+    margin-top: var(--space-4);
+    font-size: var(--fs-small);
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Terminal from '../components/ui/Terminal.astro';
+import Button from '../components/ui/Button.astro';
+import { withBase } from '../lib/url';
+---
+
+<BaseLayout title="404 — página não encontrada">
+  <main class="nf atmosphere">
+    <div class="container nf-inner">
+      <Terminal title="root@kali: ~" ariaLabel="Erro 404 em estilo terminal">
+        <pre><span class="t-accent">❯</span> curl -I {'https://pablodlz.github.io/portfolio/…'}
+HTTP/2 404
+<span class="t-accent">❯</span> echo "rota não encontrada — voltando à base"<span class="t-cursor" aria-hidden="true"></span></pre>
+      </Terminal>
+      <h1>404</h1>
+      <p>Essa rota não existe (ou foi movida para a DMZ).</p>
+      <Button href={withBase('/')} variant="primary" icon="terminal">Voltar ao início</Button>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .nf {
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding-block: var(--space-8);
+  }
+  .nf-inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-5);
+    max-width: 34rem;
+  }
+  .nf h1 {
+    font-size: var(--fs-display);
+  }
+  .nf p {
+    color: var(--text-2);
+  }
+</style>

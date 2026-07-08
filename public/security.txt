@@ -1,0 +1,6 @@
+# security.txt — RFC 9116 (cópia; canônico em /.well-known/security.txt)
+Contact: mailto:pablogalerani@gmail.com
+Expires: 2027-07-07T00:00:00.000Z
+Preferred-Languages: pt, en
+Canonical: https://pablodlz.github.io/portfolio/.well-known/security.txt
+Policy: https://github.com/pablodlz/portfolio/blob/main/SECURITY.md

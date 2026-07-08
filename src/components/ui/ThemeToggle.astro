@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+---
+
+<button
+  id="theme-toggle"
+  class="theme-toggle"
+  type="button"
+  aria-pressed="false"
+  aria-label="Alternar entre tema escuro e claro"
+>
+  <Icon name="sun" size={18} class="icon-sun" />
+  <Icon name="moon" size={18} class="icon-moon" />
+</button>
+
+<style>
+  .theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    background: transparent;
+    cursor: pointer;
+    transition:
+      color var(--dur-2) var(--ease),
+      border-color var(--dur-2) var(--ease),
+      background-color var(--dur-2) var(--ease);
+  }
+  .theme-toggle:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+    background: var(--bg-raised);
+  }
+
+  /* dark mostra o sol (ação: ir p/ claro); light mostra a lua */
+  :global(html[data-theme='light']) .theme-toggle :global(.icon-sun) {
+    display: none;
+  }
+  :global(html:not([data-theme='light'])) .theme-toggle :global(.icon-moon) {
+    display: none;
+  }
+  /* sem JS o botão não funciona — escondê-lo */
+  :global(html.no-js) .theme-toggle {
+    display: none;
+  }
+</style>

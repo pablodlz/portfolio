@@ -1,0 +1,173 @@
+---
+import ThemeToggle from '../ui/ThemeToggle.astro';
+import Icon from '../ui/Icon.astro';
+
+const LINKS = [
+  { href: '#sobre', label: 'Sobre' },
+  { href: '#skills', label: 'Skills' },
+  { href: '#experiencia', label: 'Experiência' },
+  { href: '#certificacoes', label: 'Certificações' },
+  { href: '#publicacoes', label: 'Publicações' },
+  { href: '#contato', label: 'Contato' },
+];
+---
+
+<header class="nav-wrap">
+  <nav class="nav container" aria-label="Principal">
+    <a class="brand" href="#top" aria-label="Voltar ao topo">pg<span class="brand-cursor">_</span></a>
+
+    <ul class="nav-links">
+      {LINKS.map((l) => (
+        <li><a href={l.href}>{l.label}</a></li>
+      ))}
+    </ul>
+
+    <div class="nav-actions">
+      <details class="nav-mobile">
+        <summary aria-label="Abrir menu de seções">
+          <Icon name="chevron-down" size={18} />
+          <span class="nav-mobile-label">Menu</span>
+        </summary>
+        <ul class="nav-mobile-panel">
+          {LINKS.map((l) => (
+            <li><a href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </details>
+      <ThemeToggle />
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Fecha o dropdown mobile ao escolher uma âncora (details continua funcional sem JS).
+  const details = document.querySelector<HTMLDetailsElement>('.nav-mobile');
+  details?.addEventListener('click', (ev) => {
+    if ((ev.target as HTMLElement).closest('a')) details.open = false;
+  });
+</script>
+
+<style>
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: 60px;
+  }
+
+  .brand {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .brand:hover {
+    text-decoration: none;
+    color: var(--text);
+  }
+  .brand-cursor {
+    color: var(--accent);
+    animation: brand-blink 1.1s steps(2, start) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .brand-cursor {
+      animation: none;
+    }
+  }
+  @keyframes brand-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--space-5);
+  }
+  .nav-links a {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .nav-links a:hover {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  /* dropdown mobile nativo */
+  .nav-mobile {
+    position: relative;
+    display: none;
+  }
+  .nav-mobile summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    cursor: pointer;
+    padding: 7px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .nav-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+  .nav-mobile[open] summary {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .nav-mobile-panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    min-width: 190px;
+    display: grid;
+    padding: var(--space-2);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lightbox);
+  }
+  .nav-mobile-panel a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .nav-mobile-panel a:hover {
+    color: var(--text);
+    background: var(--bg-raised-2);
+    text-decoration: none;
+  }
+
+  @media (max-width: 760px) {
+    .nav-links {
+      display: none;
+    }
+    .nav-mobile {
+      display: block;
+    }
+  }
+</style>

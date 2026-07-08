@@ -1,0 +1,409 @@
+---
+import { Image, getImage } from 'astro:assets';
+import { data, certImage, repoCertImage } from '../../lib/data';
+import { issuerOf, ISSUER_GROUPS, type IssuerGroup } from '../../lib/certs';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Badge from '../ui/Badge.astro';
+import Icon from '../ui/Icon.astro';
+
+const { certifications, certificateImagesInRepo } = data;
+const files = certifications.downloadedDocuments.files;
+
+// Versões ampliadas p/ o lightbox (sem upscale além do original)
+const fullVersions = new Map<string, string>();
+for (const f of files) {
+  const meta = certImage(f.file);
+  const full = await getImage({ src: meta, width: Math.min(1400, meta.width), format: 'webp' });
+  fullVersions.set(f.file, full.src);
+}
+for (const c of certificateImagesInRepo) {
+  const meta = repoCertImage(c.file);
+  const full = await getImage({ src: meta, width: Math.min(1400, meta.width), format: 'webp' });
+  fullVersions.set(c.file, full.src);
+}
+
+// contagem por emissor p/ os filtros
+const counts = new Map<IssuerGroup, number>();
+for (const f of files) {
+  const g = issuerOf(f.file);
+  counts.set(g, (counts.get(g) ?? 0) + 1);
+}
+const groups = ISSUER_GROUPS.filter((g) => (counts.get(g) ?? 0) > 0);
+
+const verifiableCount = certificateImagesInRepo.filter((c) => c.verifyUrl !== null).length;
+
+const stats = [
+  { n: files.length, label: 'documentos comprobatórios' },
+  { n: certifications.items.length, label: 'certificações e treinamentos', plus: true },
+  { n: verifiableCount, label: 'verificáveis online' },
+];
+---
+
+<section id="certificacoes" class="section">
+  <div class="container">
+    <SectionHeading
+      eyebrow="credentials"
+      title="Certificações"
+      description="Cada documento abaixo abre em tela cheia. Filtre por emissor."
+    />
+
+    <ul class="cert-stats reveal">
+      {stats.map((s) => (
+        <li>
+          <span class="cert-stat-n">{s.n}{s.plus && <span class="cert-stat-plus">+</span>}</span>
+          <span class="cert-stat-label">{s.label}</span>
+        </li>
+      ))}
+    </ul>
+
+    <div id="cert-filters" class="cert-filters" hidden>
+      <button type="button" data-filter="all" aria-pressed="true">
+        Todos <span class="cert-count">{files.length}</span>
+      </button>
+      {groups.map((g) => (
+        <button type="button" data-filter={g} aria-pressed="false">
+          {g} <span class="cert-count">{counts.get(g)}</span>
+        </button>
+      ))}
+    </div>
+
+    <ul id="cert-grid" class="cert-grid">
+      {files.map((f, i) => {
+        const meta = certImage(f.file);
+        const issuer = issuerOf(f.file);
+        return (
+          <li data-issuer={issuer} class="reveal" style={`--reveal-index: ${Math.min(i % 8, 7)}`}>
+            <button
+              type="button"
+              class="cert-trigger"
+              data-full={fullVersions.get(f.file)}
+              data-title={f.title}
+              data-meta={issuer === 'Outros' ? 'Emissor a confirmar' : issuer}
+              data-lowres={String(f.lowRes)}
+              aria-label={`Ampliar certificado: ${f.title}`}
+            >
+              <Image src={meta} alt={f.title} width={400} height={300} class="cert-thumb" loading="lazy" />
+              <span class="cert-overlay">
+                <span class="cert-overlay-title">{f.title}</span>
+                <span class="cert-overlay-meta">
+                  {issuer !== 'Outros' && <Badge tone="neutral">{issuer}</Badge>}
+                  {f.lowRes && <Badge tone="neutral">baixa resolução</Badge>}
+                </span>
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+
+    <h3 class="cert-verify-title reveal">Certificados verificáveis (2022–2023)</h3>
+    <ul class="cert-verify-grid">
+      {certificateImagesInRepo.map((c, i) => {
+        const meta = repoCertImage(c.file);
+        return (
+          <li class="cert-verify-card reveal" style={`--reveal-index: ${Math.min(i, 5)}`}>
+            <button
+              type="button"
+              class="cert-trigger cert-verify-thumb-btn"
+              data-full={fullVersions.get(c.file)}
+              data-title={c.title}
+              data-meta={`${c.issuer}${c.hours ? ` · ${c.hours}` : ''}`}
+              data-lowres="false"
+              aria-label={`Ampliar certificado: ${c.title}`}
+            >
+              <Image src={meta} alt={c.title} width={360} height={240} class="cert-thumb" loading="lazy" />
+            </button>
+            <div class="cert-verify-body">
+              <p class="cert-verify-name">{c.title}</p>
+              <p class="cert-verify-meta">
+                {c.issuer}{c.hours && ` · ${c.hours}`} · <time>{c.date}</time>
+              </p>
+              {c.verifyUrl && (
+                <a class="cert-verify-link" href={c.verifyUrl} target="_blank" rel="noopener noreferrer">
+                  <Icon name="shield-check" size={15} />
+                  Verificar autenticidade
+                </a>
+              )}
+              {c.verifyCode && <p class="cert-verify-code">código: {c.verifyCode}</p>}
+            </div>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+
+  <dialog id="cert-lightbox" class="lightbox" aria-labelledby="lightbox-title">
+    <div class="lightbox-frame">
+      <img class="lightbox-img" src="" alt="" />
+      <div class="lightbox-bar">
+        <div>
+          <p class="lightbox-title" id="lightbox-title"></p>
+          <p class="lightbox-meta"></p>
+        </div>
+        <div class="lightbox-controls">
+          <button type="button" class="lightbox-prev" aria-label="Certificado anterior">
+            <Icon name="chevron-left" size={20} />
+          </button>
+          <button type="button" class="lightbox-next" aria-label="Próximo certificado">
+            <Icon name="chevron-right" size={20} />
+          </button>
+          <button type="button" class="lightbox-close" aria-label="Fechar">
+            <Icon name="close" size={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  .cert-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-bottom: var(--space-6);
+    max-width: 44rem;
+  }
+  @media (max-width: 640px) {
+    .cert-stats {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+  }
+  .cert-stats li {
+    display: grid;
+  }
+  .cert-stat-n {
+    font-family: var(--font-display);
+    font-size: 2.6rem;
+    font-weight: 600;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .cert-stat-plus {
+    color: var(--accent);
+  }
+  .cert-stat-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+
+  .cert-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+  }
+  .cert-filters button {
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      color var(--dur-1) var(--ease),
+      border-color var(--dur-1) var(--ease),
+      background-color var(--dur-1) var(--ease);
+  }
+  .cert-filters button:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+  .cert-filters button[aria-pressed='true'] {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .cert-count {
+    font-family: var(--font-mono);
+    opacity: 0.75;
+  }
+
+  .cert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: var(--space-4);
+  }
+  .cert-trigger {
+    position: relative;
+    display: block;
+    width: 100%;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    cursor: zoom-in;
+    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+  }
+  .cert-trigger:hover,
+  .cert-trigger:focus-visible {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+  :global(.cert-thumb) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+  .cert-overlay {
+    position: absolute;
+    inset: auto 0 0;
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: linear-gradient(transparent, var(--scrim) 40%);
+    opacity: 0;
+    transition: opacity var(--dur-2) var(--ease);
+    text-align: left;
+  }
+  .cert-trigger:hover .cert-overlay,
+  .cert-trigger:focus-visible .cert-overlay {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cert-overlay {
+      transition: none;
+    }
+  }
+  .cert-overlay-title {
+    color: var(--text-on-scrim);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .cert-overlay-meta {
+    display: flex;
+    gap: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .cert-verify-title {
+    margin: var(--space-8) 0 var(--space-5);
+  }
+  .cert-verify-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: var(--space-4);
+  }
+  .cert-verify-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-raised);
+    transition: border-color var(--dur-2) var(--ease);
+  }
+  .cert-verify-card:hover {
+    border-color: var(--border-strong);
+  }
+  .cert-verify-thumb-btn {
+    border: none;
+    border-radius: 0;
+  }
+  .cert-verify-thumb-btn:hover,
+  .cert-verify-thumb-btn:focus-visible {
+    transform: none;
+  }
+  .cert-verify-body {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+  .cert-verify-name {
+    font-weight: 600;
+    font-size: var(--fs-small);
+    line-height: 1.4;
+  }
+  .cert-verify-meta {
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+  }
+  .cert-verify-meta time {
+    font-family: var(--font-mono);
+  }
+  .cert-verify-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+  }
+  .cert-verify-code {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-3);
+    word-break: break-all;
+  }
+
+  /* ---------- lightbox ---------- */
+  .lightbox {
+    padding: 0;
+    border: none;
+    background: transparent;
+    max-width: min(92vw, 1100px);
+    width: fit-content;
+  }
+  .lightbox::backdrop {
+    background: var(--scrim);
+    backdrop-filter: blur(4px);
+  }
+  .lightbox-frame {
+    display: grid;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lightbox);
+  }
+  .lightbox :global(.lightbox-img) {
+    max-width: min(90vw, 1060px);
+    max-height: 74vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    justify-self: center;
+    background: var(--bg);
+  }
+  /* lowRes: não ampliar demais (REQ-F05) */
+  .lightbox.is-lowres :global(.lightbox-img) {
+    max-width: min(88vw, 480px);
+  }
+  .lightbox-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border);
+  }
+  .lightbox-title {
+    font-weight: 600;
+    font-size: var(--fs-small);
+    color: var(--text);
+  }
+  .lightbox-meta {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .lightbox-controls {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .lightbox-controls button {
+    display: inline-flex;
+    padding: 8px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: color var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+  }
+  .lightbox-controls button:hover {
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+</style>

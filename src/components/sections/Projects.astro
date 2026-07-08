@@ -1,0 +1,180 @@
+---
+import { data, publicationByUrn } from '../../lib/data';
+import { formatYearMonth, formatIsoDate } from '../../lib/dates';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import Tag from '../ui/Tag.astro';
+import Icon from '../ui/Icon.astro';
+
+const { projects, speaking } = data;
+// A métrica do artigo vem do texto do JSON (não inventar números).
+const METRIC = /redução de ([\d,]+%)/;
+---
+
+<section id="projetos" class="section projects">
+  <div class="container">
+    <SectionHeading
+      eyebrow="research & talks"
+      title="Projetos & Pesquisa"
+      description="Pesquisa aplicada em ML × ransomware e AppSec levada a palco."
+    />
+
+    <div class="proj-grid">
+      {projects.map((p, i) => {
+        const metric = METRIC.exec(p.description)?.[1];
+        const related = p.relatedPublications.map(publicationByUrn);
+        const isTalks = p.category === 'Palestras e Minicursos';
+        return (
+          <Card as="article" class="proj-card reveal" style={`--reveal-index: ${i}`}>
+            <Badge tone="info">{p.category}</Badge>
+            <h3>{p.name}</h3>
+            <p class="proj-desc">{p.description}</p>
+
+            {metric && (
+              <p class="proj-stat">
+                <span class="proj-stat-number">−{metric.replace('%', '')}<span class="proj-stat-unit">%</span></span>
+                <span class="proj-stat-label">tempo de processamento, mantendo a detecção</span>
+              </p>
+            )}
+
+            {isTalks && (
+              <ul class="proj-events">
+                {speaking.map((s) => (
+                  <li>
+                    <Icon name="calendar" size={16} />
+                    <span>
+                      <strong>{s.event}</strong> — {s.host}
+                      <span class="proj-event-date"> · {formatYearMonth(s.date)}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {p.contributors.length > 0 && (
+              <p class="proj-people">com {p.contributors.join(' · ')}</p>
+            )}
+
+            <ul class="proj-skills" aria-label="Competências do projeto">
+              {p.skills.map((s) => (
+                <li><Tag>{s}</Tag></li>
+              ))}
+            </ul>
+
+            {related.length > 0 && (
+              <ul class="proj-links">
+                {related.map((pub) => (
+                  <li>
+                    <a href={pub.permalink} target="_blank" rel="noopener noreferrer">
+                      <Icon name="external-link" size={15} />
+                      Publicação no LinkedIn · {formatIsoDate(pub.date)}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  .projects :global(.card) {
+    background: var(--bg);
+  }
+
+  .proj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+  }
+  @media (max-width: 900px) {
+    .proj-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .proj-card {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    justify-items: start;
+  }
+  .proj-desc {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+
+  .proj-stat {
+    display: grid;
+    gap: 2px;
+    padding: var(--space-4);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+  }
+  .proj-stat-number {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .proj-stat-unit {
+    font-size: 1.4rem;
+  }
+  .proj-stat-label {
+    font-size: var(--fs-xs);
+    color: var(--text-2);
+  }
+
+  .proj-events {
+    display: grid;
+    gap: var(--space-3);
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+  .proj-events li {
+    display: flex;
+    gap: var(--space-2);
+    align-items: baseline;
+  }
+  .proj-events :global(svg) {
+    color: var(--text-3);
+    flex: none;
+    translate: 0 2px;
+  }
+  .proj-event-date {
+    color: var(--text-3);
+  }
+
+  .proj-people {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .proj-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .proj-links {
+    display: grid;
+    gap: var(--space-2);
+  }
+  .proj-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+</style>

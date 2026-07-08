@@ -1,0 +1,58 @@
+# CI/CD — build com gates de segurança e deploy no GitHub Pages (ADR-0005).
+# Pages deve estar configurado como "Source: GitHub Actions" nas settings do repo.
+name: Deploy no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar (lockfile estrito)
+        run: npm ci
+
+      - name: Gate de segurança — npm audit (falha em high/critical)
+        run: npm audit --audit-level=high
+
+      - name: Typecheck (astro check)
+        run: npm run check
+
+      - name: Build (valida schema Zod + gera CSP com hashes)
+        run: npm run build
+
+      - name: Upload artifact do Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

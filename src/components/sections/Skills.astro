@@ -1,0 +1,184 @@
+---
+import { data } from '../../lib/data';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Card from '../ui/Card.astro';
+import Badge from '../ui/Badge.astro';
+import Tag from '../ui/Tag.astro';
+import Icon from '../ui/Icon.astro';
+import type { IconName } from '../../lib/icons';
+
+const { about } = data;
+
+/**
+ * Agrupamento determinístico (specs/content-model.md §Agrupamento).
+ * Textos literais do JSON; ferramentas extraídas das próprias strings.
+ */
+interface Domain {
+  icon: IconName;
+  title: string;
+  texts: string[];
+  tools: string[];
+  wide?: boolean;
+}
+
+const domains: Domain[] = [
+  {
+    icon: 'shield',
+    title: 'SOC & Defesa',
+    texts: about.experiencia,
+    tools: ['Octopus', 'Wazuh', 'Rapid7', 'Jira', 'Playbooks', 'SLA'],
+    wide: true,
+  },
+  {
+    icon: 'code',
+    title: 'AppSec & DevSecOps',
+    texts: [about.conhecimento[0]!, about.conhecimento[1]!],
+    tools: ['SAST', 'DAST', 'SCA', 'Horusec', 'Snyk', 'OWASP ZAP', 'GitHub Actions', 'Jenkins', 'Python'],
+  },
+  {
+    icon: 'target',
+    title: 'Segurança Ofensiva',
+    texts: [about.conhecimento[3]!],
+    tools: ['Enumeração', 'Exploração', 'Hardening', 'CTFs', 'Análise de Intrusão'],
+  },
+  {
+    icon: 'layers',
+    title: 'Frameworks & Base',
+    texts: [about.conhecimento[2]!, about.conhecimento[4]!, about.conhecimento[5]!],
+    tools: ['OWASP Top 10', 'SAMM', 'ASVS', 'NIST', 'MITRE ATT&CK', 'Redes', 'Linux', 'ML'],
+  },
+];
+---
+
+<section id="skills" class="section skills">
+  <div class="container">
+    <SectionHeading
+      eyebrow="capabilities"
+      title="Capacidades"
+      description="Quatro domínios, um objetivo: reduzir risco de ponta a ponta."
+    />
+
+    <div class="skills-bento">
+      {domains.map((d, i) => (
+        <Card as="article" class={`skill-card${d.wide ? ' skill-card--wide' : ''} reveal`} style={`--reveal-index: ${i}`}>
+          <div class="skill-head">
+            <span class="skill-icon"><Icon name={d.icon} size={22} /></span>
+            <h3>{d.title}</h3>
+          </div>
+          <ul class="skill-texts">
+            {d.texts.map((t) => (
+              <li>{t}</li>
+            ))}
+          </ul>
+          <ul class="skill-tools" aria-label={`Ferramentas de ${d.title}`}>
+            {d.tools.map((t) => (
+              <li><Tag>{t}</Tag></li>
+            ))}
+          </ul>
+        </Card>
+      ))}
+
+      <Card class="skill-status reveal" style="--reveal-index: 4" aria-hidden="true">
+        <div class="status-row">
+          <Badge tone="ok" dot pulse>MONITORING</Badge>
+          <span class="status-mono">shift 24/7</span>
+        </div>
+        <div class="status-row">
+          <Badge tone="info">SIEM</Badge>
+          <span class="status-mono">octopus · wazuh · rapid7</span>
+        </div>
+        <div class="status-row">
+          <Badge tone="warn">TRIAGE</Badge>
+          <span class="status-mono">alerta → playbook → ação</span>
+        </div>
+        <p class="status-note">// painel ilustrativo</p>
+      </Card>
+    </div>
+  </div>
+</section>
+
+<style>
+  .skills {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  /* cards da seção assentam no fundo base para criar contraste */
+  .skills :global(.card) {
+    background: var(--bg);
+  }
+
+  .skills-bento {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+  .skills :global(.skill-card--wide) {
+    grid-column: span 2;
+  }
+  @media (max-width: 1100px) {
+    .skills-bento {
+      grid-template-columns: 1fr 1fr;
+    }
+    .skills :global(.skill-card--wide) {
+      grid-column: span 2;
+    }
+  }
+  @media (max-width: 720px) {
+    .skills-bento {
+      grid-template-columns: 1fr;
+    }
+    .skills :global(.skill-card--wide) {
+      grid-column: auto;
+    }
+  }
+
+  .skill-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .skill-icon {
+    display: inline-flex;
+    padding: 9px;
+    border-radius: var(--radius-md);
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+  .skill-texts {
+    display: grid;
+    gap: var(--space-3);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    margin-bottom: var(--space-4);
+  }
+  .skill-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .skill-status {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+  }
+  .status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .status-mono {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .status-note {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    margin-top: var(--space-2);
+  }
+</style>

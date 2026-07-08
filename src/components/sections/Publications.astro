@@ -1,0 +1,213 @@
+---
+import { Image } from 'astro:assets';
+import { data, pubImage } from '../../lib/data';
+import { formatIsoDate } from '../../lib/dates';
+import type { TPublication, TPublicationCategory } from '../../lib/schema';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Badge from '../ui/Badge.astro';
+import Icon from '../ui/Icon.astro';
+import Button from '../ui/Button.astro';
+
+const { publications, profile } = data;
+
+// mapa fixo categoria→tom/rótulo (specs/sections/08)
+const CAT: Record<TPublicationCategory, { tone: 'accent' | 'ok' | 'warn' | 'info' | 'neutral'; label: string }> = {
+  certification: { tone: 'accent', label: 'certificação' },
+  achievement: { tone: 'ok', label: 'conquista' },
+  career: { tone: 'neutral', label: 'carreira' },
+  speaking: { tone: 'info', label: 'palestra' },
+  research: { tone: 'info', label: 'pesquisa' },
+  lab: { tone: 'warn', label: 'laboratório' },
+};
+
+const featured = publications.filter((p) => p.featured);
+const rest = publications.filter((p) => !p.featured);
+
+function excerpt(p: TPublication): string {
+  if (p.description.length <= 180) return p.description;
+  return p.description.slice(0, 180).replace(/\s+\S*$/, '') + '…';
+}
+---
+
+<section id="publicacoes" class="section publications">
+  <div class="container">
+    <SectionHeading
+      eyebrow="feed"
+      title="Publicações"
+      description="Marcos e conteúdo compartilhados com a comunidade no LinkedIn."
+    />
+
+    <div class="pub-grid pub-grid--featured">
+      {featured.map((p, i) => {
+        const cat = CAT[p.category];
+        return (
+          <a
+            class="pub-card pub-card--featured reveal"
+            style={`--reveal-index: ${i}`}
+            href={p.permalink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir publicação no LinkedIn: ${p.title}`}
+          >
+            <Image src={pubImage(p.image)} alt="" width={640} height={360} class="pub-cover" loading="lazy" />
+            <div class="pub-body">
+              <Badge tone={cat.tone}>{cat.label}</Badge>
+              <h3>{p.title}</h3>
+              <p class="pub-desc">{excerpt(p)}</p>
+              <footer class="pub-foot">
+                <time datetime={p.date}>{formatIsoDate(p.date)}</time>
+                {p.engagement.reactions !== null && (
+                  <span class="pub-engage" aria-label={`${p.engagement.reactions} reações${p.engagement.comments ? `, ${p.engagement.comments} comentários` : ''}`}>
+                    <Icon name="heart" size={14} /> {p.engagement.reactions}
+                    {p.engagement.comments !== null && p.engagement.comments > 0 && (
+                      <><Icon name="comment" size={14} /> {p.engagement.comments}</>
+                    )}
+                  </span>
+                )}
+              </footer>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <div class="pub-grid pub-grid--rest">
+      {rest.map((p, i) => {
+        const cat = CAT[p.category];
+        return (
+          <a
+            class="pub-card reveal"
+            style={`--reveal-index: ${Math.min(i % 6, 5)}`}
+            href={p.permalink}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir publicação no LinkedIn: ${p.title}`}
+          >
+            <Image src={pubImage(p.image)} alt="" width={480} height={270} class="pub-cover" loading="lazy" />
+            <div class="pub-body">
+              <Badge tone={cat.tone}>{cat.label}</Badge>
+              <h3 class="pub-title-sm">{p.title}</h3>
+              <footer class="pub-foot">
+                <time datetime={p.date}>{formatIsoDate(p.date)}</time>
+                {p.engagement.reactions !== null && (
+                  <span class="pub-engage" aria-label={`${p.engagement.reactions} reações`}>
+                    <Icon name="heart" size={14} /> {p.engagement.reactions}
+                  </span>
+                )}
+              </footer>
+            </div>
+          </a>
+        );
+      })}
+    </div>
+
+    <p class="pub-more reveal">
+      <Button href={profile.profileUrl} variant="ghost" icon="linkedin" external>
+        Ver perfil completo no LinkedIn
+      </Button>
+    </p>
+  </div>
+</section>
+
+<style>
+  .publications {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+
+  .pub-grid {
+    display: grid;
+    gap: var(--space-5);
+  }
+  .pub-grid--featured {
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: var(--space-5);
+  }
+  .pub-grid--rest {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 1100px) {
+    .pub-grid--rest {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 700px) {
+    .pub-grid--featured,
+    .pub-grid--rest {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .pub-card {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    color: inherit;
+    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+  }
+  .pub-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  :global(.pub-cover) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pub-body {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    align-content: start;
+    justify-items: start;
+  }
+  .pub-body h3 {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+  .pub-title-sm {
+    font-size: 0.95rem !important;
+  }
+  .pub-desc {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+
+  .pub-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    width: 100%;
+    margin-top: var(--space-2);
+  }
+  .pub-foot time {
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .pub-engage {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .pub-engage :global(svg) {
+    color: var(--text-3);
+  }
+
+  .pub-more {
+    margin-top: var(--space-6);
+    text-align: center;
+  }
+</style>

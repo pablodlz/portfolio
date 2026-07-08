@@ -1,0 +1,84 @@
+---
+interface Props {
+  tone?: 'accent' | 'ok' | 'warn' | 'crit' | 'info' | 'neutral';
+  dot?: boolean;
+  pulse?: boolean;
+  class?: string;
+}
+const { tone = 'neutral', dot = false, pulse = false, class: className } = Astro.props;
+---
+
+<span class:list={['badge', `badge--${tone}`, className]}>
+  {dot && <span class:list={['badge-dot', { 'badge-dot--pulse': pulse }]} aria-hidden="true"></span>}
+  <slot />
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border);
+    background: var(--bg-raised-2);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 500;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+  .badge--accent {
+    background: var(--accent-soft);
+    border-color: var(--accent-border);
+    color: var(--accent);
+  }
+  .badge--ok {
+    background: var(--ok-soft);
+    border-color: transparent;
+    color: var(--ok);
+  }
+  .badge--warn {
+    background: var(--warn-soft);
+    border-color: transparent;
+    color: var(--warn);
+  }
+  .badge--crit {
+    background: var(--crit-soft);
+    border-color: transparent;
+    color: var(--crit);
+  }
+  .badge--info {
+    background: var(--info-soft);
+    border-color: transparent;
+    color: var(--info);
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+    flex: none;
+  }
+  .badge-dot--pulse {
+    animation: badge-pulse 2s var(--ease) infinite;
+  }
+  @keyframes badge-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 var(--accent-soft);
+      opacity: 1;
+    }
+    50% {
+      box-shadow: 0 0 0 5px var(--accent-soft);
+      opacity: 0.7;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .badge-dot--pulse {
+      animation: none;
+    }
+  }
+</style>

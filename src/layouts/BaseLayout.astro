@@ -1,0 +1,66 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/space-grotesk';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+// Script de tema inline (hash na CSP — ver astro.config.mjs). ?raw = conteúdo literal.
+import themeInit from '../scripts/theme-init.js?raw';
+import { data } from '../lib/data';
+import { withBase } from '../lib/url';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = `${data.profile.fullName} — ${data.profile.role}`,
+  description = data.about.summary,
+} = Astro.props;
+
+const canonical = new URL(withBase('/'), Astro.site);
+const ogImage = new URL(withBase('/og.png'), Astro.site);
+---
+
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={data.profile.fullName} />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="canonical" href={canonical} />
+
+    <!-- tema antes do primeiro paint (REQ-F11); conteúdo hasheado na CSP -->
+    <script is:inline set:html={themeInit.trim()} />
+
+    <meta name="theme-color" content="#0e0d0c" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={withBase('/favicon-96.png')} type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href={withBase('/apple-touch-icon.png')} />
+    <link rel="manifest" href={withBase('/site.webmanifest')} />
+    <link rel="sitemap" href={withBase('/sitemap.xml')} />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={data.profile.shortName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+  </head>
+  <body>
+    <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
+    <slot />
+    <script src="../scripts/app.ts"></script>
+  </body>
+</html>

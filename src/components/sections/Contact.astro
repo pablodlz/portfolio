@@ -1,0 +1,76 @@
+---
+import { data, obfuscatedEmail } from '../../lib/data';
+import Button from '../ui/Button.astro';
+
+const { profile } = data;
+const mail = obfuscatedEmail();
+---
+
+<section id="contato" class="section contact atmosphere">
+  <div class="container contact-inner">
+    <p class="eyebrow reveal">handshake</p>
+    <h2 class="reveal" style="--reveal-index: 1">Vamos conversar?</h2>
+    <p class="contact-sub reveal" style="--reveal-index: 2">
+      Aberto a trocar ideias sobre SOC, AppSec e segurança ofensiva.
+    </p>
+
+    <div class="contact-ctas reveal" style="--reveal-index: 3">
+      <Button href="#contato" class="js-mail" data-u={mail.u} data-d={mail.d} variant="primary" icon="mail">
+        <span class="js-mail-addr">Enviar e-mail</span>
+      </Button>
+      <Button href={profile.contact.github} variant="secondary" icon="github" external>GitHub</Button>
+      <Button href={profile.contact.linkedin} variant="secondary" icon="linkedin" external>LinkedIn</Button>
+    </div>
+
+    <noscript>
+      <p class="contact-noscript">
+        e-mail: pablogalerani [arroba] gmail [ponto] com
+      </p>
+    </noscript>
+
+    <p class="contact-loc reveal" style="--reveal-index: 4">
+      {profile.location} · UTC−3
+    </p>
+  </div>
+</section>
+
+<style>
+  .contact-inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-4);
+    max-width: 42rem;
+  }
+  .contact-sub {
+    color: var(--text-2);
+    font-size: var(--fs-body-lg);
+  }
+  .contact-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+  }
+  .contact-noscript {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+  .contact-loc {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    margin-top: var(--space-4);
+  }
+  /* glow também no fechamento, invertido (vem de baixo) */
+  .contact.atmosphere::after {
+    inset: auto -10% -20%;
+    background: radial-gradient(ellipse 60% 55% at 50% 100%, var(--glow), transparent 70%);
+  }
+  .contact.atmosphere::before {
+    /* máscara alpha: "black" = área visível, não é cor renderizada */
+    mask-image: linear-gradient(0deg, black 0%, black 55%, transparent 100%);
+  }
+</style>

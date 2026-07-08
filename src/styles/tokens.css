@@ -1,0 +1,114 @@
+/* ============================================================
+   tokens.css — ÚNICA fonte de valores de design em código.
+   Contrato: specs/design-system.md (espelho de design-system/MASTER.md).
+   Nenhum hex/tamanho mágico fora deste arquivo.
+   ============================================================ */
+
+@layer tokens {
+  :root {
+    /* --- cor: tema dark (padrão) --- */
+    --bg: #0e0d0c;
+    --bg-raised: #151413;
+    --bg-raised-2: #1b1a18;
+    --border: #282521;
+    --border-strong: #3a3631;
+    --text: #f2f0ed;
+    --text-2: #aaa49c;
+    --text-3: #736d64;
+    --accent: #30d158;
+    --accent-hover: #4ade70;
+    --accent-soft: rgba(48, 209, 88, 0.1);
+    --accent-border: rgba(48, 209, 88, 0.28);
+    --on-accent: #08210f;
+
+    /* status — APENAS badges (linguagem SOC) */
+    --ok: #30d158;
+    --ok-soft: rgba(48, 209, 88, 0.12);
+    --warn: #ffd60a;
+    --warn-soft: rgba(255, 214, 10, 0.12);
+    --crit: #ff453a;
+    --crit-soft: rgba(255, 69, 58, 0.12);
+    --info: #64d2ff;
+    --info-soft: rgba(100, 210, 255, 0.12);
+
+    /* atmosfera */
+    --grid-line: rgba(242, 240, 237, 0.045);
+    --glow: rgba(48, 209, 88, 0.07);
+    --scrim: rgba(4, 4, 3, 0.86);
+    /* texto sobre scrim escuro — igual nos dois temas (overlays de imagem) */
+    --text-on-scrim: #f2f0ed;
+
+    /* --- tipografia --- */
+    --font-display: 'Space Grotesk Variable', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Inter Variable', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+    --fs-display: clamp(2.6rem, 1.2rem + 6vw, 4.5rem);
+    --fs-h2: clamp(1.9rem, 1.3rem + 2.2vw, 2.6rem);
+    --fs-h3: 1.25rem;
+    --fs-body-lg: 1.125rem;
+    --fs-body: 1rem;
+    --fs-small: 0.875rem;
+    --fs-xs: 0.8125rem;
+
+    /* --- espaço (base 4) --- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
+    --space-8: 64px;
+    --space-9: 96px;
+    --section-pad: clamp(4rem, 9vw, 7rem);
+
+    /* --- container / raio / sombra --- */
+    --container: 72rem;
+    --gutter: clamp(1.25rem, 4vw, 2.5rem);
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-pill: 999px;
+    --shadow-lightbox: 0 24px 64px rgba(0, 0, 0, 0.5);
+
+    /* --- motion --- */
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-1: 150ms;
+    --dur-2: 250ms;
+    --dur-3: 500ms;
+
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] {
+    --bg: #faf9f7;
+    --bg-raised: #ffffff;
+    --bg-raised-2: #f1efeb;
+    --border: #e5e1da;
+    --border-strong: #d0cbc2;
+    --text: #1d1b18;
+    --text-2: #5b564e;
+    --text-3: #8b857b;
+    --accent: #15803d;
+    --accent-hover: #166f37;
+    --accent-soft: rgba(21, 128, 61, 0.1);
+    --accent-border: rgba(21, 128, 61, 0.3);
+    --on-accent: #ffffff;
+
+    --ok: #15803d;
+    --ok-soft: rgba(21, 128, 61, 0.12);
+    --warn: #a16207;
+    --warn-soft: rgba(161, 98, 7, 0.12);
+    --crit: #b91c1c;
+    --crit-soft: rgba(185, 28, 28, 0.1);
+    --info: #0369a1;
+    --info-soft: rgba(3, 105, 161, 0.1);
+
+    --grid-line: rgba(29, 27, 24, 0.055);
+    --glow: rgba(21, 128, 61, 0.05);
+    --scrim: rgba(30, 28, 25, 0.6);
+
+    color-scheme: light;
+  }
+}

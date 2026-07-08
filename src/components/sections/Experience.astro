@@ -1,0 +1,221 @@
+---
+import { data } from '../../lib/data';
+import { formatRange } from '../../lib/dates';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Badge from '../ui/Badge.astro';
+import Tag from '../ui/Tag.astro';
+
+const COLLAPSE_AFTER = 3;
+---
+
+<section id="experiencia" class="section">
+  <div class="container">
+    <SectionHeading
+      eyebrow="story so far"
+      title="Experiência"
+      description="Da base técnica à operação de segurança — a trilha completa."
+    />
+
+    <ol class="timeline">
+      {data.experience.map((job, i) => (
+        <li class="timeline-item reveal" style={`--reveal-index: ${Math.min(i, 4)}`}>
+          <span class:list={['timeline-dot', { 'timeline-dot--current': job.current }]} aria-hidden="true"></span>
+
+          <article class="job">
+            <header class="job-head">
+              <span class="job-logo" aria-hidden="true">{job.company.charAt(0)}</span>
+              <div class="job-id">
+                <h3>{job.title}</h3>
+                <p class="job-org">
+                  {job.company}
+                  <span class="job-meta">
+                    · {job.employmentType}
+                    {job.workplace && ` · ${job.workplace}`}
+                  </span>
+                </p>
+              </div>
+              <div class="job-when">
+                {job.current && <Badge tone="ok" dot>Atual</Badge>}
+                <time class="job-range" datetime={job.startDate}>
+                  {formatRange(job.startDate, job.endDate, job.current)}
+                </time>
+              </div>
+            </header>
+
+            {job.bullets.length > COLLAPSE_AFTER ? (
+              <>
+                <ul class="job-bullets">
+                  {job.bullets.slice(0, COLLAPSE_AFTER).map((b) => (
+                    <li>{b}</li>
+                  ))}
+                </ul>
+                <details class="job-more">
+                  <summary>Ver todas as {job.bullets.length} atividades</summary>
+                  <ul class="job-bullets">
+                    {job.bullets.slice(COLLAPSE_AFTER).map((b) => (
+                      <li>{b}</li>
+                    ))}
+                  </ul>
+                </details>
+              </>
+            ) : (
+              <ul class="job-bullets">
+                {job.bullets.map((b) => (
+                  <li>{b}</li>
+                ))}
+              </ul>
+            )}
+
+            {job.skills.length > 0 && (
+              <ul class="job-skills" aria-label="Competências desta posição">
+                {job.skills.map((s) => (
+                  <li><Tag>{s}</Tag></li>
+                ))}
+              </ul>
+            )}
+          </article>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    position: relative;
+    display: grid;
+    gap: var(--space-6);
+    padding-left: var(--space-6);
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: calc(-1 * var(--space-6) + 1px);
+    top: 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--border-strong);
+    outline: 4px solid var(--bg);
+  }
+  .timeline-dot--current {
+    background: var(--ok);
+    box-shadow: 0 0 0 5px var(--ok-soft);
+  }
+
+  .job {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5);
+    transition: border-color var(--dur-2) var(--ease);
+  }
+  .job:hover {
+    border-color: var(--border-strong);
+  }
+
+  .job-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-4);
+    align-items: start;
+    margin-bottom: var(--space-4);
+  }
+  @media (max-width: 640px) {
+    .job-head {
+      grid-template-columns: auto 1fr;
+    }
+    .job-when {
+      grid-column: 2;
+      justify-items: start !important;
+    }
+  }
+
+  .job-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--bg-raised-2);
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text-2);
+  }
+  .job-org {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+  }
+  .job-meta {
+    color: var(--text-3);
+  }
+  .job-when {
+    display: grid;
+    gap: var(--space-2);
+    justify-items: end;
+  }
+  .job-range {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  .job-bullets {
+    display: grid;
+    gap: var(--space-2);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    padding-left: 1.1rem;
+    list-style: '▸  ';
+  }
+  .job-bullets li::marker {
+    color: var(--accent);
+  }
+
+  .job-more summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    margin-top: var(--space-3);
+    list-style: none;
+    width: fit-content;
+  }
+  .job-more summary::-webkit-details-marker {
+    display: none;
+  }
+  .job-more summary::after {
+    content: ' ↓';
+  }
+  .job-more[open] summary::after {
+    content: ' ↑';
+  }
+  .job-more summary:hover {
+    color: var(--accent-hover);
+  }
+  .job-more[open] summary {
+    margin-bottom: var(--space-3);
+  }
+
+  .job-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+</style>

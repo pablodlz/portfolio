@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Nav from '../components/sections/Nav.astro';
+import Hero from '../components/sections/Hero.astro';
+import About from '../components/sections/About.astro';
+import Skills from '../components/sections/Skills.astro';
+import Experience from '../components/sections/Experience.astro';
+import Education from '../components/sections/Education.astro';
+import Projects from '../components/sections/Projects.astro';
+import Certifications from '../components/sections/Certifications.astro';
+import Publications from '../components/sections/Publications.astro';
+import Contact from '../components/sections/Contact.astro';
+import Footer from '../components/sections/Footer.astro';
+---
+
+<BaseLayout>
+  <Nav />
+  <main id="conteudo">
+    <Hero />
+    <About />
+    <Skills />
+    <Experience />
+    <Education />
+    <Projects />
+    <Certifications />
+    <Publications />
+    <Contact />
+  </main>
+  <Footer />
+</BaseLayout>

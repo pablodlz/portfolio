@@ -1,0 +1,98 @@
+---
+/** Janela de terminal (Portline): 3 dots, corpo mono, cursor opcional. */
+interface Props {
+  title?: string;
+  ariaLabel?: string;
+  class?: string;
+}
+const { title = 'bash — pablodlz', ariaLabel, class: className } = Astro.props;
+---
+
+<figure class:list={['terminal', className]} aria-label={ariaLabel}>
+  <figcaption class="terminal-bar">
+    <span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="terminal-title">{title}</span>
+  </figcaption>
+  <div class="terminal-body">
+    <slot />
+  </div>
+</figure>
+
+<style>
+  .terminal {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    font-size: var(--fs-small);
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-raised-2);
+  }
+  .terminal-dots {
+    display: inline-flex;
+    gap: 6px;
+  }
+  .terminal-dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--border-strong);
+  }
+  .terminal-dots i:first-child {
+    background: var(--crit);
+    opacity: 0.75;
+  }
+  .terminal-dots i:nth-child(2) {
+    background: var(--warn);
+    opacity: 0.75;
+  }
+  .terminal-dots i:last-child {
+    background: var(--ok);
+    opacity: 0.75;
+  }
+  .terminal-title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .terminal-body {
+    padding: var(--space-4) var(--space-4) var(--space-5);
+    overflow-x: auto;
+  }
+  .terminal-body :global(pre) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    line-height: 1.75;
+    color: var(--text-2);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .terminal-body :global(.t-accent) {
+    color: var(--accent);
+  }
+  .terminal-body :global(.t-cursor) {
+    display: inline-block;
+    width: 0.6em;
+    height: 1.1em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    background: var(--accent);
+    animation: t-blink 1.1s steps(2, start) infinite;
+  }
+  @keyframes t-blink {
+    to {
+      visibility: hidden;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-body :global(.t-cursor) {
+      animation: none;
+    }
+  }
+</style>
