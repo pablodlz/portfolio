@@ -1,0 +1,639 @@
+{
+  "_meta": {
+    "generatedAt": "2026-07-07",
+    "source": "https://www.linkedin.com/in/pablodlz/",
+    "collectedVia": "Leitura autenticada do próprio perfil (extensão Chrome).",
+    "notes": [
+      "As datas das publicações foram decodificadas do timestamp embutido no ID (urn) da atividade — são exatas, não relativas.",
+      "As 11 imagens dos posts JÁ foram baixadas para img/linkedin/<id>.jpg (jul/2026). As 8 imagens/carrosséis vieram das capas feedshare (~800px); os 3 posts do tipo 'document' (7479 EXIN, 7460 PenTest+, 7418 Security+) foram copiados dos certificados equivalentes (licert-03/01/02). Cada publicação tem 'image' apontando para o arquivo local e 'imageStatus':'downloaded'. NÃO hotlinkar as URLs originais do LinkedIn (assinadas, expiram).",
+      "O campo 'permalink' de cada publicação é estável: ao clicar, redireciona para o post no LinkedIn.",
+      "Certificações: o LinkedIn lista 24 no total; abaixo estão as ~21 com título visível (algumas ficam colapsadas). As 8 imagens de certificado que já existem no repositório são certificados mais antigos (2022–2023) e estão listadas à parte em 'certificateImagesInRepo'."
+    ]
+  },
+
+  "profile": {
+    "fullName": "Pablo de Souza Galerani",
+    "shortName": "Pablo Galerani",
+    "handle": "pablodlz",
+    "headline": "SOC Analyst @ Clavis | Offensive Security | AppSec | CEH ⏳️",
+    "role": "Security Operations Analyst (SOC)",
+    "company": "Clavis Segurança da Informação",
+    "location": "Jacarezinho, Paraná, Brasil",
+    "openToWork": false,
+    "followers": 12048,
+    "connections": "500+",
+    "profileUrl": "https://www.linkedin.com/in/pablodlz/",
+    "profileImageLocal": "img/image.jpeg",
+    "contact": {
+      "email": "pablogalerani@gmail.com",
+      "github": "https://github.com/pablodlz",
+      "githubUser": "pablodlz",
+      "website": "https://pablodlz.github.io/portfolio/",
+      "linkedin": "https://www.linkedin.com/in/pablodlz/"
+    },
+    "languages": [
+      { "name": "Português", "level": "Fluente ou nativo" },
+      { "name": "English", "level": "Nível básico a intermediário" }
+    ]
+  },
+
+  "about": {
+    "summary": "Profissional de cibersegurança, atuando como Analista de Operações de Segurança na Clavis Segurança da Informação, com foco no monitoramento do SOC. Tecnólogo em Segurança da Informação, com conhecimento em AppSec e programação, além de especialização em Cibersegurança Ofensiva.",
+    "experiencia": [
+      "Monitoramento SIEM (Octopus, Wazuh, Rapid7), triagem de alertas, investigação (logs, malware, phishing) e criação de playbooks.",
+      "Gerenciamento de tickets (Jira) com atenção ao SLA, notificação a clientes, escalonamento e elaboração de planos de ação e mitigação."
+    ],
+    "conhecimento": [
+      "AppSec, DevSecOps e Shift Left: SSDLC, modelagem de ameaças (DFD, STRIDE, Microsoft Threat Modeling Tool), SAST, DAST, SCA, IaC (Horusec, Snyk, OWASP ZAP).",
+      "Automação de Segurança: Pipeline CI/CD (GitHub Actions e Jenkins) e Scripts Python.",
+      "Frameworks: OWASP (Top 10, SAMM, ASVS), NIST e MITRE ATT&CK.",
+      "Pentest, CTFs e Labs: Enumeração, Exploração, Hardening e Análise de Intrusão.",
+      "Redes, Linux e Hardware.",
+      "Machine Learning aplicado à Cibersegurança (Artigo científico em processo de publicação)."
+    ],
+    "habilidades": [
+      "Proatividade",
+      "Planejamento e Organização",
+      "Pensamento Crítico",
+      "Colaboração e trabalho em equipe",
+      "Inovação"
+    ],
+    "certificacoesEmAndamento": [
+      { "name": "CNSE", "status": "concluída" },
+      { "name": "CSAE", "status": "concluída" },
+      { "name": "CPTE", "status": "concluída" },
+      { "name": "CRTA", "status": "em andamento" },
+      { "name": "CEH v13 AI", "status": "em andamento" }
+    ],
+    "metasFuturas": ["Security+", "Pentest+", "DCPT", "eJPT", "OSCP"],
+    "easterEgg": {
+      "description": "Bloco estilo terminal Kali no fim da seção 'Sobre' do LinkedIn — combina com um portfólio de segurança e vale reproduzir no site.",
+      "content": [
+        "> #!/bin/bash",
+        "> echo \"RkxBR3twYWJsby5nYWxlcmFuaUBnbWFpbC5jb219\" | base64 -d",
+        "> exit 0",
+        "",
+        "┌─(root㉿kali)-[~]",
+        "└# ./pablodlz.sh"
+      ]
+    }
+  },
+
+  "topSkills": [
+    "CyberSecurity",
+    "Offensive Security",
+    "AppSec",
+    "Security Operations Center",
+    "Security Information and Event Management"
+  ],
+
+  "skills": [
+    { "name": "CyberSecurity", "endorsements": null, "context": "Clavis + Acadi-TI + artigo científico" },
+    { "name": "Offensive Security", "endorsements": 2, "context": "Acadi-TI (pós) + Fatec" },
+    { "name": "AppSec", "endorsements": null, "context": "Palestra/minicurso SSDLC" },
+    { "name": "Security Operations Center", "endorsements": null, "context": "Security Operations Analyst @ Clavis" },
+    { "name": "Security Information and Event Management", "endorsements": null, "context": "Security Operations Analyst @ Clavis" },
+    { "name": "Security Monitoring", "endorsements": null, "context": "Security Operations Analyst @ Clavis" },
+    { "name": "Segurança da informação", "endorsements": null, "context": "Security Operations Analyst @ Clavis" },
+    { "name": "Security Awareness", "endorsements": 2, "context": "ANETI + Acadi-TI" },
+    { "name": "SSDLC", "endorsements": null, "context": "Application Security" },
+    { "name": "Pipeline CI/CD", "endorsements": null, "context": "Application Security" },
+    { "name": "Linux", "endorsements": null, "context": "Formação" },
+    { "name": "Python", "endorsements": null, "context": "Formação" },
+    { "name": "Machine Learning", "endorsements": null, "context": "Artigo científico" }
+  ],
+
+  "experience": [
+    {
+      "title": "Security Operations Analyst",
+      "company": "Clavis Segurança da Informação",
+      "employmentType": "Tempo integral",
+      "location": "Rio de Janeiro, Brasil",
+      "workplace": "Remoto",
+      "startDate": "2025-10",
+      "endDate": null,
+      "current": true,
+      "bullets": [
+        "Monitoramento de eventos de segurança em SIEM (Octopus, Wazuh, Rapid7 e etc).",
+        "Análise e tratamento de reportes de phishing e e-mails suspeitos.",
+        "Análise inicial, classificação e priorização de incidentes de segurança.",
+        "Coleta e correlação de logs de diferentes fontes (firewall, endpoint, rede, servidores).",
+        "Apoio na investigação de alertas de intrusões, malware e comportamentos anômalos.",
+        "Elaboração de planos de ação para mitigação de incidentes.",
+        "Execução e criação de playbooks de resposta a incidentes.",
+        "Notificação e contato direto com clientes sobre alertas e incidentes críticos.",
+        "Gestão de tickets de alertas (Jira) com foco no cumprimento de SLAs.",
+        "Geração de relatórios técnicos e registros de turnos (handover).",
+        "Verificação de integridade de agentes e dashboards do SOC.",
+        "Contribuição em melhorias de procedimentos e tuning de regras de alertas."
+      ],
+      "skills": ["Security Information and Event Management", "Security Operations Center", "Security Monitoring", "Segurança da informação", "CyberSecurity"]
+    },
+    {
+      "title": "Analista Administrativo Sênior",
+      "company": "Enifler",
+      "employmentType": "Tempo integral",
+      "location": "Jacarezinho, Paraná, Brasil",
+      "workplace": "No local",
+      "startDate": "2025-08",
+      "endDate": "2025-10",
+      "current": false,
+      "bullets": [
+        "Liderança de equipe multidisciplinar.",
+        "Gestão estratégica de projetos e operações.",
+        "Otimização de fluxos internos e padronização de processos.",
+        "Interface entre Financeiro, Fiscal, RH, Marketing e Atendimento.",
+        "Resolução de problemas e tomada de decisões complexas.",
+        "Implementação de Kanban, 5S, 5W2H, Six Sigma e PDCA.",
+        "Automação e integração de sistemas.",
+        "Implementação de melhorias para aumento de vendas.",
+        "Suporte técnico e estratégico a setores internos."
+      ],
+      "skills": ["Leadership", "Performance Management"]
+    },
+    {
+      "title": "Analista Administrativo Pleno",
+      "company": "Enifler",
+      "employmentType": "Tempo integral",
+      "location": "Jacarezinho, Paraná, Brasil",
+      "workplace": "No local",
+      "startDate": "2024-10",
+      "endDate": "2025-07",
+      "current": false,
+      "bullets": [
+        "Otimização de fluxos operacionais internos.",
+        "Aplicação do método 5S.",
+        "Melhoria de eficiência e produtividade.",
+        "Gestão de projetos.",
+        "Padronização de processos operacionais.",
+        "Automação de tarefas repetitivas.",
+        "Integração de sistemas e ferramentas.",
+        "Suporte técnico e estratégico a setores internos.",
+        "Foco em soluções práticas e organização administrativa."
+      ],
+      "skills": ["Process Automation", "Project Management"]
+    },
+    {
+      "title": "Assistente Comercial",
+      "company": "Enifler",
+      "employmentType": "Tempo integral",
+      "location": "Jacarezinho, Paraná, Brasil",
+      "workplace": "No local",
+      "startDate": "2022-06",
+      "endDate": "2024-09",
+      "current": false,
+      "bullets": [
+        "Suporte Técnico e Atendimento ao cliente.",
+        "Implementação de melhorias para aumento de vendas.",
+        "Montagem de computadores na produção.",
+        "Apoio ao marketing na criação de materiais visuais.",
+        "Colaboração na estrutura e apresentação do site.",
+        "Desenvolvimento web (HTML, CSS e JS)."
+      ],
+      "skills": ["Sales Growth", "Technical Support"]
+    },
+    {
+      "title": "Auxiliar de Marketing",
+      "company": "Enifler",
+      "employmentType": "Tempo integral",
+      "location": "Jacarezinho, Paraná, Brasil",
+      "workplace": "No local",
+      "startDate": "2020-11",
+      "endDate": "2022-05",
+      "current": false,
+      "bullets": [
+        "Design e edição (Photoshop, After Effects, Premiere).",
+        "Produção de vídeos e peças para campanhas.",
+        "Modelagem e animação 3D no Cinema 4D.",
+        "Criação de roteiros e briefings para campanhas.",
+        "Apoio em estratégias de marketing.",
+        "Análise com Google Analytics.",
+        "Campanhas em Google Ads e Meta.",
+        "Experiência com tráfego pago."
+      ],
+      "skills": ["Graphic Design", "Marketing Strategy"]
+    },
+    {
+      "title": "Estagiário",
+      "company": "Enifler",
+      "employmentType": "Meio período",
+      "location": "Jacarezinho, Paraná, Brasil",
+      "workplace": "No local",
+      "startDate": "2020-07",
+      "endDate": "2020-10",
+      "current": false,
+      "bullets": [
+        "Instalação e configuração de sistemas e equipamentos.",
+        "Manutenção de hardware e software.",
+        "Montagem de computadores.",
+        "Atendimento técnico ao público."
+      ],
+      "skills": ["Agile Methodologies", "IT operations"]
+    },
+    {
+      "title": "Associate Member — Membro do Comitê Público",
+      "company": "ANETI - Associação Nacional dos Especialistas em TI",
+      "employmentType": "Voluntário",
+      "location": null,
+      "workplace": null,
+      "startDate": "2025-05",
+      "endDate": "2025-10",
+      "current": false,
+      "bullets": [
+        "Membro voluntário no comitê público, contribuindo em: Pesquisas, Inovações, Capacitação e Networking."
+      ],
+      "skills": ["CyberSecurity", "Security Awareness"]
+    }
+  ],
+
+  "education": [
+    {
+      "institution": "Acadi-TI - Academia Inovadora de TI",
+      "degree": "Pós-graduação",
+      "field": "Cibersegurança Ofensiva",
+      "startYear": 2024,
+      "endYear": 2025,
+      "description": "Conteúdos abordados — Módulo I – Blue Team (CNSE): Legislação aplicada à Cibersegurança; Segurança de sistemas de informação; Operações de Cibersegurança; Tratamento e resposta a incidentes. Módulo II – Green Team (CSAE): Auditoria e monitoramento de redes, perímetros e sistemas; Inteligência de ameaças Cibernéticas; Desenvolvimento seguro; Arquitetura de segurança para tecnologias emergentes; Automação de segurança da informação com Python. Módulo III – Red Team (CPTE): Ethical Hacker, técnicas e ferramentas Hacker (CEH); Metodologia e técnicas de invasão avançadas; Projeto aplicado – Técnico.",
+      "skills": ["Linux", "Python"]
+    },
+    {
+      "institution": "Faculdade de Tecnologia de Ourinhos - Fatec Ourinhos",
+      "degree": "Curso Superior de Tecnologia (CST) — Tecnólogo",
+      "field": "Segurança da Informação",
+      "startYear": 2020,
+      "endYear": 2023,
+      "description": "Conteúdos abordados: Políticas de Segurança da Informação; Fator Humano em Segurança da Informação; Criptografia; Infraestrutura em Redes de Computadores; Desenvolvimento Seguro de Sistemas; Resposta a Incidentes e Continuidade de Negócios; Auditoria de Sistemas de Informação; Segurança em Sistemas Operacionais e Redes; Gerenciamento de Redes de Computadores; Fundamentos de Banco de Dados; Gestão de Segurança da Informação; Estudos Avançados em Segurança; Perícia Forense em Segurança da Informação; Arquitetura e Organização de Computadores; Programação; Governança de Tecnologia da Informação; Administração de Sistemas Operacionais de Redes; Desenvolvimento de Sistemas; Protocolos e Roteamento em Redes; Inglês.",
+      "skills": ["Linux", "Python"]
+    },
+    {
+      "institution": "Colégio Estadual Rui Barbosa",
+      "degree": "Ensino Médio",
+      "field": "Ensino Médio",
+      "startYear": 2017,
+      "endYear": 2020,
+      "description": "Aprimorei minhas habilidades me preparando para o futuro.",
+      "skills": []
+    },
+    {
+      "institution": "VLG Capacitação Profissional",
+      "degree": "Curso",
+      "field": "Profissional Digital + Games",
+      "startYear": 2018,
+      "endYear": 2019,
+      "description": "Curso de Profissional Digital + Games com qualificação em 3D Studio MAX 2008/2009, Desenvolvedor de Games 3D, Windows 10, Word 2019, Excel 2019, Flash CS6 — carga horária de 156 horas.",
+      "skills": []
+    },
+    {
+      "institution": "Escola Estadual Imaculada Conceição",
+      "degree": "Ensino Fundamental",
+      "field": "Ensino Fundamental",
+      "startYear": 2012,
+      "endYear": 2016,
+      "description": "Explorei e descobri meu interesse pelas áreas exatas.",
+      "skills": []
+    },
+    {
+      "institution": "CDA Sistema de Ensino Profissionalizante",
+      "degree": "Curso",
+      "field": "Basic Computer Skills",
+      "startYear": 2008,
+      "endYear": 2009,
+      "description": "Introdução à Informática — conhecimento básico para uso de computadores e tecnologia.",
+      "skills": []
+    }
+  ],
+
+  "certifications": {
+    "totalOnLinkedIn": 24,
+    "items": [
+      { "issuer": "Clavis Segurança da Informação (Academia CLAVIS)", "title": "Treinamento CompTIA PenTest+ e Ethical Hacking", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Clavis Segurança da Informação (Academia CLAVIS)", "title": "Treinamento CompTIA Security+", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Clavis Segurança da Informação (Academia CLAVIS)", "title": "Treinamento EXIN - [C] Information Security Foundation", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Instituto Federal do Paraná - IFPR Jacarezinho", "title": "Palestra no evento \"VI J3TI - VI Jornada de Estudos em Tecnologia da Informação\"", "type": "Certificado de Palestrante", "credentialUrl": null },
+      { "issuer": "KnowBe4", "title": "Chameleon: \"O que você diz pode ser usado contra você\" (Spear phishing)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "KnowBe4", "title": "Chameleon: \"Festa dos terceiros\" (Segurança dos fornecedores externos)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "KnowBe4", "title": "Chameleon: \"Ações nas redes e na bolsa\" (Redes sociais)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Santander Brasil", "title": "Bootcamp - Cibersegurança #2", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Santander Brasil", "title": "Introdução à Cibersegurança com Santander", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "DIO", "title": "Exploração de Vulnerabilidades e Ataques - Trilha (5/5)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "DIO", "title": "Fundamentos de Busca por Vulnerabilidades e Testes de Invasão - Trilha (7/7)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "DIO", "title": "Fundamentos de Cibersegurança - Trilha (5/5)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "RedScanAcademy", "title": "Curso de RedTeam", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Alura", "title": "Imersão Dados com Python", "type": "Certificado de Participação", "credentialUrl": null },
+      { "issuer": "Alura", "title": "Imersão Cloud DevOps", "type": "Certificado de Participação", "credentialUrl": null },
+      { "issuer": "FIAP", "title": "Semana Carreira Tech: FIAP + Alura", "type": "Certificado de Participação", "credentialUrl": null },
+      { "issuer": "Ministério da Educação (Aprenda Mais MEC)", "title": "Python Fundamental I", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Ministério da Educação (Aprenda Mais MEC)", "title": "Automação de Sistemas", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Fundação Bradesco (Escola Virtual)", "title": "Segurança em Tecnologia da Informação", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Google / Coursera", "title": "Google Cybersecurity (Professional Certificate)", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Google / Coursera", "title": "Foundations of Cybersecurity", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Google / Coursera", "title": "Automate Cybersecurity Tasks with Python", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Fortinet Training Institute", "title": "Fortinet Certified Fundamentals in Cybersecurity", "type": "Certificação", "credentialUrl": null, "validationNumber": "8193301085PD", "validUntil": "2027-04-09" },
+      { "issuer": "Fortinet Training Institute", "title": "Fortinet Certified Associate in Cybersecurity", "type": "Certificação", "credentialUrl": null },
+      { "issuer": "Fortinet Training Institute", "title": "FCA - FortiGate 7.4 Operator", "type": "Certificação", "credentialUrl": null },
+      { "issuer": "Cisco Networking Academy", "title": "Junior Cybersecurity Analyst Career Path", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Cisco Networking Academy", "title": "Ethical Hacker", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Cisco Networking Academy", "title": "Networking Basics", "type": "Certificado de Conclusão", "credentialUrl": null },
+      { "issuer": "Acadi-TI", "title": "CPTE - Certified Penetration Testing Expert", "type": "Certificação", "credentialUrl": null },
+      { "issuer": "OWASP / curso", "title": "OWASP A3 Injeção - Protegendo suas Aplicações", "type": "Certificado de Conclusão", "credentialUrl": null }
+    ],
+    "note": "Lista consolidada após baixar todos os documentos. Alguns títulos ('Segurança da Informação para Todos', 'Fundamentos da Segurança Cibernética - Intermediário', 'Escola de Inovadores', 'Fundamentos de DevOps/DevSecOps') aparecem nas mídias baixadas mas o emissor exato não foi confirmado.",
+    "downloadedDocuments": {
+      "folder": "img/certificados/linkedin/",
+      "count": 44,
+      "downloadedAt": "2026-07-07",
+      "source": "Seção 'Licenças e certificados' do LinkedIn (mídia anexada, renditions ~480px; alguns só disponíveis em 160px, marcados lowRes).",
+      "files": [
+        { "file": "licert-01-treinamento-comptia-pentest-e-ethicalhac.jpg", "title": "Treinamento CompTIA PenTest+ e Ethical Hacking (Clavis)", "lowRes": false },
+        { "file": "licert-02-treinamento-comptia-security.jpg", "title": "Treinamento CompTIA Security+ (Clavis)", "lowRes": false },
+        { "file": "licert-03-treinamento-exin-c-information-security-.jpg", "title": "Treinamento EXIN - [C] Information Security Foundation (Clavis)", "lowRes": false },
+        { "file": "licert-04-palestra-ministrada-no-evento-vi-j3t1-vi.jpg", "title": "Palestra VI J3TI (IFPR Jacarezinho)", "lowRes": true },
+        { "file": "licert-05-chameleon-o-que-voce-diz-pode-ser-usado-.jpg", "title": "KnowBe4 Chameleon: Spear phishing", "lowRes": false },
+        { "file": "licert-06-chameleon-festa-dos-terceiros-seguranca-.jpg", "title": "KnowBe4 Chameleon: Segurança dos fornecedores externos", "lowRes": false },
+        { "file": "licert-07-chameleon-acoes-nas-redes-e-na-bolsa-red.jpg", "title": "KnowBe4 Chameleon: Redes sociais", "lowRes": false },
+        { "file": "licert-08-bootcamp-ciberseguranca-2.jpg", "title": "Santander Bootcamp - Cibersegurança #2", "lowRes": false },
+        { "file": "licert-09-introducao-a-ciberseguranca-com-santande.jpg", "title": "Santander - Introdução à Cibersegurança", "lowRes": false },
+        { "file": "licert-10-exploracao-de-vulnerabilidades-e-ataques.jpg", "title": "DIO - Exploração de Vulnerabilidades e Ataques (Trilha 5/5)", "lowRes": false },
+        { "file": "licert-11-fundamentos-de-busca-por-vulnerabilidade.jpg", "title": "DIO - Fundamentos de Busca por Vulnerabilidades e Testes de Invasão (Trilha 7/7)", "lowRes": false },
+        { "file": "licert-12-fundamentos-de-ciberseguranca-trilha-5-5.jpg", "title": "DIO - Fundamentos de Cibersegurança (Trilha 5/5)", "lowRes": false },
+        { "file": "licert-13-curso-de-redteam.jpg", "title": "RedScanAcademy - Curso de RedTeam", "lowRes": false },
+        { "file": "licert-14-imersao-dados-com-python.jpg", "title": "Alura - Imersão Dados com Python", "lowRes": false },
+        { "file": "licert-15-imersao-cloud-devops.jpg", "title": "Alura - Imersão Cloud DevOps", "lowRes": false },
+        { "file": "licert-16-semana-carreira-tech-fiap-alura.jpg", "title": "FIAP - Semana Carreira Tech: FIAP + Alura", "lowRes": false },
+        { "file": "licert-17-python-fundamental-i.jpg", "title": "MEC - Python Fundamental I", "lowRes": false },
+        { "file": "licert-18-automacao-de-sistemas.jpg", "title": "MEC - Automação de Sistemas", "lowRes": false },
+        { "file": "licert-19-seguranca-em-tecnologia-da-informacao.jpg", "title": "Fundação Bradesco - Segurança em Tecnologia da Informação", "lowRes": false },
+        { "file": "licert-20-seguranca-da-informacao-para-todos.jpg", "title": "Segurança da Informação para Todos", "lowRes": false },
+        { "file": "licert-21-fundamentos-da-seguranca-cibernetica-int.jpg", "title": "Fundamentos da Segurança Cibernética - Intermediário", "lowRes": false },
+        { "file": "licert-22-google-cybersecurity.jpg", "title": "Google Cybersecurity (Coursera)", "lowRes": false },
+        { "file": "licert-23-foundations-of-cybersecurity.jpg", "title": "Foundations of Cybersecurity (Google/Coursera)", "lowRes": false },
+        { "file": "licert-24-automate-cybersecurity-tasks-with-python.jpg", "title": "Automate Cybersecurity Tasks with Python (Google/Coursera)", "lowRes": false },
+        { "file": "licert-25-fortinet-certified-fundamentals-in-cyber.jpg", "title": "Fortinet Certified Fundamentals in Cybersecurity", "lowRes": false },
+        { "file": "licert-26-fortinet-certified-associate-in-cybersec.jpg", "title": "Fortinet Certified Associate in Cybersecurity", "lowRes": false },
+        { "file": "licert-27-fca-fortigate-7-4-operator.jpg", "title": "FCA - FortiGate 7.4 Operator", "lowRes": false },
+        { "file": "licert-28-17-edicao-do-curso-escola-de-inovadores.jpg", "title": "17ª Edição do Curso Escola de Inovadores", "lowRes": false },
+        { "file": "licert-29-diploma.jpg", "title": "Diploma - Pós-graduação Cibersegurança Ofensiva (ACADI-TI)", "lowRes": false },
+        { "file": "licert-30-placa-de-conclusao.jpg", "title": "Placa de Conclusão", "lowRes": true },
+        { "file": "licert-31-cpte-certified-penetration-testing-exper.jpg", "title": "CPTE - Certified Penetration Testing Expert", "lowRes": false },
+        { "file": "licert-32-owasp-a3-injecao-protegendo-suas-aplicac.jpg", "title": "OWASP A3 Injeção - Protegendo suas Aplicações", "lowRes": false },
+        { "file": "licert-33-ethical-hacker.jpg", "title": "Ethical Hacker (Cisco)", "lowRes": false },
+        { "file": "licert-34-junior-cybersecurity-analyst-career-path.jpg", "title": "Junior Cybersecurity Analyst Career Path (Cisco)", "lowRes": false },
+        { "file": "licert-35-networking-basics.jpg", "title": "Networking Basics (Cisco)", "lowRes": false },
+        { "file": "licert-36-diploma.jpg", "title": "Diploma (segundo)", "lowRes": true },
+        { "file": "licert-37-minicurso-application-security-como-impl.jpg", "title": "Minicurso Application Security (SSDLC) - Fatec", "lowRes": false },
+        { "file": "licert-38-apresentacao-de-trabalho-autoral-na-1-mo.jpg", "title": "Apresentação de Trabalho Autoral - 1ª Mostra Detect.AI", "lowRes": false },
+        { "file": "licert-39-memory-forensics.jpg", "title": "Memory Forensics (badge)", "lowRes": true },
+        { "file": "licert-40-dynamic-analyst.jpg", "title": "Dynamic Analyst (badge)", "lowRes": true },
+        { "file": "licert-41-wireshark-expert.jpg", "title": "Wireshark Expert (badge)", "lowRes": true },
+        { "file": "licert-42-fundamentos-de-devops.jpg", "title": "Fundamentos de DevOps", "lowRes": true },
+        { "file": "licert-43-fundamentos-de-devops-devsecops.jpg", "title": "Fundamentos de DevOps / DevSecOps", "lowRes": true },
+        { "file": "licert-44-como-se-preparar-para-uma-carreira-de-de.jpg", "title": "Como se preparar para uma carreira de DevOps", "lowRes": true }
+      ]
+    }
+  },
+
+  "certificateImagesInRepo": [
+    { "file": "img/certificados/1.png", "title": "Roadsec 2022 — Certificado de Participação", "issuer": "Roadsec / Flipside", "hours": "9h", "date": "2022-07", "verifyUrl": null },
+    { "file": "img/certificados/2.png", "title": "AWS Academy Graduate — AWS Academy Cloud Foundations", "issuer": "AWS Academy", "hours": "20h", "date": "2023-08-26", "verifyUrl": "https://www.credly.com/go/E1GcXYdW" },
+    { "file": "img/certificados/3.png", "title": "Hardening em Sistemas Linux: Técnicas Avançadas Para Proteger a Segurança do Seu Ambiente", "issuer": "Fatec Ourinhos", "hours": "2h", "date": "2023-05-20", "verifyUrl": "http://www.fatecourinhos.edu.br/declaracoes/inscricao/1010786" },
+    { "file": "img/certificados/4.png", "title": "I Workshop de Solução de Problemas com Ciência de Dados", "issuer": "Fatec Ourinhos", "hours": "40h", "date": "2022-06", "verifyUrl": "http://www.fatecourinhos.edu.br/declaracoes/inscricao/1009234" },
+    { "file": "img/certificados/5.png", "title": "Robô com Python e Machine Learning", "issuer": "Fatec Ourinhos", "hours": "4h", "date": "2022-05-14", "verifyUrl": "http://www.fatecourinhos.edu.br/declaracoes/inscricao/1008887" },
+    { "file": "img/certificados/6.png", "title": "V Security Weekend", "issuer": "Fatec Ourinhos", "hours": "16h", "date": "2022-05", "verifyUrl": "http://www.fatecourinhos.edu.br/declaracoes/inscricao/1008885" },
+    { "file": "img/certificados/7.png", "title": "II FatecSeg - Congresso de Segurança da Informação", "issuer": "FatecSeg", "hours": "8h", "date": "2022-11", "verifyUrl": "https://www.even3.com.br/documentos", "verifyCode": "1786837.86904326.6.8.5797057931408997" },
+    { "file": "img/certificados/8.png", "title": "Ferramentas para Ciência de Dados", "issuer": "Fatec Ourinhos (via Even3)", "hours": "4h", "date": "2023-08-26", "verifyUrl": "https://www.even3.com.br/documentos", "verifyCode": "18674495.83758928.6.8.86744958375892868" }
+  ],
+
+  "projects": [
+    {
+      "name": "Application Security — Como implementar o Ciclo de Vida de Desenvolvimento de Software Seguro (SSDLC) do zero",
+      "category": "Palestras e Minicursos",
+      "description": "Palestra/minicurso sobre AppSec e implementação de um processo seguro no ciclo de desenvolvimento: SSDLC e Shift Left; modelagem de ameaças com STRIDE e Microsoft Threat Modeling Tool; automação de segurança com SAST, SCA, IaC e DAST; OWASP Juice Shop; pipelines CI/CD com GitHub Actions e Snyk; testes ofensivos com OWASP ZAP.",
+      "contributors": ["Demetry Levy Kotrozinis"],
+      "skills": ["AppSec", "DevSecOps", "SSDLC"],
+      "relatedPublications": ["urn:li:activity:7397200867143188480", "urn:li:activity:7387705703257378816"]
+    },
+    {
+      "name": "Undersampling Applied to Ransomware Detection: An Analysis of NearMiss and Random Undersampling Techniques",
+      "category": "Artigo Científico",
+      "description": "Trabalho de graduação (TCC) que propõe um método de detecção de ransomware com machine learning, focando em acurácia e eficiência computacional — alcançou redução de 41,96% no tempo de processamento mantendo o desempenho de detecção. Apresentado na 1ª Mostra de Pesquisas do Laboratório Detect.AI (Fatec Ourinhos) e submetido ao Simpósio Brasileiro de Cibersegurança 2025.",
+      "contributors": ["Rafael Alves Vanzella", "Thiago José Lucas, Ph.D. (orientador)"],
+      "skills": ["CyberSecurity", "Machine Learning"],
+      "relatedPublications": ["urn:li:activity:7328626999235600385"]
+    }
+  ],
+
+  "speaking": [
+    {
+      "title": "Application Security – Como implementar o Ciclo de Vida de Desenvolvimento de Software Seguro (SSDLC) do zero",
+      "event": "VI J3TI – Jornada de Estudos em Tecnologia da Informação",
+      "host": "Instituto Federal do Paraná - IFPR Jacarezinho",
+      "date": "2025-11",
+      "coSpeaker": "Demetry Levy Kotrozinis",
+      "publication": "urn:li:activity:7397200867143188480"
+    },
+    {
+      "title": "Application Security: Como Implementar o Ciclo de Vida de Desenvolvimento de Software Seguro (SSDLC) do Zero",
+      "event": "XIX Semana de Tecnologia",
+      "host": "Faculdade de Tecnologia de Ourinhos - Fatec Ourinhos",
+      "date": "2025-10",
+      "coSpeaker": "Demetry Levy Kotrozinis",
+      "publication": "urn:li:activity:7387705703257378816"
+    }
+  ],
+
+  "courses": [
+    { "title": "Hardening em Sistemas Linux: Técnicas Avançadas Para Proteger a Segurança do Seu Ambiente", "type": "Minicurso", "institution": "FATEC Ourinhos" },
+    { "title": "Robô com Python e Machine Learning", "type": "Minicurso", "institution": "FATEC Ourinhos" }
+  ],
+
+  "volunteering": [
+    {
+      "role": "Marketing Digital",
+      "organization": "Centro da Juventude José Richa",
+      "cause": "Crianças",
+      "startDate": "2018-06",
+      "endDate": "2018-08"
+    }
+  ],
+
+  "recommendationsReceived": {
+    "total": 7,
+    "highlighted": [
+      {
+        "author": "Pedro Henrique Fogaça Pereira",
+        "authorTitle": "Técnico de manutenção e suporte em redes",
+        "relationship": "Trabalhou na mesma equipe que Pablo (6 de junho de 2025)",
+        "text": "Pablo é um companheiro de serviço e pelo tempo juntos, vi muitas evoluções, o mesmo sempre é focado em criar novidades e aprimorar nosso meio de trabalho, atua muito bem como líder e auxilia todos os setores da melhor forma, resolve qualquer desafio e passa muita confiança em lhe ensinar coisas novas."
+      },
+      {
+        "author": "Thalita Durante Moraes",
+        "authorTitle": "Assistente de Contas Médicas na Unimed Norte Pioneiro-PR | Psicologia Organizacional e do Trabalho",
+        "relationship": "Trabalhou na mesma equipe que Pablo (13 de abril de 2025)",
+        "text": "Trabalhar com o Pablo é uma experiência muito positiva. Ele atua como Analista Administrativo Pleno e, além de cuidar das atividades do dia a dia com responsabilidade, também assume a liderança, resolve problemas com agilidade e contribui com o desenvolvimento de sistemas que facilitam a rotina da equipe. O Pablo é aquele tipo de pessoa que está sempre disposto a ajudar, é educado, comprometido e tem uma postura super proativa. Ele está sempre em busca de melhorias, trazendo ideias e soluções que realmente fazem a diferença para a empresa. Sem dúvida, é um profissional que deixa uma marca positiva por onde passa e agrega muito valor ao time."
+      }
+    ],
+    "note": "Há 7 recomendações recebidas no total; as demais podem ser extraídas se desejar."
+  },
+
+  "publications": [
+    {
+      "id": "7479874684654682113",
+      "urn": "urn:li:activity:7479874684654682113",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7479874684654682113",
+      "date": "2026-07-06",
+      "category": "certification",
+      "type": "document",
+      "featured": false,
+      "title": "Treinamento EXIN - [C] Information Security Foundation (25h) — Academia Clavis",
+      "description": "Gostaria de compartilhar que finalizei o treinamento preparatório para a certificação EXIN - [C] Information Security Foundation, oferecido pela Academia Clavis. Foram 25 horas de curso, cobrindo os seguintes tópicos: ✓ Informação e segurança; ✓ Ameaças e riscos; ✓ Controles de segurança; ✓ Legislação, regulamentação e normas. Agradeço à Clavis Segurança da Informação pelo acesso ao treinamento e pelo incentivo contínuo ao desenvolvimento do time. 🐙",
+      "image": "img/linkedin/7479874684654682113.jpg",
+      "imageStatus": "downloaded",
+      "engagement": { "reactions": 13, "comments": 1, "shares": 0 }
+    },
+    {
+      "id": "7460440870895579136",
+      "urn": "urn:li:activity:7460440870895579136",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7460440870895579136",
+      "date": "2026-05-13",
+      "category": "certification",
+      "type": "document",
+      "featured": false,
+      "title": "Treinamento Ethical Hacking e CompTIA PenTest+ (20h) — Academia Clavis",
+      "description": "Gostaria de compartilhar que finalizei o treinamento preparatório para a certificação Ethical Hacking e CompTIA PenTest+, oferecido pela Academia Clavis. Foram 20 horas de curso, cobrindo os seguintes tópicos: ✓ Planejamento e Obtenção de Informações; ✓ Varredura; ✓ Exploração; ✓ Pós-Exploração; ✓ Ataques a Aplicações Web. Agradeço à Clavis Segurança da Informação pelo acesso ao treinamento e pelo incentivo contínuo ao desenvolvimento do time. 🐙",
+      "image": "img/linkedin/7460440870895579136.jpg",
+      "imageStatus": "downloaded",
+      "engagement": { "reactions": 90, "comments": 7, "shares": 0 }
+    },
+    {
+      "id": "7440178593785122817",
+      "urn": "urn:li:activity:7440178593785122817",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7440178593785122817",
+      "date": "2026-03-18",
+      "category": "achievement",
+      "type": "images",
+      "featured": true,
+      "title": "Conclusão da Pós-graduação em Cibersegurança Ofensiva (Acadi-TI)",
+      "description": "Diploma na mão e mais uma meta alcançada! Concluí minha pós-graduação em Cibersegurança Ofensiva pela Acadi-TI - Academia Inovadora de TI. Destaque para os parceiros desde a faculdade, Demetry Levy Kotrozinis e Rafael Alves Vanzella. Aos 22 anos, completar essa etapa — fruto de um investimento pessoal e financeiro significativo — é extremamente gratificante. Durante o período de estudo, conquistei minha primeira oportunidade no mercado de cyber, apliquei conhecimento na prática em casos reais e fui convidado para ministrar cursos e palestras. Agora o foco total se volta para os novos cursos e simulados, rumo à próxima meta: certificações!",
+      "image": "img/linkedin/7440178593785122817.jpg",
+      "imageStatus": "downloaded",
+      "mediaCount": 6,
+      "engagement": { "reactions": 236, "comments": 14, "shares": 1 }
+    },
+    {
+      "id": "7418232553461104640",
+      "urn": "urn:li:activity:7418232553461104640",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7418232553461104640",
+      "date": "2026-01-17",
+      "category": "certification",
+      "type": "document",
+      "featured": false,
+      "title": "Treinamento CompTIA Security+ (37h) — Academia Clavis",
+      "description": "Gostaria de compartilhar que finalizei o treinamento preparatório para a certificação CompTIA Security+, oferecido pela Academia Clavis. Foram 37 horas de curso, cobrindo os seguintes tópicos: ✓ Ataques, ameaças e vulnerabilidades; ✓ Design e Arquitetura de Segurança; ✓ Protocolos; ✓ Operações e respostas a incidentes; ✓ Governança, Risco e Conformidade. Agradeço à Clavis Segurança da Informação pelo acesso ao treinamento e pelo incentivo contínuo ao desenvolvimento do time.",
+      "image": "img/linkedin/7418232553461104640.jpg",
+      "imageStatus": "downloaded",
+      "engagement": { "reactions": 85, "comments": 12, "shares": 0 }
+    },
+    {
+      "id": "7397200867143188480",
+      "urn": "urn:li:activity:7397200867143188480",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7397200867143188480",
+      "date": "2025-11-20",
+      "category": "speaking",
+      "type": "images",
+      "featured": true,
+      "title": "Palestra de AppSec (SSDLC) no VI J3TI — IFPR Jacarezinho",
+      "description": "Palestrei junto ao Demetry Levy Kotrozinis no evento \"VI J3TI – Jornada de Estudos em Tecnologia da Informação\", organizado pelo Instituto Federal do Paraná - IFPR Jacarezinho. Apresentamos o tema “Application Security – Como implementar o Ciclo de Vida de Desenvolvimento de Software Seguro (SSDLC) do zero”, abordando os conceitos de AppSec e como iniciar a implementação de um processo seguro dentro do ciclo de desenvolvimento. #appsec #applicationsecurity #cybersecurity #ssdlc #devsecops #ifpr",
+      "image": "img/linkedin/7397200867143188480.jpg",
+      "imageStatus": "downloaded",
+      "mediaCount": 10,
+      "engagement": { "reactions": 55, "comments": 0, "shares": 0 }
+    },
+    {
+      "id": "7388529928964808704",
+      "urn": "urn:li:activity:7388529928964808704",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7388529928964808704",
+      "date": "2025-10-27",
+      "category": "career",
+      "type": "image",
+      "featured": false,
+      "title": "Início na Clavis Segurança da Informação",
+      "description": "Agora faço parte do time Clavis Segurança da Informação! Receber o kit de boas-vindas foi um momento especial — mais do que um símbolo de início, é a realização de um grande sonho. O onboarding tem sido incrível, e já deu pra sentir de perto a cultura colaborativa e o cuidado com cada detalhe. Agora é hora de mostrar meu potencial, aprendendo muito e contribuindo com o que estiver ao meu alcance. #SomosTodosUmaClavis 💚",
+      "image": "img/linkedin/7388529928964808704.jpg",
+      "imageStatus": "downloaded",
+      "engagement": { "reactions": 338, "comments": 36, "shares": 0 }
+    },
+    {
+      "id": "7387705703257378816",
+      "urn": "urn:li:activity:7387705703257378816",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7387705703257378816",
+      "date": "2025-10-25",
+      "category": "speaking",
+      "type": "images",
+      "featured": true,
+      "title": "Minicurso de AppSec (SSDLC) na XIX Semana de Tecnologia — Fatec Ourinhos",
+      "description": "Ministrei, junto com Demetry Levy Kotrozinis, o minicurso “Application Security: Como Implementar o Ciclo de Vida de Desenvolvimento de Software Seguro (SSDLC) do Zero” durante a XIX Semana de Tecnologia da Fatec Ourinhos. Temas: SSDLC e Shift Left; Modelagem de ameaças com STRIDE e Microsoft Threat Modeling Tool; Automação de segurança com SAST, SCA, IaC e DAST; OWASP Juice Shop; Pipelines CI/CD com GitHub Actions e Snyk; Testes ofensivos com OWASP ZAP. #AppSec #SSDLC #DevSecOps #CyberSecurity #OWASP #FatecOurinhos #SecurityByDesign #ShiftLeft",
+      "image": "img/linkedin/7387705703257378816.jpg",
+      "imageStatus": "downloaded",
+      "mediaCount": 6,
+      "engagement": { "reactions": 63, "comments": 2, "shares": 1 }
+    },
+    {
+      "id": "7386983437020200960",
+      "urn": "urn:li:activity:7386983437020200960",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7386983437020200960",
+      "date": "2025-10-23",
+      "category": "career",
+      "type": "images",
+      "featured": false,
+      "title": "Despedida da Enifler após 5 anos",
+      "description": "Encerrei um dos capítulos mais marcantes da minha vida profissional. Depois de 5 anos e alguns meses, me despedi da Enifler. Entrei com 17 anos, comecei como estagiário e, com o tempo, me tornei líder e parte da coordenação, ajudando a estruturar cada departamento. Foi minha escola da vida: aprendi a ser organizado, responsável, proativo e profissional, a liderar, planejar e pensar fora da caixa. Com o fruto do meu trabalho, realizei metas e sonhos — inclusive pagar a faculdade e a pós-graduação. Saio com gratidão e as portas abertas. Muito obrigado, Enifler! 🧡",
+      "image": "img/linkedin/7386983437020200960.jpg",
+      "imageStatus": "downloaded",
+      "mediaCount": 8,
+      "engagement": { "reactions": 45, "comments": 6, "shares": 0 }
+    },
+    {
+      "id": "7374411879869321216",
+      "urn": "urn:li:activity:7374411879869321216",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7374411879869321216",
+      "date": "2025-09-18",
+      "category": "certification",
+      "type": "image",
+      "featured": false,
+      "title": "Início do treinamento CEH v13 — EC-Council",
+      "description": "Iniciei oficialmente o treinamento CEHv13 - Certified Ethical Hacker, pela EC-Council. Este é um grande marco na minha jornada, o primeiro passo dentro do meu plano de conquistar certificações amplamente reconhecidas na área de Cibersegurança. A CEH é apenas o começo de uma lista, e em breve espero compartilhar a aprovação no exame. #CyberSecurity #EthicalHacking #CEH #CEHv13 #ECCouncil #Pentest #RedTeam #OffensiveSecurity",
+      "image": "img/linkedin/7374411879869321216.jpg",
+      "imageStatus": "downloaded",
+      "engagement": { "reactions": 76, "comments": 6, "shares": 0 }
+    },
+    {
+      "id": "7328626999235600385",
+      "urn": "urn:li:activity:7328626999235600385",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7328626999235600385",
+      "date": "2025-05-15",
+      "category": "research",
+      "type": "images",
+      "featured": true,
+      "title": "Artigo científico sobre detecção de ransomware apresentado no Detect.AI",
+      "description": "Apresentamos nosso artigo científico \"Undersampling Aplicado à Detecção de Ransomwares: Uma Análise dos Efeitos do NearMiss e do Random Undersampling\" na 1ª Mostra de Pesquisas do Laboratório Detect.AI (Fatec Ourinhos), organizada por Thiago José Lucas, Ph.D. Estudo que representou nosso trabalho de graduação, desenvolvido por mim e por Rafael Alves Vanzella, com orientação do próprio Thiago José Lucas. Submetemos a pesquisa ao Simpósio Brasileiro de Cibersegurança 2025. O objetivo é propor um método de detecção de ransomware com machine learning, focando em acurácia e eficiência computacional — com redução de 41,96% no tempo de processamento mantendo o desempenho de detecção. #Cibersegurança #MachineLearning #Ransomware #FatecOurinhos #DetectAI #DataScience",
+      "image": "img/linkedin/7328626999235600385.jpg",
+      "imageStatus": "downloaded",
+      "mediaCount": 5,
+      "engagement": { "reactions": 70, "comments": 10, "shares": 0 }
+    },
+    {
+      "id": "7195162664413605889",
+      "urn": "urn:li:activity:7195162664413605889",
+      "permalink": "https://www.linkedin.com/feed/update/urn:li:activity:7195162664413605889",
+      "date": "2024-05-11",
+      "category": "lab",
+      "type": "text",
+      "featured": false,
+      "title": "Laboratório Extreme Hacking BR — SpearPhishing emulando APT (Acadi-TI)",
+      "description": "Primeiro Laboratório da Extreme Hacking BR finalizado! Nele consegui simular um ataque através de SpearPhishing emulando um grupo APT. Tópicos explorados: exemplo prático de SpearPhishing; entrega de artefato malicioso e engenharia social; uso do Metasploit Framework para invasão; bypass do UAC do Windows; captura de credenciais; captura e filtragem de pacotes com Wireshark; exfiltração de dados; como a criptografia (HTTPS) dificulta a análise de pacotes; identificação de ataque via logs do Windows; e monitoramento de ambiente. Parabéns Acadi-TI - Academia Inovadora de TI pelo conteúdo de qualidade! 🚀",
+      "image": "img/linkedin/7195162664413605889.jpg",
+      "imageStatus": "downloaded",
+      "engagement": { "reactions": null, "comments": null, "shares": null }
+    }
+  ]
+}

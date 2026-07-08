@@ -1,0 +1,285 @@
+{
+  "_meta": {
+    "generatedAt": "2026-07-07",
+    "purpose": "Banco de referências de design coletadas de sites que o Pablo gostou, para usar como ideias/template no portfólio. Valores extraídos via getComputedStyle no navegador (reais) + observação de screenshot.",
+    "sourceOrder": "Sites listados na ordem de preferência informada pelo Pablo (rank 1 = favorito).",
+    "notes": [
+      "Cores 'accent' já filtradas: descartei ruído comum como #0000ee (cor default de link do browser) e tokens de syntax-highlight de blocos de código.",
+      "Sites em Framer/Next com CSS moderno (oklch, color-mix) às vezes confundem o getComputedStyle; nesses casos a cor foi validada pela screenshot.",
+      "Screenshots salvos apenas dos 3 primeiros (prints oficiais fornecidos) em data/design-references/shots/. Os demais foram observados ao vivo; posso salvar prints deles se quiser."
+    ]
+  },
+
+  "designBrief": {
+    "tema": "Dark por padrão. Opção de toggle Light se o usuário quiser trocar.",
+    "cor": "UMA cor principal. Cores secundárias apenas discretas, para diferenciar seções ou estados — nada colorido/carnavalesco.",
+    "vibe": "Profissional de cibersegurança / SOC Analyst. Minimalista, técnico, confiável.",
+    "candidatosDeAcento": ["verde-terminal (estilo Portline #30d158)", "ciano/azul (estilo Daytona #0080ff)", "âmbar/amarelo discreto (estilo Crontap, porém mais sóbrio)"],
+    "recomendacaoInicial": "Base preto/quase-preto + 1 acento (verde ou ciano combinam com segurança) + cinzas neutros para hierarquia. Secundárias só em badges de status (ex.: verde=ok, âmbar=alerta, vermelho=crítico) — que é justamente a linguagem de um SOC."
+  },
+
+  "sites": [
+    {
+      "rank": 1,
+      "name": "Portline",
+      "url": "https://portline.dev/",
+      "category": "Dev tool (localhost tunneling)",
+      "relevance": "ALTA — dark minimalista com estética de terminal; casa com portfólio de segurança.",
+      "tokens": {
+        "bg": "#0e0d0c",
+        "bgNote": "Preto quente (leve tom marrom), não puro.",
+        "text": "#ffffff",
+        "fonts": { "heading": "Inter", "body": "Inter", "mono": "usada no card de terminal" },
+        "headings": { "h1": "68px / 700 / tracking -1.7px / lh 1.06", "h2": "30px / 600 / -0.75px", "h3": "16px / 600" },
+        "accents": [{ "hex": "#30d158", "role": "acento principal — verde 'live/running' (status)" }],
+        "buttons": [
+          { "tipo": "primary", "bg": "#ffffff", "fg": "#0e0d0c", "radius": "12px", "note": "botão branco invertido, sem sombra" },
+          { "tipo": "ghost", "bg": "#191817", "fg": "#d4d0cd", "radius": "6px", "border": "1px" }
+        ],
+        "radii": ["12px", "8px", "6px"]
+      },
+      "techniques": ["Card flutuante estilo app nativo (terminal com lista de rotas, toggles, status verde)", "cursor de terminal piscando '_' no headline", "hero 2 colunas (texto + produto)", "snippet de instalação curl em bloco mono com botão copiar"],
+      "stealThis": ["Acento verde só para status 'ativo/live'", "botão primário branco sobre fundo escuro", "bloco de comando copiável (curl/instalação)"],
+      "screenshot": "data/design-references/shots/01-portline-source.jpeg"
+    },
+    {
+      "rank": 2,
+      "name": "Daytona",
+      "url": "https://www.daytona.io/",
+      "category": "Infra para rodar código de IA",
+      "relevance": "ALTA — preto puro + azul, hero com bloco de código (bom pra mostrar scripts/logs).",
+      "tokens": {
+        "bg": "#0a0a0a",
+        "text": "#ffffff",
+        "fonts": { "heading": "Inter", "body": "Inter", "mono": "monospace no bloco de código" },
+        "headings": { "h1": "48px / 400 (leve!)", "h3": "32px / 400" },
+        "accents": [{ "hex": "#0080ff", "role": "azul elétrico — CTA primário" }],
+        "buttons": [
+          { "tipo": "primary", "bg": "#0080ff", "fg": "#ffffff", "radius": "4px" },
+          { "tipo": "secondary", "bg": "#252525", "fg": "#ffffff", "radius": "4px" }
+        ],
+        "radii": ["4px"]
+      },
+      "techniques": ["Hero com bloco de código real com syntax highlight + abas de linguagem (Python/TS/Ruby/Go/Java)", "raio de borda pequeno (4px) = mais técnico/sério", "faixa de logos 'usado por' com case studies"],
+      "stealThis": ["Bloco de código com abas de linguagem no hero", "H1 em peso leve (400) para contraste elegante", "radius pequeno = tom sério/enterprise"],
+      "screenshot": "data/design-references/shots/02-daytona-source.jpeg"
+    },
+    {
+      "rank": 3,
+      "name": "Supabase",
+      "url": "https://supabase.com/",
+      "category": "Backend / banco de dados open source",
+      "relevance": "ALTA — referência clássica de dark + verde, com grid de cards de feature.",
+      "tokens": {
+        "bg": "#121212",
+        "bgNote": "Escuro neutro; parsing leu #00009f por causa de oklch/color-mix — cor real confirmada pela screenshot.",
+        "text": "#ffffff",
+        "fonts": { "heading": "Manrope", "body": "Inter", "note": "pareamento 2 fontes: Manrope títulos, Inter corpo" },
+        "headings": { "h1": "46px / 500 (Manrope)", "h3": "34px / 600" },
+        "accents": [{ "hex": "#3ecf8e", "role": "verde de marca" }, { "hex": "#006239", "role": "verde escuro no fundo do botão" }],
+        "buttons": [
+          { "tipo": "primary", "bg": "#006239", "fg": "#ffffff", "radius": "6px", "border": "1px verde" },
+          { "tipo": "secondary", "bg": "#2a2a2a", "radius": "6px" }
+        ],
+        "radii": ["6px", "pill (nos botões de ação da UI)"]
+      },
+      "techniques": ["Headline em 2 cores (branco + verde na 2ª linha)", "grid de cards de feature com ícone + título + bullets + mockup", "bordas sutis (#2e2e2e) nos cards"],
+      "stealThis": ["Grid de cards de feature (perfeito para seção de skills/serviços de segurança)", "segunda linha do headline em cor de acento", "Manrope+Inter"],
+      "screenshot": "data/design-references/shots/03-supabase-source.jpeg"
+    },
+    {
+      "rank": 4,
+      "name": "Cobalt",
+      "url": "https://joincobalt.com/",
+      "category": "Fintech (waitlist)",
+      "relevance": "ALTA — 'uma cor + sutileza' levada ao extremo; dessaturado e premium.",
+      "tokens": {
+        "bg": "#09090b",
+        "bgNote": "Zinc quase-preto (frio) com grid e glow azul-cobalto sutil no topo.",
+        "text": "#e4e4e7",
+        "fonts": { "heading": "Inter", "body": "Inter" },
+        "headings": { "h1": "72px / 700 / -1.8px (texto em GRADIENTE branco→cinza)", "h2": "32px / 700 / -0.8px", "h3": "18px / 500" },
+        "accents": [{ "hex": "ambiente azul-cobalto (glow radial)", "role": "atmosfera, não sólido" }, { "hex": "#fb923c", "role": "laranja só em micro-UI" }],
+        "buttons": [{ "tipo": "neutro", "bg": "#3f3f46", "fg": "#d4d4d8", "radius": "4px" }],
+        "radii": ["9999px", "24px", "16px", "12px", "8px", "6px", "4px"]
+      },
+      "techniques": ["Texto do headline em gradiente (background-clip:text, branco→cinza que some)", "fundo em grade fina + glow radial azul-cobalto", "paleta ultra-dessaturada (quase só cinzas)", "botão 'Join the waitlist' escuro discreto"],
+      "stealThis": ["Texto em gradiente que desvanece nos títulos grandes", "fundo de grade sutil + glow radial de UMA cor", "restrição de cor extrema = ar premium"],
+      "screenshot": null
+    },
+    {
+      "rank": 5,
+      "name": "Zento",
+      "url": "https://zento.framer.website/",
+      "category": "TEMPLATE DE PORTFÓLIO PESSOAL",
+      "relevance": "MÁXIMA — é literalmente um portfólio pessoal; melhor referência estrutural direta.",
+      "tokens": {
+        "bg": "#050505",
+        "bgNote": "Preto quase puro; cards em ~#161616 com bordas sutis.",
+        "text": "#e6e6e6",
+        "fonts": { "heading": "Manrope", "body": "Manrope/sans" },
+        "headings": { "h1": "28px / 600 (Manrope)", "h2": "20px / 600" },
+        "accents": [{ "hex": "#a290fc", "role": "roxo-lavanda — badges, botões, ícones" }, { "hex": "#6dd33d", "role": "verde 'Available to work' (status)" }],
+        "buttons": [{ "tipo": "primary", "bg": "#212121", "fg": "#fff", "radius": "16px", "note": "arredondado; variantes pill" }],
+        "radii": ["24px", "20px", "16px", "12px", "pill", "circle"]
+      },
+      "techniques": ["LAYOUT BENTO-GRID: mosaico de cards de tamanhos variados", "card de perfil: avatar + nome + 'I'm a Designer' + dot verde 'Available To Work' + tags (país, idiomas, cargo, universidade) + botões de contato", "cards de estatística com número gigante (56+ Projects, 23+ Clients, 06+ Years)", "card 'Tech Arsenal' = stack em grid 2x2 com logo+nome", "Works Gallery, Testimonials, Workflow Highlights, Services, logos de clientes, CTA 'Let's Work Together'", "cada card tem header com emoji/ícone"],
+      "stealThis": ["ESTRUTURA BENTO-GRID inteira", "card de perfil com badge de disponibilidade + tags", "cards de estatística com número grande", "card de stack/tecnologias em grid"],
+      "screenshot": null
+    },
+    {
+      "rank": 6,
+      "name": "Spellar",
+      "url": "https://www.spellar.ai/",
+      "category": "App de IA (notas de reunião, macOS)",
+      "relevance": "MÉDIA-ALTA — preto puro, títulos ousados, tem toggle light/dark.",
+      "tokens": {
+        "bg": "#000000",
+        "text": "#d6d2cf",
+        "fonts": { "heading": "Geologica (display geométrica)", "body": "system-ui" },
+        "headings": { "h1": "76px / 700 / -3.04px (enorme, tracking bem apertado)", "h2": "48px / 700", "h3": "34px / 700" },
+        "accents": [{ "hex": "#a78bfa", "role": "roxo principal" }, { "hex": "gradiente roxo→rosa", "role": "CTA primário" }, { "hex": "#007aff", "role": "azul secundário" }],
+        "buttons": [
+          { "tipo": "primary", "bg": "gradiente #a78bfa→rosa", "fg": "#fff", "radius": "999px (pill)" },
+          { "tipo": "badge", "bg": "#0a0a0c", "border": "1px", "radius": "999px" }
+        ],
+        "radii": ["999px (pill)", "50%"]
+      },
+      "techniques": ["Headline gigante Geologica com tracking muito apertado", "CTA pill com gradiente roxo→rosa", "pill badge de versão (v3.3.0) no topo do hero", "toggle light/dark (sol) na navbar", "fundo com grade + glow sutil"],
+      "stealThis": ["Toggle light/dark visível na navbar", "fonte display forte para títulos (Geologica)", "pill badge de anúncio no topo do hero"],
+      "screenshot": null
+    },
+    {
+      "rank": 7,
+      "name": "Mohit Singh",
+      "url": "https://www.mohitsingh.cloud/",
+      "category": "Site pessoal de dev (editorial)",
+      "relevance": "ALTA — outro portfólio pessoal, estilo editorial/texto-primeiro.",
+      "tokens": {
+        "bg": "#111010",
+        "bgNote": "Preto quente.",
+        "text": "#e6e6e6",
+        "fonts": { "heading": "Reckless (serifada elegante)", "body": "Figtree (sans)", "mono": "usada em descrições de projeto" },
+        "headings": { "h2": "16px / 300 (Reckless, leve)", "h3": "14px / 500 (Figtree)" },
+        "accents": [{ "hex": "acentos mínimos", "role": "ícones/labels coloridos por tecnologia (Postgres azul, Prisma, etc.)" }],
+        "buttons": [{ "tipo": "ghost", "bg": "#212121", "radius": "8px", "note": "'Show All', 'See All ↗'" }],
+        "radii": ["8px", "6px", "4px"]
+      },
+      "techniques": ["Animação de blur/reveal na entrada", "STACK COMO PILLS INLINE dentro da frase (logo+nome de cada tech no meio do texto)", "timeline 'Story So Far' (logo da empresa + cargo + período + chevron de expandir)", "cards de projeto: thumbnail + título + badge 'Building/Live' + mini-ícones de stack", "links 'See All ↗' em cada seção", "pareamento serif (títulos) + sans (corpo) + mono (código)"],
+      "stealThis": ["Tech stack como pills inline no meio do texto do 'sobre'", "timeline de experiência com logo das empresas", "cards de projeto com badge de status + ícones de tecnologia", "serif para títulos = toque editorial/sofisticado"],
+      "screenshot": null
+    },
+    {
+      "rank": 8,
+      "name": "x.ai (Grok)",
+      "url": "https://x.ai/",
+      "category": "Empresa de IA",
+      "relevance": "MÉDIA — referência de restrição máxima (monocromático).",
+      "tokens": {
+        "bg": "#0a0a0a",
+        "text": "#ffffff",
+        "fonts": { "heading": "Universal Sans Display (grotesca custom)", "body": "Universal Sans" },
+        "headings": { "h1": "60px / 500 / -1.5px", "h2": "48px / 400 / -1.2px" },
+        "accents": [{ "hex": "nenhum (monocromático preto+branco)", "role": "sem cor de marca" }],
+        "buttons": [{ "tipo": "primary", "bg": "#ffffff", "fg": "#0a0a0a", "radius": "9999px (pill)" }],
+        "radii": ["9999px (pill)"]
+      },
+      "techniques": ["Paleta 100% preto e branco, sem acento", "botões pill brancos", "fonte grotesca custom", "muito espaço negativo, austero"],
+      "stealThis": ["Prova de que dá pra ser forte SEM cor de acento (opção mais radical do brief do Pablo)", "botões pill brancos monocromáticos"],
+      "screenshot": null
+    },
+    {
+      "rank": 9,
+      "name": "SaaS Pro (Soft Pro)",
+      "url": "https://saaspro.framer.ai/",
+      "category": "Template Framer de SaaS",
+      "relevance": "MÉDIA — 'uma cor quente' (laranja) bem aplicada.",
+      "tokens": {
+        "bg": "#101010",
+        "text": "#ffffff",
+        "fonts": { "heading": "Inter", "body": "Inter" },
+        "headings": { "h1": "56px / 500 / -2.8px", "h2": "48px / 500", "h3": "40px / 500", "note": "peso 500 consistente em toda hierarquia" },
+        "accents": [{ "hex": "#ff5024", "role": "laranja — acento único" }],
+        "buttons": [
+          { "tipo": "primary", "bg": "#ff5024", "fg": "#fff", "radius": "10px", "shadow": "sombra sutil" },
+          { "tipo": "secondary", "bg": "#262626", "radius": "10px" }
+        ],
+        "radii": ["10px", "6px"]
+      },
+      "techniques": ["Acento laranja único e forte", "botões com sombra sutil (diferente dos flat)", "H1/H2/H3 todos em Inter 500 = hierarquia por tamanho, não peso", "mockups de dashboard do produto"],
+      "stealThis": ["Uma cor de acento quente aplicada com disciplina", "hierarquia por tamanho mantendo o mesmo peso de fonte"],
+      "screenshot": null
+    },
+    {
+      "rank": 10,
+      "name": "Reflect",
+      "url": "https://reflect.app/",
+      "category": "App de notas com IA",
+      "relevance": "ALTA — dark elegante com glow, hero centralizado e acento único índigo.",
+      "tokens": {
+        "bg": "#030014",
+        "bgNote": "Azul-quase-preto (tint índigo).",
+        "text": "#ffffff",
+        "fonts": { "heading": "Aeonik Pro", "body": "Inter" },
+        "headings": { "h1": "72px / 500", "h2": "56px / 500", "h3": "32px / 500" },
+        "accents": [{ "hex": "#6d48ff", "role": "índigo/violeta — acento único" }, { "hex": "#5046e4", "role": "índigo no botão" }],
+        "buttons": [{ "tipo": "primary", "bg": "#5046e4", "fg": "#fff", "radius": "6px", "note": "leve gradiente" }],
+        "radii": ["999px (pill)", "32px", "24px", "16px", "8px"]
+      },
+      "techniques": ["Hero CENTRALIZADO com pill de anúncio ('✦ New: AI integration just landed')", "glow radial roxo + linhas orbitais/constelação atrás do título", "fundo com tint da cor de acento (índigo)", "mockup do produto abaixo do hero", "headline em cinza claro (não branco puro) para suavidade"],
+      "stealThis": ["Pill de anúncio no topo do hero centralizado", "glow radial + órbitas da cor de acento como fundo", "tingir o preto de fundo com um traço da cor principal"],
+      "screenshot": null
+    },
+    {
+      "rank": 11,
+      "name": "Crontap",
+      "url": "https://crontap.com/",
+      "category": "Agendador de cron jobs / monitoramento",
+      "relevance": "ALTA — cards de monitoramento com badges de status = cara de dashboard de SOC.",
+      "tokens": {
+        "bg": "#0a0a0a",
+        "bgNote": "Preto com glow verde sutil no canto.",
+        "text": "#ffffff",
+        "fonts": { "heading": "Manrope", "body": "Inter" },
+        "headings": { "h1": "60px / 600 / -1.5px (Manrope)", "h2": "48px / 600", "h3": "18px / 600" },
+        "accents": [{ "hex": "#faff00", "role": "amarelo forte — acento principal (logo, CTA, timers)" }, { "hex": "#7dd3fc", "role": "azul (badge método POST/GET)" }, { "hex": "#34d399", "role": "verde (status HEALTHY/RUNNING)" }],
+        "buttons": [
+          { "tipo": "primary", "bg": "#ffe600", "fg": "#1f2937", "radius": "6px" },
+          { "tipo": "card", "bg": "#18181b", "radius": "12px", "border": "1px + glow branco sutil" }
+        ],
+        "radii": ["12px", "6px"]
+      },
+      "techniques": ["Eyebrow em mono ('SCHEDULE. SYNC. SHIP.') com barra colorida à esquerda", "CARDS DE MONITORAMENTO: método (POST/GET) em badge colorido + endpoint em mono + status (RUNNING/HEALTHY) com dot verde + próximo run em timer amarelo mono", "avatar stack '1.9k+ teams' como prova social", "toggle light/dark", "glow verde ambiente"],
+      "stealThis": ["CARDS DE STATUS/MONITORAMENTO — reaproveitar como cards de incidente/alerta de SOC (badge de severidade + status + timestamp em mono)", "eyebrow em monospace com barra de acento", "avatar stack de prova social"],
+      "screenshot": null
+    }
+  ],
+
+  "recreationPrompts": {
+    "note": "Pablo forneceu prompts de recriação pixel-perfect para os 3 primeiros sites. O texto do prompt é IDÊNTICO para os três — muda apenas a URL do screenshot de origem. Guardado uma vez abaixo + os 3 alvos.",
+    "sharedPromptTitle": "Fast Pixel-Perfect Recreation via Parallel Sub-Agents (Next.js + Bun)",
+    "sharedPromptSummary": "Orquestrador recria um screenshot com alta fidelidade usando sub-agentes paralelos. Stack: create-next-app (TS, Tailwind v4, React Compiler, Biome, App Router, Turbopack, Bun) + Playwright. Fase 1 (sequencial, foundation): análise rápida de layout/tokens, extração de paleta com sharp (~15 pontos), tokens semânticos em globals.css @theme, primitivos que aparecem 3+ vezes, stub de page/layout, AGENT_BRIEFING.md (<40 linhas), rota de preview __preview/[section]. Fase 2: cropar o screenshot em 4-6 seções, disparar TODOS os sub-agentes em paralelo (1 seção = 1 arquivo = 1 dono), cada um só consome tokens/primitivos, auto-verifica com Playwright, 1 iteração de fix máx. Fase 3: integrar em page.tsx, resolver tokens faltantes em lote, bun run build, screenshot full-page, eyeball-diff, 2 loops máx. Regras de velocidade: Biome só no fim, sem confirmação entre fases, build só na integração.",
+    "sharedPromptFullText": "# Fast Pixel-Perfect Recreation via Parallel Sub-Agents (Next.js + Bun)\n\nYou are the ORCHESTRATOR. Recreate the attached screenshot with high visual fidelity using parallel sub-agents. Optimize for wall-clock time.\n\n## Stack setup (do in parallel with Phase 1)\nScaffold: npx create-next-app@latest <name> --ts --tailwind --react-compiler --biome --app --turbopack --use-bun --no-src-dir --yes\nThen in parallel: bun add -d playwright && bunx playwright install chromium --with-deps AND begin Phase 1 analysis.\n\n## Parallelization contract (non-negotiable)\n- Foundation is sequential, done by you. Sections are parallel.\n- Sub-agents CONSUME tokens and primitives, never define them.\n- One section, one file, one owner. No cross-edits.\n- Sub-agents hitting a missing token STOP and report — they don't improvise.\n\n## Phase 1 — Foundation (fast pass)\n1. Quick analysis: layout system, container width, base spacing unit, font family, component inventory. 2-3 min.\n2. Token extraction: scripts/extract.ts com sharp amostrando ~15 pontos -> paleta. Tipografia/espaçamento: medir 3-4 elementos e inferir escala.\n3. Encode tokens em app/globals.css @theme (Tailwind v4) ou tailwind.config.ts (v3). Nomes semânticos.\n4. Build só primitivos que aparecem 3+ vezes (Button, Card). One-offs no arquivo da seção.\n5. Stub app/page.tsx com imports das seções + app/layout.tsx com next/font.\n6. AGENT_BRIEFING.md < 40 linhas: nomes de token, assinaturas de primitivo, ações proibidas, output path.\n7. Rota de preview app/__preview/[section]/page.tsx agora.\n\n## Phase 2 — Crop and dispatch\nCropar o screenshot em N seções (4-6). Salvar em scripts/crops/. Disparar TODOS os sub-agentes em um único batch (Task tool paralelo). Template: cada sub-agente lê AGENT_BRIEFING.md, globals.css, components/ui/*.tsx, seu crop; escreve components/sections/<section>-section.tsx; edita só seu arquivo; usa só tokens/primitivos existentes (reporta faltantes); auto-verifica com Playwright screenshot em localhost:3000/__preview/<section>, 1 iteração de fix máx.\n\n## Phase 3 — Integrate and verify\n1. Wire seções em app/page.tsx. 2. Resolver tokens faltantes em lote (você patcha os arquivos, não re-dispara agentes). 3. bun run build. 4. Screenshot full-page no viewport de origem. 5. Eyeball-diff, corrigir só deltas óbvios. 6. Mais um screenshot. Máx 2 loops de integração.\n\n## Speed rules\nBiome só no fim. Sem overlay 50%. Sem confirmação entre fases. Token faltante: você adiciona e patcha. build só na integração.\n\n## Done when\nBate visualmente em distância normal; bun run build limpo; bunx biome check --write . final.",
+    "targets": [
+      { "site": "Portline", "sourceImage": "https://landingsdev.s3.us-west-1.amazonaws.com/post-images/fe42cfca0d96473abaa379b76842051f.jpeg", "savedShot": "data/design-references/shots/01-portline-source.jpeg" },
+      { "site": "Daytona", "sourceImage": "https://landingsdev.s3.us-west-1.amazonaws.com/post-images/08f5c71e6c1040c2839917e4431c7da5.jpeg", "savedShot": "data/design-references/shots/02-daytona-source.jpeg" },
+      { "site": "Supabase", "sourceImage": "https://landingsdev.s3.us-west-1.amazonaws.com/post-images/5df0e64fbdc14f569a261db165d7548d.jpeg", "savedShot": "data/design-references/shots/03-supabase-source.jpeg" }
+    ]
+  },
+
+  "synthesis": {
+    "padroesRecorrentes": {
+      "fundo": "Todos são dark: variam de preto puro (#000) a quase-preto quente (#0e0d0c, #111010) ou com tint da cor de acento (#030014, #09090b). Nenhum usa preto chapado sem textura — quase todos têm grid sutil e/ou glow radial.",
+      "tipografia": "Inter é o padrão de corpo. Para títulos: Inter (tracking apertado -1.5 a -3px), Manrope (Supabase, Zento, Crontap), ou display custom (Geologica, AeonikPro, Universal Sans). Serifada (Reckless) dá ar editorial (Mohit).",
+      "acento": "Quase todos usam UMA cor de acento só. Verde (Portline, Supabase), azul (Daytona), roxo/índigo (Reflect, Zento, Spellar), laranja (SaaS Pro), amarelo (Crontap), ou nenhuma (x.ai).",
+      "botoes": "Dois padrões: pill total (999px, x.ai/Spellar/Reflect) ou radius pequeno 4-12px (Daytona/Portline). Primário sólido na cor de acento OU branco invertido. Sombras raras (só SaaS Pro).",
+      "secundarias": "Cores extras aparecem SÓ como badges de status/método (verde=ok, azul=info) — nunca como decoração. É exatamente o que o Pablo quer."
+    },
+    "recomendacaoParaOPortfolio": {
+      "estruturaBase": "Zento (bento-grid) + Mohit Singh (editorial/timeline/tech pills) são as referências estruturais mais diretas por serem portfólios.",
+      "estetica": "Portline + Daytona + Crontap dão o tom técnico/terminal ideal para SOC/segurança.",
+      "sugestao": "Dark quase-preto quente + 1 acento (verde-terminal #30d158 ou ciano) + Inter/Manrope + fundo com grid/glow sutil. Reaproveitar os CARDS DE STATUS do Crontap como cards de incidente/alerta (badge de severidade), e o card de perfil + stats + tech-arsenal do Zento. Toggle light/dark como Spellar/Crontap.",
+      "aRoubar": ["Bento-grid (Zento)", "tech stack como pills inline (Mohit)", "timeline de experiência com logos (Mohit)", "cards de status estilo monitoramento/SOC (Crontap)", "bloco de código/terminal no hero (Daytona/Portline)", "pill de anúncio + glow radial (Reflect)", "texto em gradiente nos títulos (Cobalt)", "toggle light/dark (Spellar/Crontap)"]
+    }
+  }
+}
