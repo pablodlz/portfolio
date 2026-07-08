@@ -313,11 +313,19 @@
     border: 1px solid var(--accent-border);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lightbox);
-    transform: translateY(140%);
-    transition: transform var(--dur-3) var(--ease);
+    /* informativo: nunca intercepta cliques (fica sobre o FAB de contato) */
+    pointer-events: none;
+    /* sai da tela por completo: própria altura + os 92px de âncora + folga */
+    transform: translateY(calc(100% + 120px));
+    visibility: hidden;
+    transition:
+      transform var(--dur-3) var(--ease),
+      visibility 0s linear var(--dur-3);
   }
   .achievement.is-in {
     transform: none;
+    visibility: visible;
+    transition: transform var(--dur-3) var(--ease);
   }
   .achievement-icon {
     display: inline-flex;

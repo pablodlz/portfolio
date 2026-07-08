@@ -394,6 +394,7 @@ function initRecToggle(): void {
 
 /* ---------- conquistas ---------- */
 let achievementEl: HTMLDivElement | null = null;
+let achievementTimer: ReturnType<typeof setTimeout> | undefined;
 const unlocked = new Set<string>();
 function unlockAchievement(name: string, text: string): void {
   if (unlocked.has(name)) return;
@@ -410,7 +411,9 @@ function unlockAchievement(name: string, text: string): void {
   achievementEl.querySelector('.achievement-title')!.textContent = `Conquista — ${name}`;
   achievementEl.querySelector('.achievement-text')!.textContent = text;
   requestAnimationFrame(() => achievementEl!.classList.add('is-in'));
-  setTimeout(() => achievementEl?.classList.remove('is-in'), 5200);
+  // conquistas em sequência renovam o prazo — sem corrida entre timers
+  clearTimeout(achievementTimer);
+  achievementTimer = setTimeout(() => achievementEl?.classList.remove('is-in'), 5200);
   dispatchEvent(new CustomEvent('pablodlz:achievement', { detail: name }));
 }
 
