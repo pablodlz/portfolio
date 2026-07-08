@@ -469,52 +469,90 @@ interface ToneOpts {
   gain?: number;
   at?: number;
   slideTo?: number;
+  detune?: number; // >0 empilha uma 2ª voz desafinada → timbre "synth-brass" rico
+  attack?: number;
 }
 function tone(ctx: AudioContext, o: ToneOpts): void {
   const t0 = ctx.currentTime + (o.at ?? 0);
   const dur = o.dur ?? 0.12;
-  const osc = ctx.createOscillator();
+  const atk = o.attack ?? 0.008;
   const g = ctx.createGain();
-  osc.type = o.type ?? 'sine';
-  osc.frequency.setValueAtTime(o.freq, t0);
-  if (o.slideTo) osc.frequency.exponentialRampToValueAtTime(o.slideTo, t0 + dur);
   g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(o.gain ?? 0.08, t0 + 0.008);
+  g.gain.exponentialRampToValueAtTime(o.gain ?? 0.08, t0 + atk);
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  osc.connect(g).connect(master!);
-  osc.start(t0);
-  osc.stop(t0 + dur + 0.03);
+  g.connect(master!);
+  const detunes = o.detune ? [-o.detune, o.detune] : [0];
+  for (const d of detunes) {
+    const osc = ctx.createOscillator();
+    osc.type = o.type ?? 'sine';
+    osc.frequency.setValueAtTime(o.freq, t0);
+    if (o.slideTo) osc.frequency.exponentialRampToValueAtTime(o.slideTo, t0 + dur);
+    if (d) osc.detune.setValueAtTime(d, t0);
+    osc.connect(g);
+    osc.start(t0);
+    osc.stop(t0 + dur + 0.03);
+  }
+}
+// acorde: várias notas simultâneas (para o "toque triunfal")
+function chord(ctx: AudioContext, freqs: number[], o: Omit<ToneOpts, 'freq'>): void {
+  for (const f of freqs) tone(ctx, { ...o, freq: f });
 }
 const jitter = (n: number, amt = 30) => n + (Math.random() * 2 - 1) * amt;
+// notas (Hz) — reaproveitadas nos jingles
+const N = { C4: 261.63, E4: 329.63, G4: 392.0, A4: 440.0, C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.0, B5: 987.77, C6: 1046.5, E6: 1318.5, G6: 1568.0 };
 
+/* Identidade sonora inspirada em GTA: San Andreas — recriada 100% via síntese
+   (Web Audio), sem samples do jogo: mantém a CSP 'self' intacta e sem risco de
+   direitos autorais, evocando a nostalgia pela ESTRUTURA melódica dos jingles. */
 const SFX: Record<string, (c: AudioContext) => void> = {
-  // b1t
+  // --- vozinha do b1t ---
   boop: (c) => tone(c, { freq: jitter(680), type: 'triangle', dur: 0.09, gain: 0.06 }),
   boop2: (c) => {
     tone(c, { freq: 520, type: 'square', dur: 0.05, gain: 0.045 });
     tone(c, { freq: jitter(820), type: 'square', dur: 0.06, gain: 0.045, at: 0.05 });
   },
   hop: (c) => tone(c, { freq: 400, type: 'sine', dur: 0.13, gain: 0.06, slideTo: jitter(760, 60) }),
-  scan: (c) => tone(c, { freq: 280, type: 'sawtooth', dur: 0.4, gain: 0.035, slideTo: 1300 }),
+  scan: (c) => tone(c, { freq: 280, type: 'sawtooth', dur: 0.4, gain: 0.03, slideTo: 1300 }),
   worried: (c) => tone(c, { freq: 520, type: 'sine', dur: 0.22, gain: 0.05, slideTo: 230 }),
-  happy: (c) => [523, 659, 784].forEach((f, i) => tone(c, { freq: f, type: 'triangle', dur: 0.1, gain: 0.05, at: i * 0.06 })),
+  happy: (c) => [N.C5, N.E5, N.G5].forEach((f, i) => tone(c, { freq: f, type: 'triangle', dur: 0.1, gain: 0.05, at: i * 0.06 })),
   wave: (c) => tone(c, { freq: jitter(900), type: 'sine', dur: 0.08, gain: 0.04 }),
-  theme: (c) => {
-    tone(c, { freq: 300, type: 'sine', dur: 0.32, gain: 0.05, slideTo: 980 });
-    tone(c, { freq: 600, type: 'triangle', dur: 0.18, gain: 0.03, at: 0.2 });
-  },
-  // site / gamificação (estilo GTA:SA, original)
-  secret: (c) => [880, 1175, 1568, 2093].forEach((f, i) => tone(c, { freq: f, type: 'sine', dur: 0.16, gain: 0.04, at: i * 0.07 })),
-  mission: (c) => [392, 523, 659].forEach((f, i) => tone(c, { freq: f, type: 'square', dur: 0.14, gain: 0.045, at: i * 0.1 })),
+
+  // --- gamificação estilo GTA:SA (originais) ---
+  // "MISSION PASSED": fanfarra synth-brass ascendente que resolve num acorde
   achievement: (c) => {
-    // arpejo ascendente resolvido + baixo quente → "missão cumprida"
-    const notes = [523.25, 659.25, 783.99, 1046.5];
-    notes.forEach((f, i) => {
-      tone(c, { freq: f, type: 'triangle', dur: 0.24, gain: 0.06, at: i * 0.12 });
-      tone(c, { freq: f / 2, type: 'sine', dur: 0.24, gain: 0.03, at: i * 0.12 });
-    });
-    tone(c, { freq: 1046.5, type: 'triangle', dur: 0.5, gain: 0.05, at: 0.48 });
+    const t: OscillatorType = 'sawtooth';
+    tone(c, { freq: N.G4, type: t, dur: 0.12, gain: 0.045, detune: 8 });
+    tone(c, { freq: N.C5, type: t, dur: 0.12, gain: 0.045, detune: 8, at: 0.11 });
+    tone(c, { freq: N.E5, type: t, dur: 0.14, gain: 0.05, detune: 8, at: 0.22 });
+    chord(c, [N.C5, N.E5, N.G5], { type: t, dur: 0.55, gain: 0.04, detune: 10, at: 0.37, attack: 0.02 });
+    tone(c, { freq: N.C6, type: 'triangle', dur: 0.6, gain: 0.035, at: 0.4 });
+    tone(c, { freq: N.C4 / 2, type: 'sine', dur: 0.7, gain: 0.05, at: 0.37 }); // baixo quente
   },
+  // "NEW MISSION": motivo curto de expectativa (ascendente)
+  mission: (c) => {
+    const t: OscillatorType = 'square';
+    tone(c, { freq: N.E4, type: t, dur: 0.1, gain: 0.04, detune: 6 });
+    tone(c, { freq: N.A4, type: t, dur: 0.1, gain: 0.04, detune: 6, at: 0.1 });
+    tone(c, { freq: N.C5, type: t, dur: 0.18, gain: 0.045, detune: 6, at: 0.2 });
+  },
+  // "CHEAT ACTIVATED": power-up rápido subindo + brilho
+  cheat: (c) => {
+    tone(c, { freq: 300, type: 'square', dur: 0.2, gain: 0.045, slideTo: 1500 });
+    tone(c, { freq: N.C6, type: 'triangle', dur: 0.14, gain: 0.03, at: 0.16 });
+  },
+  theme: (c) => SFX.cheat!(c), // a brincadeira do tema é uma "manha"
+  // "SAVE GAME": confirmação suave em duas notas
+  save: (c) => {
+    tone(c, { freq: N.G5, type: 'sine', dur: 0.14, gain: 0.04 });
+    tone(c, { freq: N.C6, type: 'sine', dur: 0.24, gain: 0.038, at: 0.12 });
+  },
+  // "PICKUP / COLLECTIBLE": moedinha brilhante
+  pickup: (c) => {
+    tone(c, { freq: N.B5, type: 'square', dur: 0.08, gain: 0.04 });
+    tone(c, { freq: N.E6, type: 'square', dur: 0.16, gain: 0.04, at: 0.07 });
+  },
+  // "SECRET FOUND": brilho misterioso ascendente (sininhos)
+  secret: (c) => [N.A5, N.C6, N.E6, N.A5 * 2].forEach((f, i) => tone(c, { freq: f, type: 'sine', dur: 0.2, gain: 0.036, at: i * 0.08 })),
   click: (c) => tone(c, { freq: 1300, type: 'square', dur: 0.03, gain: 0.03 }),
 };
 
@@ -546,7 +584,7 @@ function initSound(): void {
     } catch {
       /* sem storage: vale para a sessão */
     }
-    if (sfxOn) playSfx('boop2'); // confirma ligando (o clique é o gesto do usuário)
+    if (sfxOn) playSfx('save'); // confirma ligando (o clique é o gesto do usuário)
   });
 }
 

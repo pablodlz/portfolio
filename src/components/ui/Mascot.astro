@@ -87,7 +87,24 @@
     let termActive = false;
     let friendship = 0;
     let clicks = 0;
-    let themePranked = false;
+    // brincadeira do tema: UMA vez por sessão (persiste em sessionStorage p/
+    // não repetir nem ao navegar entre páginas na mesma sessão)
+    const PRANK_KEY = 'b1t-theme-prank';
+    let themePranked = (() => {
+      try {
+        return sessionStorage.getItem(PRANK_KEY) === '1';
+      } catch {
+        return false;
+      }
+    })();
+    const markPranked = (): void => {
+      themePranked = true;
+      try {
+        sessionStorage.setItem(PRANK_KEY, '1');
+      } catch {
+        /* sem storage: vale para a sessão em memória */
+      }
+    };
     let mischief = false; // está aprontando algo → pode ser "pego no flagra"
     let hiding = false;
     let nearCooldown = false; // evita reagir à proximidade toda hora
@@ -165,7 +182,9 @@
     const elVisible = (el: Element | null): el is HTMLElement => {
       if (!el || !(el as HTMLElement).isConnected) return false;
       const r = el.getBoundingClientRect();
-      return r.width > 0 && r.bottom > 52 && r.top < innerHeight - 52 && r.right > 0 && r.left < innerWidth;
+      // margem pequena (16px): elementos no topo da nav (toggle de tema/som)
+      // são alvos legítimos — margem grande os excluía e travava o prank
+      return r.width > 0 && r.bottom > 16 && r.top < innerHeight - 16 && r.right > 0 && r.left < innerWidth;
     };
     const placeFor = (el: HTMLElement, place: Place, off?: { x?: number; y?: number }) => {
       const r = el.getBoundingClientRect();
@@ -405,6 +424,7 @@
       hideTool();
       showTool('✅');
       await act('stamp', 800, tok);
+      sfx('pickup'); // coletável estilo GTA:SA
       hideTool();
       setEmotion('proud');
       say('Approved. selo do b1t. 🏅', 2800);
@@ -439,9 +459,10 @@
     async function epThemePrank(tok: symbol): Promise<void> {
       const btn = q('#theme-toggle');
       if (!vis(btn) || themePranked || document.documentElement.dataset.userTheme) return;
-      themePranked = true;
+      markPranked();
       mischief = true;
       setEmotion('playful');
+      sfx('mission'); // "new mission": o b1t decidiu aprontar 😏
       await arrive(btn!, 'left', tok);
       await act('peek', 700, tok);
       say('ninguém olhando… 👀', 1800);
@@ -779,19 +800,31 @@
       say(`conquista: ${e.detail}! 🎉`, 5000, true);
     }) as EventListener);
 
-    /* ---------------------------------------------- idle leve -------- */
+    /* ---------------------------------------------- idle leve --------
+       Sem repetir: percorre cada animação UMA vez (fila embaralhada) antes de
+       reciclar, com pausas maiores entre elas — não cansa. */
     const IDLE = mobile
       ? ['hop', 'wobble', 'blink2', 'lookaround', 'spin']
       : ['hop', 'wobble', 'stretch', 'lookaround', 'spin', 'jump', 'pose', 'blink2'];
+    let idleQueue: string[] = [];
+    const nextIdleAnim = (): string => {
+      if (idleQueue.length === 0) idleQueue = [...IDLE].sort(() => Math.random() - 0.5);
+      return idleQueue.pop()!;
+    };
+    let tipQueue: string[] = [];
+    const nextTip = (): string => {
+      if (tipQueue.length === 0) tipQueue = [...TIPS].sort(() => Math.random() - 0.5);
+      return tipQueue.pop()!;
+    };
     const idleTick = (): void => {
+      // pausa maior: ~16–30s entre uma animação ociosa e a próxima
       setTimeout(() => {
         if (!asleep && !busy && root.dataset.state === 'idle') {
-          const roll = Math.random();
-          if (roll < 0.4) say(rnd(TIPS), 4200);
-          else void anim(rnd(IDLE));
+          if (Math.random() < 0.35) say(nextTip(), 4200);
+          else void anim(nextIdleAnim());
         }
         idleTick();
-      }, 9000 + Math.random() * 9000);
+      }, 16000 + Math.random() * 14000);
     };
 
     /* ---------------------------------------------- boot ------------- */
@@ -806,26 +839,32 @@
     if (!reduced) scheduleDirector(); // roda no mobile também (mobile-first)
     setTimeout(() => say('e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑', 5200), 3500);
 
-    // garante que a "brincadeira do tema" aconteça (uma vez), sem depender só
-    // do sorteio do diretor — tenta ~70s após a visita, reagendando se ocupado
+    // garante que a "brincadeira do tema" aconteça (uma vez por sessão), sem
+    // depender do sorteio — tenta num momento aleatório da navegação e, se
+    // estiver ocupado/rolando, tenta de novo logo em seguida
     const tryThemePrank = (): void => {
       if (reduced || themePranked || document.documentElement.dataset.userTheme) return;
       if (!canPlay() || !vis(q('#theme-toggle'))) {
-        setTimeout(tryThemePrank, 15000);
+        setTimeout(tryThemePrank, 7000);
         return;
       }
       busy = true;
       const tok = Symbol();
       running = tok;
-      void epThemePrank(tok).then(() => {
-        if (running === tok) return goHome(tok);
-      }).then(() => {
-        if (running === tok) running = null;
-        setState('idle');
-        busy = false;
-      });
+      void epThemePrank(tok)
+        .then(() => {
+          if (running === tok) return goHome(tok);
+        })
+        .catch(() => snapHome())
+        .finally(() => {
+          if (running === tok) running = null;
+          mischief = false;
+          setState('idle');
+          busy = false;
+          lastEpisodeAt = performance.now();
+        });
     };
-    if (!reduced) setTimeout(tryThemePrank, 70000 + Math.random() * 20000);
+    if (!reduced) setTimeout(tryThemePrank, 28000 + Math.random() * 22000);
     };
     if ('requestIdleCallback' in window)
       (window as unknown as { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback(boot, { timeout: 1800 });
