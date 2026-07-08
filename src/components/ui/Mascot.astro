@@ -265,10 +265,14 @@
       gXY = null;
       targetLost = false;
       kick();
+      // desiste se não chegar em ~5s (rAF pausado no scroll do mobile, alvo
+      // inalcançável, etc.) → nunca trava o episódio/apresentação
+      const deadline = performance.now() + 5000;
       while (running === tok) {
         if (targetLost || !elVisible(el)) throw new Error('lost');
         const g = placeFor(el, place, off);
         if (Math.hypot(g.x - px, g.y - py) < arrivedDist + 8) break;
+        if (performance.now() > deadline) break; // tempo esgotado: segue de onde parou
         await wait(55);
       }
     };
@@ -624,9 +628,17 @@
     async function presentSection(sec: SecScript, tok: symbol): Promise<void> {
       const target = q(sec.sel);
       if (!vis(target)) return;
-      await arrive(target!, 'onTop', tok);
+      // FALA JÁ: o balão aparece na hora (mobile-first) — a apresentação é
+      // visível mesmo se a caminhada até o título não completar (o usuário
+      // continua rolando). A caminhada/animação é best-effort a seguir.
       setEmotion(sec.emotion);
-      say(vary('sec-' + sec.id, sec.lines), 3400);
+      say(vary('sec-' + sec.id, sec.lines), 3600);
+      try {
+        await arrive(target!, 'onTop', tok);
+      } catch {
+        return; // alvo saiu da tela: já falamos, encerra sem travar
+      }
+      if (running !== tok) return;
       if (sec.special) await sec.special(tok);
       else {
         await act(sec.anim, 900, tok);
@@ -654,12 +666,24 @@
       busy = true;
       const tok = Symbol();
       running = tok;
+      // WATCHDOG: nenhuma cena pode segurar o b1t "ocupado" pra sempre. Se
+      // travar (ex.: rAF congelado no scroll do mobile), largamos o token → os
+      // loops internos (arrive/hold/goStatic) saem e a cena encerra, liberando
+      // o busy p/ as próximas apresentações. Sem isto, um único travamento
+      // bloqueava TODAS as apresentações de seção seguintes.
+      const watchdog = setTimeout(() => {
+        if (running === tok) {
+          running = null;
+          snapHome();
+        }
+      }, 10000);
       try {
         await fn(tok);
         if (running === tok) await goHome(tok);
       } catch {
         if (running === tok) await goHome(tok).catch(() => snapHome());
       }
+      clearTimeout(watchdog);
       hideTool();
       mischief = false;
       setState('idle');
@@ -721,7 +745,7 @@
           if (pendingSection()) {
             setTimeout(() => {
               if (canPlay()) void playEpisode();
-            }, 900);
+            }, 300);
           } else if (performance.now() - lastEpisodeAt > 8000) {
             setTimeout(() => {
               if (canPlay()) void playEpisode();
