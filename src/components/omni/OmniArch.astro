@@ -1,0 +1,174 @@
+---
+import Sec from './Sec.astro';
+import Deep from './Deep.astro';
+import {
+  ARCH_INVARIANTS,
+  ATTACK_PATH,
+  ARCH_STORES_NOTE,
+  ARCH_LAYERS,
+  ARCH_NOTE,
+} from '../../lib/omni';
+---
+
+<Sec
+  n="08"
+  id="arquitetura"
+  title="Onde ficam as fronteiras de confiança"
+  lede="Quem fala com quem, o que cruza cada fronteira, e por que o controle crítico nunca fica do lado do modelo. Três invariantes o desenho inteiro respeita."
+>
+  <div class="o-matrix inv">
+    {ARCH_INVARIANTS.map((v) => (
+      <article class="o-cell">
+        <p class="o-cell-n">{v.n}</p>
+        <h3 class="o-cell-t">{v.title}</h3>
+        <p set:html={v.what} />
+      </article>
+    ))}
+  </div>
+
+  <h3 class="sub">O caminho do ataque — e quem autoriza cada passo</h3>
+  <p class="sub-lede">
+    Da intenção do agente até o tráfego que sai, e de volta. <b>Nada alcança o alvo sem atravessar o
+    portão de escopo</b>, e o que volta do alvo entra como resumo.
+  </p>
+  <ol class="path">
+    {ATTACK_PATH.map((s) => (
+      <li class:list={['step', `is-${s.kind}`]}>
+        <span class="step-n" aria-hidden="true">{s.n}</span>
+        <div>
+          <p class="step-t">{s.name}</p>
+          <p class="step-d" set:html={s.what} />
+        </div>
+      </li>
+    ))}
+  </ol>
+  <p class="tail" set:html={ARCH_STORES_NOTE} />
+
+  <h3 class="sub">Por baixo: hexagonal, com uma única raiz de composição</h3>
+  <dl class="o-spec layers">
+    {ARCH_LAYERS.map((l) => (
+      <div>
+        <dt>{l.name}</dt>
+        <dd>{l.role}</dd>
+      </div>
+    ))}
+  </dl>
+  <p class="o-note" set:html={ARCH_NOTE} />
+
+  <Deep summary="Por que a resposta do alvo nunca chega crua">
+    <p>
+      O alvo é <b>hostil por definição</b>, e a resposta dele volta para o mesmo contexto onde o agente
+      raciocina. Um corpo HTTP bruto colado ali é conteúdo controlado pelo atacante lido por um modelo
+      de linguagem — a superfície de injeção de prompt mais óbvia que existe numa ferramenta ofensiva.
+    </p>
+    <p>
+      Por isso o que atravessa a fronteira é sempre um <b>resumo estruturado com uma alça</b>: o corpo
+      original fica em disco, disponível para a prova de conceito e para a evidência do relatório, mas
+      não passa pelo raciocínio. Mesmo se o alvo devolvesse instruções, elas não teriam por onde entrar
+      — e, ainda que entrassem, o escopo é decidido por código fora do alcance do modelo.
+    </p>
+  </Deep>
+</Sec>
+
+<style>
+  .inv {
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: var(--space-6);
+  }
+
+  .sub {
+    margin-top: var(--space-7);
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  .sub-lede {
+    margin-block: var(--space-3) var(--space-5);
+    max-width: 64ch;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .sub-lede b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .path {
+    display: grid;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: baseline;
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+  .step-n {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--text-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .step-t {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .step-d {
+    margin-top: var(--space-2);
+    max-width: 62ch;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  /* o portão e o alvo são os dois pontos que o leitor precisa achar sem procurar */
+  .step.is-ctrl .step-n,
+  .step.is-hostile .step-n {
+    color: var(--accent);
+  }
+  .step.is-ctrl,
+  .step.is-hostile {
+    box-shadow: inset 2px 0 0 var(--accent);
+    padding-left: var(--space-4);
+    grid-template-columns: calc(2.5rem - var(--space-4)) minmax(0, 1fr);
+  }
+
+  .tail {
+    margin-top: var(--space-4);
+    max-width: 64ch;
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.8;
+  }
+  .tail b {
+    color: var(--text-2);
+    font-weight: 600;
+  }
+
+  .layers {
+    margin-top: var(--space-5);
+  }
+  .layers div {
+    grid-template-columns: 11rem minmax(0, 1fr);
+  }
+  .layers dd {
+    color: var(--text-2);
+  }
+
+  @media (max-width: 900px) {
+    .inv {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 720px) {
+    .layers div {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,143 @@
+---
+import Sec from './Sec.astro';
+import { HARNESS, HARNESS_TERM, HOOKS } from '../../lib/omni';
+---
+
+<Sec
+  n="09"
+  id="harness"
+  title="Não é um script que você dispara e reza"
+  lede="O agente vive dentro de um harness e usa a plataforma como ferramenta. Um comando abre a caça inteira — e quatro guardrails rodam <b>mesmo se o agente esquecer</b>."
+>
+  <div class="cols">
+    <div>
+      <div class="o-rows">
+        {HARNESS.map((h) => (
+          <div class="o-row">
+            <div class="o-row-k">{h.k}</div>
+            <p class="o-row-v" set:html={h.v} />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div class="term-col">
+      <div class="o-term">
+        <div class="o-term-bar" aria-hidden="true">
+          <span class="o-term-dot"></span>
+          <span class="o-term-dot"></span>
+          <span class="o-term-dot"></span>
+        </div>
+        <div class="o-term-body">
+          <span class="o-term-p">{HARNESS_TERM.prompt}</span>
+          <span class="o-term-cmd">{HARNESS_TERM.cmd}</span>
+          {HARNESS_TERM.lines.map((l) => (
+            <><br /><span class="o-term-out">  {l}</span></>
+          ))}
+        </div>
+      </div>
+      <p class="term-cap">
+        A skill narra em altitude macro, nunca envia um relatório sem aprovação e — em Modo Profundo —
+        só encerra por decisão do operador ou pelo orçamento de tokens.
+      </p>
+    </div>
+  </div>
+
+  <p class="o-label hooks-label">Os quatro guardrails</p>
+  <ol class="hooks">
+    {HOOKS.map((h) => (
+      <li class="hook">
+        <p class="hook-when">{h.when}</p>
+        <h3 class="hook-t">{h.name}</h3>
+        <p class="hook-d" set:html={h.what} />
+      </li>
+    ))}
+  </ol>
+</Sec>
+
+<style>
+  .cols {
+    display: grid;
+    /* `minmax(0, …)`: o bloco de terminal é pre-formatado e, com min-width auto,
+       esticava a trilha até caber a linha mais longa — a página inteira rolava
+       de lado no celular. Assim o rolar fica DENTRO do terminal. */
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    margin-top: var(--space-6);
+    align-items: start;
+  }
+  /* metade da largura da seção: a chave de 13rem espremia o valor em 5 linhas */
+  .cols :global(.o-row) {
+    grid-template-columns: 10rem minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+  .term-col {
+    position: sticky;
+    top: 84px;
+  }
+  .term-cap {
+    margin-top: var(--space-3);
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+  }
+
+  .hooks-label {
+    display: block;
+    margin-top: var(--space-7);
+    margin-bottom: var(--space-4);
+  }
+  .hooks {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    list-style: none;
+  }
+  .hook {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-4);
+    background: var(--bg);
+  }
+  .hook-when {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .hook-t {
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+  .hook-d {
+    color: var(--text-2);
+    font-size: var(--fs-xs);
+    line-height: 1.75;
+  }
+
+  @media (max-width: 900px) {
+    .cols {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-6);
+    }
+    .term-col {
+      position: static;
+    }
+    .hooks {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 720px) {
+    .cols :global(.o-row) {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+</style>

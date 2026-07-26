@@ -243,6 +243,204 @@
     color: var(--accent);
   }
 
+  /* ---------- bloco expansível (o contrato de leitura do README) ----------
+     O README abre em superfície curta e esconde o aprofundamento em blocos
+     ▸ expansíveis. A página herda o MESMO contrato: quem quer a altitude macro
+     lê e passa; quem quer o detalhe técnico clica. */
+  .o-deep {
+    margin-top: var(--space-6);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-raised);
+  }
+  /* dentro de uma faixa o fundo já é `--bg-raised`: o bloco sumiria nela */
+  .is-band .o-deep {
+    background: var(--bg);
+  }
+  .o-deep > summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    cursor: pointer;
+    list-style: none;
+  }
+  .o-deep > summary::-webkit-details-marker {
+    display: none;
+  }
+  .o-deep > summary:hover {
+    color: var(--accent);
+  }
+  .o-deep > summary::before {
+    content: '▸';
+    color: var(--accent);
+    transition: rotate var(--dur-fast) var(--ease);
+  }
+  .o-deep[open] > summary {
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+  }
+  .o-deep[open] > summary::before {
+    rotate: 90deg;
+  }
+  .o-deep-body {
+    display: grid;
+    gap: var(--space-5);
+    padding: var(--space-5) var(--space-4);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .o-deep-body > * {
+    max-width: 64ch;
+  }
+  .o-deep-body b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .o-deep-body h4 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+
+  /* ---------- tira de fluxo (fases encadeadas) ---------- */
+  .o-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .o-flow a,
+  .o-flow span {
+    flex: 1 1 auto;
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg);
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .o-flow a:hover {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .o-flow .is-end {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* ---------- cascata numerada com conector ---------- */
+  .o-steps {
+    display: grid;
+    gap: 0;
+  }
+  .o-step {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-bottom: var(--space-5);
+  }
+  .o-step:last-child {
+    padding-bottom: 0;
+  }
+  .o-step-n {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg-raised);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  /* o fio que liga um degrau ao próximo */
+  .o-step:not(:last-child) .o-step-n::after {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    width: 1px;
+    height: calc(100% + var(--space-5) - 2rem);
+    background: var(--border);
+  }
+  .o-step-t {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    margin-bottom: var(--space-2);
+  }
+  .o-step-b {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+    max-width: 62ch;
+  }
+  .o-step-b b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ---------- bloco de terminal ---------- */
+  .o-term {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--bg-raised);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    line-height: 1.9;
+    overflow-x: auto;
+  }
+  .o-term-bar {
+    display: flex;
+    gap: 6px;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+  .o-term-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border-strong);
+  }
+  .o-term-body {
+    padding: var(--space-4);
+    white-space: pre;
+  }
+  .o-term-cmd {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .o-term-p {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .o-term-out {
+    color: var(--text-3);
+  }
+
   /* ---------- nota lateral ---------- */
   .o-note {
     margin-top: var(--space-6);
@@ -272,6 +470,12 @@
       display: none;
     }
     .o-index-q {
+      text-align: left;
+    }
+    /* a tira de fluxo empilha: melhor ler 8 linhas que rolar 8 colunas */
+    .o-flow a,
+    .o-flow span {
+      flex-basis: 100%;
       text-align: left;
     }
   }

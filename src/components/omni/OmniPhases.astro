@@ -1,6 +1,7 @@
 ---
 import Sec from './Sec.astro';
-import { PHASES } from '../../lib/omni';
+import Deep from './Deep.astro';
+import { PHASES, DEEP_MODE } from '../../lib/omni';
 ---
 
 <Sec
@@ -9,21 +10,57 @@ import { PHASES } from '../../lib/omni';
   title="Seis fases, uma superfície por vez"
   lede="O agente caminha por uma máquina de fases, consulta o conhecimento antes de agir e registra o que já testou — para não repetir a si mesmo nem esquecer o que ficou aberto."
 >
+  <div class="o-flow" aria-label="A máquina de fases">
+    <span>INIT</span>
+    {PHASES.map((p) => (
+      <span>{p.code}</span>
+    ))}
+    <span class="is-end">DONE</span>
+  </div>
+  <p class="loops">
+    Duas arestas voltam: superfície nova descoberta reentra no <b>filtro de escopo</b>, e o que a
+    validação reprova volta para a <b>exploração</b> — não para o lixo.
+  </p>
+
   <div class="o-rows">
     {PHASES.map((p, i) => (
       <div class="o-row">
         <div class="o-row-k">
           <span class="o-row-i">{String(i + 1).padStart(2, '0')}</span>{p.name}
         </div>
-        <p class="o-row-v">{p.what}</p>
+        <p class="o-row-v" set:html={p.what} />
       </div>
     ))}
   </div>
 
-  <p class="o-note">
-    <b>E ele não desiste.</b> No modo padrão, o alvo nunca se “esgota” sozinho: quando a fila de
-    hipóteses zera, o sistema gira uma lente nova em vez de encerrar. A caça termina por decisão do
-    operador — parar ou trocar de alvo — ou pelo orçamento combinado.
-    <b>“Não compensa mais” é julgamento humano</b>, não do agente.
-  </p>
+  <Deep summary="O que cada fase faz por dentro">
+    {PHASES.map((p) => (
+      <>
+        <h4>{p.name}</h4>
+        {p.deep.map((d) => (
+          <p set:html={d} />
+        ))}
+      </>
+    ))}
+    <h4>{DEEP_MODE.title}</h4>
+    {DEEP_MODE.body.map((d) => (
+      <p set:html={d} />
+    ))}
+  </Deep>
+
+  <p class="o-note" set:html={DEEP_MODE.lead} />
 </Sec>
+
+<style>
+  .loops {
+    margin-top: var(--space-3);
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+    max-width: 62ch;
+  }
+  .loops b {
+    color: var(--text-2);
+    font-weight: 600;
+  }
+</style>

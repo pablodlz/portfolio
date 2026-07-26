@@ -3,14 +3,14 @@ import Sec from './Sec.astro';
 import Icon from '../ui/Icon.astro';
 import { data, obfuscatedEmail } from '../../lib/data';
 import { withBase } from '../../lib/url';
-import { GUARANTEES, OMNI_VERSION, OMNI_SNAPSHOT } from '../../lib/omni';
+import { GUARANTEES, AUTHORIZED_USE, OMNI_VERSION, OMNI_SNAPSHOT } from '../../lib/omni';
 
 const mail = obfuscatedEmail();
 const { profile } = data;
 ---
 
 <Sec
-  n="08"
+  n="11"
   id="garantias"
   title="Quatro garantias que não dependem do bom comportamento do modelo"
   lede="Toda a autonomia acima existe dentro destes quatro limites — e nenhum deles é uma instrução ao modelo: são decisões de código determinístico e de gente."
@@ -23,6 +23,11 @@ const { profile } = data;
       </div>
     ))}
   </dl>
+
+  <p class="warn">
+    <span class="warn-k">Uso autorizado apenas</span>
+    <span class="warn-v" set:html={AUTHORIZED_USE} />
+  </p>
 </Sec>
 
 <section id="contato" class="close">
@@ -104,6 +109,36 @@ const { profile } = data;
     color: var(--text-2);
     font-size: var(--fs-small);
     line-height: 1.8;
+  }
+
+  /* o aviso que abre o repositório — mesma altitude, sem alarde */
+  .warn {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: baseline;
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-5);
+    border: 1px dashed var(--accent-border);
+    border-radius: var(--radius-sm);
+  }
+  .warn-k {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .warn-v {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .warn-v :global(b) {
+    color: var(--text);
+    font-weight: 600;
   }
 
   /* --- fecho --- */
@@ -211,7 +246,8 @@ const { profile } = data;
     }
   }
   @media (max-width: 720px) {
-    .clause {
+    .clause,
+    .warn {
       grid-template-columns: 1fr;
       gap: var(--space-2);
     }

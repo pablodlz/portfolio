@@ -16,10 +16,25 @@ const BACK = [
 ];
 
 const HERE = [
-  { href: '#ciclo', label: '01 ciclo' },
   { href: '#metodo', label: '03 método' },
   { href: '#firewall', label: '05 firewall' },
-  { href: '#console', label: '07 console' },
+  { href: '#arquitetura', label: '08 arquitetura' },
+  { href: '#console', label: '10 console' },
+];
+
+/** O sumário completo — vive só no painel "Ir para", que tem espaço para 11. */
+const ALL = [
+  { href: '#ciclo', label: '01 ciclo' },
+  { href: '#fases', label: '02 fases' },
+  { href: '#metodo', label: '03 método' },
+  { href: '#operador', label: '04 operador' },
+  { href: '#firewall', label: '05 firewall' },
+  { href: '#conhecimento', label: '06 conhecimento' },
+  { href: '#arsenal', label: '07 arsenal' },
+  { href: '#arquitetura', label: '08 arquitetura' },
+  { href: '#harness', label: '09 harness' },
+  { href: '#console', label: '10 console' },
+  { href: '#garantias', label: '11 garantias' },
 ];
 ---
 
@@ -50,7 +65,7 @@ const HERE = [
         <div class="onav-panel">
           <p class="o-label">Neste dossiê</p>
           <ul>
-            {HERE.map((l) => (
+            {ALL.map((l) => (
               <li><a href={l.href}>{l.label}</a></li>
             ))}
           </ul>
@@ -174,6 +189,9 @@ const HERE = [
     display: grid;
     gap: var(--space-2);
     min-width: 12rem;
+    /* onze seções + três voltas ao portfólio: rola dentro do painel, não empurra a página */
+    max-height: min(70vh, 26rem);
+    overflow-y: auto;
     padding: var(--space-4);
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);

@@ -1,0 +1,69 @@
+---
+import Sec from './Sec.astro';
+import Deep from './Deep.astro';
+import { ARSENAL, TOOL_GROUPS, ARSENAL_NOTE } from '../../lib/omni';
+---
+
+<Sec
+  n="07"
+  id="arsenal"
+  title="Mais de 140 ferramentas, um único comando"
+  lede="O agente opera por um protocolo de ferramentas plugáveis — cada servidor um poder distinto, todos atrás do mesmo portão de escopo. Nenhum deles alcança um alvo que o operador não autorizou."
+  band
+>
+  <div class="o-table-wrap arsenal-table">
+    <table class="o-table">
+      <thead>
+        <tr>
+          <th scope="col">Frente</th>
+          <th scope="col">Escala</th>
+          <th scope="col">O que cobre</th>
+        </tr>
+      </thead>
+      <tbody>
+        {ARSENAL.map((a) => (
+          <tr>
+            <th scope="row">{a.name}</th>
+            <td class="o-num">{a.count ?? '—'}</td>
+            <td>{a.role}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="o-note" set:html={ARSENAL_NOTE} />
+
+  <Deep summary="As 90 ferramentas próprias, por função">
+    <p>
+      O servidor nativo é <b>leitura mais escrita controlada</b>: mutação só por serviços validados,
+      nunca escrita crua. Um rótulo, um sinal externo ou um salto de grafo <b>jamais</b> viram achado
+      direto — entram como hipótese e atravessam os dez portões.
+    </p>
+    {TOOL_GROUPS.map((g) => (
+      <>
+        <h4>{g.name}</h4>
+        <p set:html={g.what} />
+      </>
+    ))}
+  </Deep>
+</Sec>
+
+<style>
+  .arsenal-table {
+    margin-top: var(--space-6);
+  }
+  /* cabeçalho de LINHA é nome próprio, não rótulo de coluna */
+  .arsenal-table .o-table th[scope='row'] {
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    white-space: normal;
+    vertical-align: top;
+  }
+</style>

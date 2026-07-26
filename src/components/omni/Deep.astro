@@ -1,0 +1,19 @@
+---
+/**
+ * O bloco ▸ expansível — o contrato de leitura que o README do projeto usa:
+ * superfície curta e direta, todo aprofundamento técnico escondido atrás de um
+ * clique. Sem ele a página vira um muro de texto e o visitante que só quer a
+ * altitude macro desiste na primeira rolagem.
+ */
+interface Props {
+  summary: string;
+}
+const { summary } = Astro.props;
+---
+
+<details class="o-deep">
+  <summary>{summary}</summary>
+  <div class="o-deep-body">
+    <slot />
+  </div>
+</details>

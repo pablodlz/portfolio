@@ -1,25 +1,7 @@
 ---
 import Sec from './Sec.astro';
-import { KNOWLEDGE_SOURCES, ARSENAL } from '../../lib/omni';
-
-/** Como a base é usada — três regras, não três cartões. */
-const BEHAVIOR = [
-  {
-    k: 'reflexo',
-    t: 'A consulta não é opcional',
-    d: 'A pergunta acontece a cada passo da caça e a cada caminho que falha — porque a falha é a melhor pergunta seguinte. E não depende de o agente lembrar: um portão barra a exploração que não consultou a base antes.',
-  },
-  {
-    k: 'balanço',
-    t: 'Todas as fontes, sempre',
-    d: 'Cada consulta traz ao menos um resultado de cada fonte relevante — senão os relatos reais e as provas de conceito somem debaixo de um corpus numericamente dominado por catálogos de vulnerabilidade.',
-  },
-  {
-    k: 'prioridade',
-    t: 'O que é de fato explorável sobe',
-    d: 'O que está sendo explorado no mundo real ganha peso; prova de conceito velha desce; quando três fontes independentes concordam, o item sobe. A busca é progressiva: começa por um índice curto e só aprofunda no que importa.',
-  },
-];
+import Deep from './Deep.astro';
+import { KNOWLEDGE_SOURCES, KNOWLEDGE_HOW, GOLDEN_RULE } from '../../lib/omni';
 ---
 
 <Sec
@@ -28,7 +10,7 @@ const BEHAVIOR = [
   title="Conhecimento antes de qualquer ataque"
   lede="É o que faz o agente atacar com precisão em vez de força bruta. Antes de cada decisão ele pergunta a uma base de <b>~489 mil documentos de segurança</b> o que já se sabe sobre aquela tecnologia — e a resposta guia o vetor."
 >
-  <p class="o-label idx-label">O que está indexado</p>
+  <p class="o-label idx-label">O que está indexado — 16 corpora</p>
   <ul class="o-index sources">
     {KNOWLEDGE_SOURCES.map((s) => (
       <li>
@@ -40,48 +22,37 @@ const BEHAVIOR = [
   </ul>
 
   <div class="o-rows behavior">
-    {BEHAVIOR.map((b) => (
+    {KNOWLEDGE_HOW.map((b, i) => (
       <div class="o-row">
-        <div class="o-row-k">{b.k}</div>
+        <div class="o-row-k">
+          <span class="o-row-i">{String(i + 1).padStart(2, '0')}</span>
+        </div>
         <div class="o-row-v">
-          <span class="o-row-t">{b.t}</span>
-          {b.d}
+          <span class="o-row-t">{b.name}</span>
+          <span set:html={b.what} />
         </div>
       </div>
     ))}
   </div>
 
-  <div class="arsenal" id="arsenal">
-    <p class="o-label o-label--accent">O braço</p>
-    <h3 class="arsenal-t">Quatro frentes, um único comando</h3>
-
-    <div class="o-table-wrap arsenal-table">
-      <table class="o-table">
-        <thead>
-          <tr>
-            <th scope="col">Frente</th>
-            <th scope="col">Escala</th>
-            <th scope="col">O que cobre</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ARSENAL.map((a) => (
-            <tr>
-              <th scope="row">{a.name}</th>
-              <td class="o-num">{a.count ?? '—'}</td>
-              <td>{a.role}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    <p class="o-note">
-      Tudo o que é pesado — aprender a máquina de estados, resolver a entrada, enumerar a matriz —
-      roda em código. Ao modelo vai sempre um <b>resumo compacto</b>, nunca o estado inteiro nem o
-      corpo bruto de uma resposta. É o que mantém a caça barata e o raciocínio limpo.
-    </p>
+  <div class="golden">
+    <p class="o-label o-label--accent">Regra de ouro</p>
+    <h3 class="golden-t">{GOLDEN_RULE.title}</h3>
+    <p class="golden-d" set:html={GOLDEN_RULE.body} />
   </div>
+
+  <Deep summary="Por que o balanceamento por fonte existe">
+    <p>
+      O acervo é numericamente dominado por catálogos de vulnerabilidade. Numa recuperação ingênua, os
+      dez primeiros resultados seriam dez identificadores de CVE — e o <b>relato real de como alguém
+      achou e foi pago</b> por aquele bug, que é o documento mais útil da base, nunca apareceria.
+    </p>
+    <p>
+      Por isso uma fatia fica <b>reservada por fonte</b>: cada consulta devolve ao menos um resultado
+      de cada fonte relevante, e nenhuma é engolida pela truncagem. É uma decisão de recuperação, não
+      de ranqueamento — o ranqueamento vem depois, e aí sim o que está sendo explorado agora sobe.
+    </p>
+  </Deep>
 </Sec>
 
 <style>
@@ -99,28 +70,34 @@ const BEHAVIOR = [
   .behavior {
     margin-top: var(--space-7);
   }
-
-  .arsenal {
-    margin-top: var(--space-8);
-    scroll-margin-top: 84px;
+  .behavior .o-row {
+    grid-template-columns: 4rem minmax(0, 1fr);
   }
-  .arsenal-t {
+
+  .golden {
+    margin-top: var(--space-7);
+    padding: var(--space-5);
+    border: 1px solid var(--accent-border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
+    background: var(--accent-soft);
+  }
+  .golden-t {
     margin-top: var(--space-2);
-    margin-bottom: var(--space-4);
-    font-size: 1.375rem;
+    font-size: 1.25rem;
     letter-spacing: -0.02em;
   }
-  /* cabeçalho de LINHA é nome próprio, não rótulo de coluna */
-  .arsenal-table .o-table th[scope='row'] {
-    padding: var(--space-4) var(--space-4) var(--space-4) 0;
-    border-bottom: 1px solid var(--border);
+  .golden-d {
+    margin-top: var(--space-3);
+    max-width: 66ch;
     color: var(--text);
-    font-family: var(--font-display);
     font-size: var(--fs-small);
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: -0.01em;
-    white-space: normal;
-    vertical-align: top;
+    line-height: 1.8;
+  }
+
+  @media (max-width: 720px) {
+    .behavior .o-row {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

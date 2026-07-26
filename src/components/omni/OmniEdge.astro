@@ -1,6 +1,7 @@
 ---
 import Sec from './Sec.astro';
-import { CAPABILITIES } from '../../lib/omni';
+import Deep from './Deep.astro';
+import { CAPABILITIES, CAPABILITIES_NOTE, PARADIGM } from '../../lib/omni';
 
 /** O eixo vem primeiro e ocupa a linha inteira; o resto é ficha de motores. */
 const axis = CAPABILITIES.filter((c) => c.tag === 'o eixo');
@@ -13,6 +14,27 @@ const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
   title="Gerar-e-testar é raso. Modelar-e-deduzir, não."
   lede="A indústria de pentest com IA opera num único paradigma: inventa um payload, dispara, observa, segue. É empírico e ganancioso — e por isso não enxerga a classe de bug que mais paga."
 >
+  <div class="o-table-wrap para-wrap">
+    <table class="o-table">
+      <thead>
+        <tr>
+          <th scope="col"><span class="visually-hidden">Pergunta</span></th>
+          <th scope="col">Gerar-e-testar</th>
+          <th scope="col" class="th-win">Modelar-e-deduzir</th>
+        </tr>
+      </thead>
+      <tbody>
+        {PARADIGM.map((r) => (
+          <tr>
+            <th scope="row">{r.question}</th>
+            <td>{r.generate}</td>
+            <td class="td-win">{r.deduce}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
   <div class="split">
     <div class="split-side">
       <p class="o-label">A IA faz</p>
@@ -28,31 +50,76 @@ const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
     <article class="axis">
       <p class="o-label o-label--accent">{c.tag}</p>
       <h3 class="axis-t">{c.name}</h3>
-      <p class="axis-d">{c.what}</p>
+      <p class="axis-d" set:html={c.what} />
     </article>
   ))}
 
-  <p class="o-label motors-label">Os outros motores</p>
+  <p class="o-label motors-label">Os outros sete motores</p>
   <div class="o-rows">
     {rest.map((c) => (
       <div class="o-row">
         <div class="o-row-k">{c.tag}</div>
         <div class="o-row-v">
           <span class="o-row-t">{c.name}</span>
-          {c.what}
+          <span set:html={c.what} />
         </div>
       </div>
     ))}
   </div>
 
-  <p class="o-note">
-    Cada motor apenas <b>propõe</b> um candidato melhor — o firewall segue sendo o único juiz. E tudo
-    isso roda em <b>CPU comum, sem placa de vídeo</b>: a inteligência mora em álgebra e lógica, não em
-    computação pesada.
-  </p>
+  <Deep summary="Por que gerar-e-testar é raso">
+    <p>
+      Toda a indústria de pentest com IA opera num único paradigma — <b>gerar-e-testar</b>: inventa uma
+      hipótese, dispara, observa a resposta imediata, segue. É empírico, guloso e raso: só alcança o
+      que uma única requisição consegue revelar.
+    </p>
+    <p>
+      Funciona bem para o que uma resposta imediata denuncia — um erro de SQL vazado, um script que
+      executa. Mas o bug que uma plataforma paga caro raramente cabe numa resposta: ele mora na
+      <b>relação entre requisições</b>, na ordem em que os passos foram aceitos, no estado que sobrou
+      de uma sessão anterior. Um gerador de payloads não tem onde enxergar isso, porque não tem
+      modelo — só tem a última resposta.
+    </p>
+    <p>
+      É por isso que a classe que mais paga — bypass de autenticação, quebra de fluxo, falha de lógica
+      de vários passos — aparece aqui e não num scanner: ela não está numa resposta isolada, está na
+      <b>estrutura</b> que liga uma requisição à seguinte.
+    </p>
+  </Deep>
+
+  <p class="o-note" set:html={CAPABILITIES_NOTE} />
 </Sec>
 
 <style>
+  .para-wrap {
+    margin-top: var(--space-6);
+  }
+  /* o cabeçalho de linha é uma PERGUNTA, não um rótulo de dado: display, não mono */
+  .para-wrap th[scope='row'] {
+    width: 12rem;
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--font-display);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    white-space: normal;
+    vertical-align: top;
+  }
+  .th-win {
+    color: var(--accent);
+  }
+  .para-wrap td {
+    white-space: normal;
+    font-weight: 400;
+    color: var(--text-2);
+  }
+  .para-wrap .td-win {
+    color: var(--text);
+  }
+
   .split {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -111,6 +178,9 @@ const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
       padding-left: 0;
       border-left: none;
       border-top: 1px solid var(--border);
+    }
+    .para-wrap th[scope='row'] {
+      width: 9rem;
     }
   }
 </style>

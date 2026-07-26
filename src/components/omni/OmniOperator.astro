@@ -1,6 +1,9 @@
 ---
 import Sec from './Sec.astro';
-import { OPERATOR_FNS } from '../../lib/omni';
+import Deep from './Deep.astro';
+import { OPERATOR_FNS, OPERATOR_NOTE } from '../../lib/omni';
+
+const detailed = OPERATOR_FNS.filter((f) => f.deep.length > 0);
 ---
 
 <Sec
@@ -15,16 +18,24 @@ import { OPERATOR_FNS } from '../../lib/omni';
         <span class="fn-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
         <div>
           <h3 class="fn-t">{f.title}</h3>
-          <p class="fn-d">{f.solves}</p>
+          <p class="fn-d" set:html={f.solves} />
         </div>
       </li>
     ))}
   </ol>
 
-  <p class="o-note">
-    A fronteira é sagrada: essas camadas <b>propõem e medem</b>. Quem <b>autoriza</b> continua sendo o
-    código determinístico e o operador humano — nunca o modelo de linguagem.
-  </p>
+  <Deep summary="O detalhe de cada função">
+    {detailed.map((f) => (
+      <>
+        <h4>{f.title}</h4>
+        {f.deep.map((d) => (
+          <p set:html={d} />
+        ))}
+      </>
+    ))}
+  </Deep>
+
+  <p class="o-note" set:html={OPERATOR_NOTE} />
 </Sec>
 
 <style>
