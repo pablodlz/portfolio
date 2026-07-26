@@ -1,0 +1,101 @@
+---
+/**
+ * Seção do dossiê: numeração à esquerda e uma espinha vertical que atravessa a
+ * página inteira. É de propósito o oposto do resto do portfólio (bloco central,
+ * sobrancelha + título grande + grade de cards): quem chega aqui vindo de
+ * "Projetos" tem que sentir que entrou noutro documento, não na mesma página com
+ * outro texto.
+ */
+interface Props {
+  n: string;
+  id: string;
+  title: string;
+  lede?: string;
+  /** faixa de fundo distinta — reservada ao bloco do console (a imagem manda) */
+  band?: boolean;
+}
+
+const { n, id, title, lede, band = false } = Astro.props;
+---
+
+<section id={id} class:list={['sec', { 'is-band': band }]}>
+  <div class="container sec-grid">
+    <p class="sec-n">§&#8202;{n}</p>
+    <div class="sec-main">
+      <h2 class="sec-title">{title}</h2>
+      {lede && <p class="sec-lede" set:html={lede} />}
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .sec {
+    padding-block: var(--space-7);
+  }
+  .sec.is-band {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+
+  .sec-grid {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    align-items: start;
+  }
+  .sec-n {
+    position: sticky;
+    top: 76px;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+  }
+  .sec-main {
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--border);
+    /* a espinha encosta nas seções vizinhas: vira uma linha contínua */
+    margin-block: calc(-1 * var(--space-7));
+    padding-block: var(--space-7);
+  }
+
+  .sec-title {
+    font-size: clamp(1.5rem, 2.6vw, 2.05rem);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+    max-width: 24ch;
+  }
+  .sec-lede {
+    margin-top: var(--space-3);
+    max-width: 62ch;
+    color: var(--text-2);
+    font-size: var(--fs-body);
+    line-height: 1.75;
+  }
+  .sec-lede :global(b) {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 720px) {
+    .sec-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+    .sec-n {
+      position: static;
+    }
+    .sec-main {
+      padding-left: 0;
+      border-left: none;
+      margin-block: 0;
+      padding-block: 0;
+    }
+    .sec-title {
+      max-width: none;
+    }
+  }
+</style>

@@ -3,141 +3,103 @@ import { data } from '../../lib/data';
 import { withBase } from '../../lib/url';
 import { OMNI_VERSION } from '../../lib/omni';
 
+/**
+ * Colofão, não rodapé de site: uma faixa fina com autoria, versão retratada e
+ * os caminhos de volta ao portfólio. O sumário do dossiê já é o cabeçalho — não
+ * se repete aqui em três colunas de links (isso seria o rodapé do portfólio de novo).
+ */
 const year = new Date().getFullYear();
-const SECTION_LINKS = [
-  { href: '#mapa', label: 'O mapa' },
-  { href: '#fases', label: 'As fases' },
-  { href: '#diferencial', label: 'O diferencial' },
-  { href: '#operador', label: 'Autonomia' },
-  { href: '#firewall', label: 'O firewall' },
-  { href: '#conhecimento', label: 'Conhecimento' },
-  { href: '#console', label: 'O console' },
-  { href: '#garantias', label: 'Garantias' },
-];
+const { profile } = data;
 ---
 
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-id">
-        <p class="footer-brand">Omni<span class="text-accent">&#8209;</span>Pentest</p>
-        <p class="footer-role">
-          Pesquisa aplicada em segurança ofensiva e IA<br />
-          por {data.profile.fullName}
-        </p>
-        <p class="footer-version">versão retratada: v{OMNI_VERSION}</p>
-        <p class="footer-copy">© {year} — todos os direitos reservados</p>
-      </div>
-
-      <nav aria-label="Seções desta página" class="footer-nav">
-        <p class="footer-heading">Nesta página</p>
-        <ul class="footer-list">
-          {SECTION_LINKS.map((l) => (
-            <li><a href={l.href}>{l.label}</a></li>
-          ))}
-        </ul>
-      </nav>
-
-      <div class="footer-meta">
-        <p class="footer-heading">Sobre o autor</p>
-        <ul class="footer-list">
-          <li><a href={withBase('/')}>Portfólio completo</a></li>
-          <li>
-            <a href={data.profile.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          </li>
-          <li>
-            <a href={data.profile.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-          </li>
-          {data.profile.socials.map((s) => (
-            <li>
-              <a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-
-    <p class="footer-legal">
-      Ferramenta de segurança ofensiva para uso <b>estritamente autorizado</b> — pentest e bug bounty
-      dentro de escopo permitido. O código-fonte é privado; esta página descreve o funcionamento,
-      não a implementação.
+<footer class="colophon">
+  <div class="container colophon-row">
+    <p class="colophon-id">
+      <a href={withBase('/')} class="colophon-brand">@pablodlz</a>
+      <span class="colophon-sep" aria-hidden="true">·</span>
+      <span>Omni&#8209;Pentest, dossiê da versão <b>v{OMNI_VERSION}</b></span>
+      <span class="colophon-sep" aria-hidden="true">·</span>
+      <span>© {year} {profile.fullName}</span>
     </p>
+
+    <nav class="colophon-links" aria-label="Caminhos de volta">
+      <a href={withBase('/')}>Portfólio</a>
+      <a href={withBase('/#projetos')}>Projetos</a>
+      <a href={profile.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href={profile.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="#topo">Topo &#8593;</a>
+    </nav>
   </div>
+
+  <p class="container colophon-legal">
+    Ferramenta de segurança ofensiva para uso <b>estritamente autorizado</b> — pentest e bug bounty
+    dentro de escopo permitido. O código-fonte é privado: esta página descreve o funcionamento, não a
+    implementação.
+  </p>
 </footer>
 
 <style>
-  .footer {
-    padding-block: var(--space-7) var(--space-6);
+  .colophon {
+    padding-block: var(--space-5) var(--space-6);
     border-top: 1px solid var(--border);
-    background: var(--bg-raised);
   }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr);
-    gap: var(--space-6);
-    padding-bottom: var(--space-6);
-    border-bottom: 1px solid var(--border);
+  .colophon-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
   }
-  .footer-brand {
-    font-family: var(--font-display);
-    font-size: 1.35rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    margin-bottom: var(--space-3);
-  }
-  .footer-role {
-    color: var(--text-2);
-    font-size: var(--fs-small);
-    line-height: 1.7;
-  }
-  .footer-version,
-  .footer-copy {
-    margin-top: var(--space-3);
-    color: var(--text-3);
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-  }
-  .footer-copy {
-    margin-top: var(--space-2);
-  }
-  .footer-heading {
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--text-3);
-    margin-bottom: var(--space-3);
-  }
-  .footer-list {
-    display: grid;
+  .colophon-id {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
     gap: var(--space-2);
-  }
-  .footer-nav a,
-  .footer-meta a {
-    color: var(--text-2);
-    font-size: var(--fs-small);
-  }
-  .footer-nav a:hover,
-  .footer-meta a:hover {
-    color: var(--accent);
-  }
-  .footer-legal {
-    margin-top: var(--space-5);
-    color: var(--text-3);
+    font-family: var(--font-mono);
     font-size: var(--fs-xs);
-    line-height: 1.7;
-    max-width: 52rem;
+    color: var(--text-3);
   }
-  .footer-legal b {
+  .colophon-id b {
     color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .colophon-brand {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .colophon-brand:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .colophon-sep {
+    color: var(--border-strong);
   }
 
-  @media (max-width: 760px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-    .footer-id {
-      grid-column: 1 / -1;
-    }
+  .colophon-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+  }
+  .colophon-links a {
+    color: var(--text-3);
+  }
+  .colophon-links a:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .colophon-legal {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border);
+    max-width: 64rem;
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.75;
+  }
+  .colophon-legal b {
+    color: var(--text-2);
   }
 </style>

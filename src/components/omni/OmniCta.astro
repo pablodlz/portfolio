@@ -1,136 +1,219 @@
 ---
+import Sec from './Sec.astro';
+import Icon from '../ui/Icon.astro';
 import { data, obfuscatedEmail } from '../../lib/data';
 import { withBase } from '../../lib/url';
-import Button from '../ui/Button.astro';
 import { GUARANTEES, OMNI_VERSION, OMNI_SNAPSHOT } from '../../lib/omni';
 
 const mail = obfuscatedEmail();
 const { profile } = data;
 ---
 
-<section id="garantias" class="section omni-guarantees">
-  <div class="container">
-    <p class="eyebrow reveal">o que não se negocia</p>
-    <h2 class="reveal" data-ri="1">Quatro garantias que não dependem do bom comportamento do modelo</h2>
+<Sec
+  n="08"
+  id="garantias"
+  title="Quatro garantias que não dependem do bom comportamento do modelo"
+  lede="Toda a autonomia acima existe dentro destes quatro limites — e nenhum deles é uma instrução ao modelo: são decisões de código determinístico e de gente."
+>
+  <dl class="clauses">
+    {GUARANTEES.map((g) => (
+      <div class="clause">
+        <dt>{g.title}</dt>
+        <dd>{g.what}</dd>
+      </div>
+    ))}
+  </dl>
+</Sec>
 
-    <div class="gr-grid">
-      {GUARANTEES.map((g, i) => (
-        <article class="gr-card reveal" data-ri={i % 4}>
-          <h3>{g.title}</h3>
-          <p>{g.what}</p>
-        </article>
-      ))}
-    </div>
-  </div>
-</section>
-
-<section id="contato" class="section omni-cta atmosphere">
-  <div class="container cta-inner">
-    <p class="eyebrow reveal">handshake</p>
-    <h2 class="reveal" data-ri="1">Quer conversar sobre o projeto?</h2>
-    <p class="cta-sub reveal" data-ri="2">
-      O Omni-Pentest é um projeto pessoal de pesquisa aplicada em segurança ofensiva e IA, de
-      <b>{profile.fullName}</b>. O código é fechado, mas a conversa não: dúvidas sobre arquitetura,
-      resultados ou uma demonstração são bem-vindas.
-    </p>
-
-    <div class="cta-buttons reveal" data-ri="3">
-      <Button href="#contato" class="js-mail" data-u={mail.u} data-d={mail.d} variant="primary" icon="mail">
-        <span class="js-mail-addr">Enviar e-mail</span>
-      </Button>
-      <Button href={profile.contact.linkedin} variant="secondary" icon="linkedin" external>LinkedIn</Button>
-      <Button href={withBase('/')} variant="ghost" icon="arrow-right">Ver o portfólio completo</Button>
+<section id="contato" class="close">
+  <div class="container close-grid">
+    <div class="close-mark" aria-hidden="true">
+      <span class="close-rule"></span>
+      <span class="o-label">fim do dossiê</span>
+      <span class="close-rule"></span>
     </div>
 
-    <noscript>
-      <p class="cta-noscript">e-mail: pablogalerani [arroba] gmail [ponto] com</p>
-    </noscript>
+    <div class="close-main">
+      <h2 class="close-t">O código é fechado. A conversa não.</h2>
+      <p class="close-d">
+        O Omni-Pentest é um projeto pessoal de pesquisa aplicada em segurança ofensiva e IA, de
+        <b>{profile.fullName}</b>. Dúvidas sobre arquitetura, sobre os resultados ou um pedido de
+        demonstração são bem-vindos.
+      </p>
 
-    <p class="cta-version reveal" data-ri="4">
-      <b>Esta página retrata a versão {OMNI_VERSION}</b>, de {OMNI_SNAPSHOT}. A plataforma continua
-      em desenvolvimento ativo e evolui mais rápido do que esta página — o que você lê aqui é um
-      retrato daquele momento, não necessariamente o estado atual.
-    </p>
+      <ul class="close-links">
+        <li>
+          <a class="js-mail" href="#contato" data-u={mail.u} data-d={mail.d}>
+            <Icon name="mail" size={16} />
+            <span class="js-mail-addr">Enviar e-mail</span>
+          </a>
+        </li>
+        <li>
+          <a href={profile.contact.linkedin} target="_blank" rel="noopener noreferrer">
+            <Icon name="linkedin" size={16} />
+            LinkedIn
+          </a>
+        </li>
+        <li>
+          <a href={withBase('/')}>
+            <Icon name="arrow-right" size={16} />
+            Voltar ao portfólio
+          </a>
+        </li>
+      </ul>
+
+      <noscript>
+        <p class="close-noscript">e-mail: pablogalerani [arroba] gmail [ponto] com</p>
+      </noscript>
+    </div>
+
+    <aside class="stamp">
+      <p class="o-label o-label--accent">Nota de honestidade</p>
+      <p class="stamp-d">
+        Esta página retrata a versão <b>{OMNI_VERSION}</b>, de <b>{OMNI_SNAPSHOT}</b>. A plataforma
+        segue em desenvolvimento ativo e evolui mais rápido do que este dossiê — o que você leu é o
+        retrato daquele momento, não necessariamente o estado atual.
+      </p>
+    </aside>
   </div>
 </section>
 
 <style>
-  .omni-guarantees h2 {
-    max-width: 34rem;
-    margin-bottom: var(--space-6);
+  /* --- garantias: ficha de cláusulas (chave grande à esquerda) --- */
+  .clauses {
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--border-strong);
   }
-  .gr-grid {
+  .clause {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-5);
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: var(--space-6);
+    padding-block: var(--space-5);
+    border-bottom: 1px solid var(--border);
   }
-  .gr-card {
-    display: grid;
-    gap: var(--space-3);
-    align-content: start;
-    padding: var(--space-5);
-    border: 1px solid var(--accent-border);
-    border-radius: var(--radius-lg);
-    background: var(--accent-soft);
+  .clause dt {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--accent);
+    line-height: 1.35;
   }
-  .gr-card h3 {
-    font-size: var(--fs-h3);
-  }
-  .gr-card p {
+  .clause dd {
+    max-width: 62ch;
     color: var(--text-2);
     font-size: var(--fs-small);
-    line-height: 1.75;
+    line-height: 1.8;
   }
 
-  /* --- CTA --- */
-  .cta-inner {
+  /* --- fecho --- */
+  .close {
+    padding-block: var(--space-7) var(--space-8);
+  }
+  .close-mark {
     display: grid;
-    justify-items: center;
-    text-align: center;
-    gap: var(--space-4);
+    grid-template-columns: var(--space-6) auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
   }
-  .omni-cta h2 {
-    max-width: 22rem;
+  .close-rule {
+    height: 1px;
+    background: var(--border-strong);
   }
-  .cta-sub {
-    max-width: 40rem;
+
+  .close-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+  .close-mark {
+    grid-column: 1 / -1;
+  }
+
+  .close-t {
+    font-size: clamp(1.6rem, 3vw, 2.35rem);
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    max-width: 18ch;
+  }
+  .close-d {
+    margin-top: var(--space-4);
+    max-width: 56ch;
     color: var(--text-2);
-    font-size: var(--fs-body-lg);
-    line-height: 1.75;
+    font-size: var(--fs-body);
+    line-height: 1.8;
   }
-  .cta-sub b {
+  .close-d b {
     color: var(--text);
     font-weight: 600;
   }
-  .cta-buttons {
+
+  .close-links {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: var(--space-3);
-    margin-top: var(--space-2);
+    margin-top: var(--space-6);
+    list-style: none;
   }
-  .cta-noscript {
+  .close-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    transition: border-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease);
+  }
+  .close-links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .close-links li:first-child a {
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .close-noscript {
+    margin-top: var(--space-4);
     font-family: var(--font-mono);
     font-size: var(--fs-small);
     color: var(--text-2);
   }
-  .cta-version {
-    max-width: 44rem;
-    margin-top: var(--space-5);
-    padding: var(--space-4);
+
+  .stamp {
+    padding: var(--space-5);
     border: 1px dashed var(--border-strong);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
+  }
+  .stamp-d {
+    margin-top: var(--space-3);
     color: var(--text-3);
     font-size: var(--fs-xs);
-    line-height: 1.8;
+    line-height: 1.85;
   }
-  .cta-version b {
+  .stamp-d b {
     color: var(--text-2);
+    font-variant-numeric: tabular-nums;
   }
 
-  @media (max-width: 720px) {
-    .gr-grid {
+  @media (max-width: 860px) {
+    .close-grid {
       grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+  @media (max-width: 720px) {
+    .clause {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
     }
   }
 </style>

@@ -1,0 +1,278 @@
+/* ============================================================
+   omni.css — primitivas do dossiê (/omni-pentest).
+
+   O portfólio fala por CARDS FLUTUANTES arredondados numa grade
+   central. Esta página fala por FILETE, RÓTULO EM MONO E TABELA:
+   é um documento técnico, não uma vitrine. Mesmos tokens (mesma
+   marca), gramática visual oposta — senão o visitante lê a mesma
+   página duas vezes, só com outro texto.
+
+   Zero valor mágico: tudo sai de tokens.css.
+   ============================================================ */
+
+@layer components {
+  /* ---------- linhas rótulo | conteúdo (o padrão dominante) ---------- */
+  .o-rows {
+    display: grid;
+    border-top: 1px solid var(--border);
+  }
+  .o-row {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: var(--space-5);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--border);
+  }
+  .o-row-k {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding-top: 3px;
+  }
+  .o-row-k .o-row-i {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-right: var(--space-2);
+  }
+  .o-row-v {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+    max-width: 62ch;
+  }
+  .o-row-v b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .o-row-t {
+    display: block;
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-2);
+  }
+  /* a linha que carrega o eixo do projeto */
+  .o-row.is-key .o-row-k {
+    color: var(--accent);
+  }
+  .o-row.is-key .o-row-t {
+    color: var(--accent);
+  }
+
+  /* ---------- matriz de células com filete compartilhado ---------- */
+  .o-matrix {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .o-cell {
+    display: grid;
+    align-content: start;
+    gap: var(--space-2);
+    padding: var(--space-5) var(--space-4);
+    background: var(--bg);
+  }
+  .o-cell-n {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .o-cell-t {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+  }
+  .o-cell-t a {
+    color: inherit;
+  }
+  .o-cell-t a:hover {
+    color: var(--accent);
+  }
+  .o-cell p {
+    color: var(--text-2);
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+  }
+
+  /* ---------- índice com condutor pontilhado ---------- */
+  .o-index {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .o-index li {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: var(--space-3);
+    font-size: var(--fs-small);
+  }
+  .o-index-n {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .o-index-dots {
+    /* condutor pontilhado: `--border-strong` some no tema claro, `--text-3` lê nos dois */
+    border-bottom: 1px dotted var(--text-3);
+    opacity: 0.55;
+    translate: 0 -4px;
+  }
+  .o-index-q {
+    color: var(--text-3);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-align: right;
+  }
+
+  /* ---------- tabela ---------- */
+  .o-table-wrap {
+    overflow-x: auto;
+  }
+  .o-table {
+    width: 100%;
+    min-width: 32rem;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+  }
+  .o-table th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+    padding: 0 var(--space-4) var(--space-3) 0;
+    border-bottom: 1px solid var(--border-strong);
+    white-space: nowrap;
+  }
+  .o-table td {
+    padding: var(--space-4) var(--space-4) var(--space-4) 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-2);
+    line-height: 1.7;
+    vertical-align: top;
+  }
+  .o-table td:first-child {
+    color: var(--text);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .o-table .o-num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .o-table .o-who {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+
+  /* ---------- rótulo em mono (sobrancelha do dossiê) ---------- */
+  .o-label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-3);
+  }
+  .o-label--accent {
+    color: var(--accent);
+  }
+
+  /* ---------- ficha (rótulo curto : valor) ---------- */
+  .o-spec {
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--border);
+  }
+  .o-spec div {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--border);
+    font-size: var(--fs-small);
+  }
+  .o-spec dt {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-3);
+  }
+  .o-spec dd {
+    color: var(--text);
+  }
+
+  /* ---------- chip retangular (≠ pill do portfólio) ---------- */
+  .o-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .o-chip {
+    padding: 4px 9px;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--bg-raised);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-variant-numeric: tabular-nums;
+  }
+  .o-chip--accent {
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* ---------- nota lateral ---------- */
+  .o-note {
+    margin-top: var(--space-6);
+    padding-left: var(--space-5);
+    border-left: 2px solid var(--accent);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+    max-width: 62ch;
+  }
+  .o-note b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 720px) {
+    .o-row,
+    .o-spec div {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+    .o-index li {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+    .o-index-dots {
+      display: none;
+    }
+    .o-index-q {
+      text-align: left;
+    }
+  }
+}

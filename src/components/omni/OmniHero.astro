@@ -1,181 +1,218 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../../../img/omni-pentest/logo.png';
-import Badge from '../ui/Badge.astro';
-import Button from '../ui/Button.astro';
+import { data } from '../../lib/data';
 import { STATS, OMNI_VERSION, OMNI_SNAPSHOT } from '../../lib/omni';
+
+/**
+ * Capa do dossiê. Deliberadamente NÃO é o hero do portfólio (bloco central,
+ * selo arredondado, quatro números lado a lado): aqui a abertura é a folha de
+ * rosto de um documento — declaração em tipo grande, ficha técnica em filete e
+ * os números num razão alinhado à direita.
+ */
+const { profile } = data;
 ---
 
-<section class="omni-hero atmosphere" id="topo">
-  <div class="container hero-inner">
-    <div class="hero-copy">
-      <Badge tone="accent" dot pulse>v{OMNI_VERSION} · {OMNI_SNAPSHOT}</Badge>
+<section class="cover" id="topo">
+  <div class="container cover-grid">
+    <div class="cover-main">
+      <p class="o-label o-label--accent">Dossiê técnico · projeto autoral</p>
 
-      <h1>
-        Omni&#8209;Pentest
-        <span class="hero-sub">O agente que <span class="text-accent">deduz</span> a vulnerabilidade em vez de tropeçar nela.</span>
-      </h1>
+      <h1 class="cover-h1">Omni&#8209;Pentest</h1>
 
-      <p class="hero-lede">
-        Uma plataforma de segurança ofensiva conduzida por um agente de IA: você aponta um alvo
-        autorizado e ele leva a caça do reconhecimento ao relatório. A diferença está em <b>como</b> ele
-        acha o bug — não disparando payloads no escuro, mas <b>aprendendo uma teoria formal do alvo e
-        deduzindo a falha da estrutura dessa teoria</b>.
+      <p class="cover-thesis">
+        O agente que <em>deduz</em> a vulnerabilidade<br />
+        em vez de tropeçar nela.
       </p>
 
-      <p class="hero-lede">
-        E em <b>o que ele deixa passar</b>: todo achado atravessa um firewall de validação onde o
-        padrão é descartar. O que sobra é reproduzível — e nada é enviado a lugar nenhum sem um
-        humano aprovar.
+      <p class="cover-body">
+        Uma plataforma de segurança ofensiva conduzida por um agente de IA: aponta-se um alvo
+        autorizado e ele leva a caça do reconhecimento ao relatório. A diferença está em
+        <b>como</b> ele acha o bug — não disparando payloads no escuro, mas <b>aprendendo uma teoria
+        formal do alvo e deduzindo a falha da estrutura dessa teoria</b>. E em <b>o que ele deixa
+        passar</b>: todo achado atravessa um firewall de validação onde o padrão é descartar.
       </p>
 
-      <div class="hero-ctas">
-        <Button href="#mapa" variant="primary" icon="target">Ver como funciona</Button>
-        <Button href="#contato" variant="secondary" icon="mail">Falar com o autor</Button>
-      </div>
+      <dl class="o-spec cover-spec">
+        <div>
+          <dt>Autor</dt>
+          <dd>{profile.fullName}</dd>
+        </div>
+        <div>
+          <dt>Versão retratada</dt>
+          <dd>v{OMNI_VERSION} · {OMNI_SNAPSHOT}</dd>
+        </div>
+        <div>
+          <dt>Natureza</dt>
+          <dd>Pesquisa aplicada · código-fonte fechado</dd>
+        </div>
+        <div>
+          <dt>Uso</dt>
+          <dd>Pentest e bug bounty <b>dentro de escopo autorizado</b></dd>
+        </div>
+      </dl>
+
+      <p class="cover-links">
+        <a href="#ciclo">Como funciona, do começo ao fim <span aria-hidden="true">↓</span></a>
+        <a href="#contato">Falar com o autor</a>
+      </p>
     </div>
 
-    <div class="hero-art">
+    <aside class="cover-side">
       <Image
+        class="cover-mark"
         src={logo}
         alt="Brasão do Omni-Pentest: um dragão prateado sobre escudo negro com bordas douradas"
-        widths={[320, 460]}
-        sizes="(max-width: 900px) 220px, 380px"
+        widths={[260, 380]}
+        sizes="(max-width: 900px) 180px, 300px"
         loading="eager"
         fetchpriority="high"
       />
-    </div>
-  </div>
 
-  <div class="container">
-    <ul class="hero-stats">
-      {STATS.map((s, i) => (
-        <li class="reveal" data-ri={i}>
-          <span class="stat-value">
-            {s.value}{s.unit && <span class="stat-unit">{s.unit}</span>}
-          </span>
-          <span class="stat-label">{s.label}</span>
-        </li>
-      ))}
-    </ul>
+      <p class="o-label cover-side-label">Em números</p>
+      <ul class="cover-ledger">
+        {STATS.map((s) => (
+          <li>
+            <span class="cover-fig">
+              {s.value}{s.unit && <span class="cover-unit">{s.unit}</span>}
+            </span>
+            <span class="cover-cap">{s.label}</span>
+          </li>
+        ))}
+      </ul>
+    </aside>
   </div>
 </section>
 
 <style>
-  .omni-hero {
-    padding-block: clamp(3rem, 7vw, 5rem) var(--section-pad);
+  .cover {
+    padding-block: var(--space-8) var(--space-7);
+    border-bottom: 1px solid var(--border);
   }
-  .hero-inner {
+  .cover-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
     gap: var(--space-8);
-  }
-  .hero-copy {
-    display: grid;
-    gap: var(--space-5);
-    justify-items: start;
-    max-width: 44rem;
+    align-items: start;
   }
 
-  h1 {
-    display: grid;
-    gap: var(--space-4);
-    font-size: var(--fs-display);
-    line-height: 1.02;
-    letter-spacing: -0.035em;
-    background: linear-gradient(180deg, var(--text), var(--text-2));
-    background-clip: text;
-    -webkit-background-clip: text;
-    color: transparent;
+  .cover-h1 {
+    margin-top: var(--space-4);
+    font-size: clamp(2.75rem, 1rem + 7vw, 5rem);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
   }
-  .hero-sub {
-    font-family: var(--font-body);
-    font-size: clamp(1.15rem, 0.9rem + 1.1vw, 1.65rem);
+  .cover-thesis {
+    margin-top: var(--space-4);
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 0.9rem + 1.1vw, 1.6rem);
     font-weight: 500;
-    line-height: 1.35;
-    letter-spacing: -0.01em;
+    line-height: 1.32;
+    letter-spacing: -0.02em;
     color: var(--text);
-    background: none;
-    -webkit-text-fill-color: currentColor;
-    max-width: 32rem;
   }
-
-  .hero-lede {
+  .cover-thesis em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .cover-body {
+    margin-top: var(--space-5);
+    max-width: 60ch;
     color: var(--text-2);
-    font-size: var(--fs-body-lg);
-    line-height: 1.75;
+    font-size: var(--fs-body);
+    line-height: 1.8;
   }
-  .hero-lede b {
+  .cover-body b {
     color: var(--text);
     font-weight: 600;
   }
 
-  .hero-ctas {
+  .cover-spec {
+    margin-top: var(--space-6);
+    max-width: 44rem;
+  }
+  .cover-spec :global(b) {
+    font-weight: 600;
+  }
+
+  .cover-links {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-3);
-    margin-top: var(--space-2);
-  }
-
-  .hero-art {
-    justify-self: end;
-  }
-  .hero-art :global(img) {
-    width: clamp(200px, 26vw, 380px);
-    height: auto;
-    filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.55));
-  }
-
-  .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
     gap: var(--space-5);
-    margin-top: var(--space-8);
-    padding-top: var(--space-6);
-    border-top: 1px solid var(--border);
+    margin-top: var(--space-6);
+    font-size: var(--fs-small);
+    font-weight: 600;
   }
-  .hero-stats li {
+  .cover-links a {
+    color: var(--accent);
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--accent-border);
+  }
+  .cover-links a:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  /* --- coluna direita --- */
+  .cover-side {
     display: grid;
-    gap: var(--space-2);
-    align-content: start;
+    justify-items: end;
   }
-  .stat-value {
+  .cover-mark {
+    width: min(300px, 100%);
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .cover-side-label {
+    margin-top: var(--space-6);
+    justify-self: stretch;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .cover-ledger {
+    justify-self: stretch;
+    display: grid;
+    list-style: none;
+  }
+  .cover-ledger li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--space-4);
+    padding-block: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .cover-fig {
     font-family: var(--font-display);
-    font-size: clamp(2rem, 1.4rem + 1.8vw, 2.9rem);
+    font-size: 1.75rem;
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.03em;
     color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    min-width: 4.5ch;
   }
-  .stat-unit {
-    font-size: 0.55em;
-    margin-left: 2px;
+  .cover-unit {
+    font-size: 0.9rem;
+    margin-left: 1px;
   }
-  .stat-label {
-    font-size: var(--fs-small);
-    line-height: 1.6;
-    color: var(--text-2);
-    max-width: 15rem;
+  .cover-cap {
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.55;
   }
 
   @media (max-width: 900px) {
-    .hero-inner {
+    .cover-grid {
       grid-template-columns: 1fr;
       gap: var(--space-6);
     }
-    .hero-art {
-      order: -1;
-      justify-self: start;
+    .cover-side {
+      justify-items: start;
     }
-    .hero-stats {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-6) var(--space-5);
-    }
-  }
-  @media (max-width: 520px) {
-    .hero-stats {
-      grid-template-columns: 1fr;
+    .cover-mark {
+      width: 180px;
     }
   }
 </style>

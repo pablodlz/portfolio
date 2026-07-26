@@ -3,204 +3,225 @@ import ThemeToggle from '../ui/ThemeToggle.astro';
 import Icon from '../ui/Icon.astro';
 import { withBase } from '../../lib/url';
 
-const LINKS = [
-  { href: '#mapa', label: 'O mapa' },
-  { href: '#diferencial', label: 'Diferencial' },
-  { href: '#firewall', label: 'Firewall' },
-  { href: '#console', label: 'Console' },
-  { href: '#contato', label: 'Contato' },
+/**
+ * A marca continua sendo a DELE: quem chega aqui está dentro do portfólio de
+ * @pablodlz, na página de um projeto — não num site de produto. Por isso o
+ * cabeçalho abre com o handle e um rastro "projetos / omni-pentest", e os links
+ * voltam para as seções do portfólio, não só para a home.
+ */
+const BACK = [
+  { href: withBase('/#projetos'), label: 'Projetos' },
+  { href: withBase('/#experiencia'), label: 'Experiência' },
+  { href: withBase('/#contato'), label: 'Contato' },
+];
+
+const HERE = [
+  { href: '#ciclo', label: '01 ciclo' },
+  { href: '#metodo', label: '03 método' },
+  { href: '#firewall', label: '05 firewall' },
+  { href: '#console', label: '07 console' },
 ];
 ---
 
-<header class="nav-wrap">
-  <nav class="nav container" aria-label="Principal">
-    <a class="back" href={withBase('/')}>
-      <Icon name="chevron-left" size={16} />
-      <span class="back-label">Portfólio de <b>@pablodlz</b></span>
-      <span class="back-label back-label--short">@pablodlz</span>
+<header class="onav-wrap">
+  <div class="container onav">
+    <a class="onav-brand" href={withBase('/')}>
+      <span class="onav-at">@</span>pablodlz<span class="onav-cursor">_</span>
     </a>
 
-    <ul class="nav-links">
-      {LINKS.map((l) => (
-        <li><a href={l.href}>{l.label}</a></li>
-      ))}
-    </ul>
+    <nav class="onav-crumb" aria-label="Localização">
+      <a href={withBase('/#projetos')}>projetos</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">omni&#8209;pentest</span>
+    </nav>
 
-    <div class="nav-actions">
-      <details class="nav-mobile">
-        <summary aria-label="Menu de seções">
-          <Icon name="chevron-down" size={18} />
-          <span>Menu</span>
+    <nav class="onav-here" aria-label="Seções do dossiê">
+      {HERE.map((l) => (
+        <a href={l.href}>{l.label}</a>
+      ))}
+    </nav>
+
+    <div class="onav-actions">
+      <details class="onav-more">
+        <summary aria-label="Mais destinos">
+          <Icon name="chevron-down" size={16} />
+          <span>Ir para</span>
         </summary>
-        <ul class="nav-mobile-panel">
-          {LINKS.map((l) => (
-            <li><a href={l.href}>{l.label}</a></li>
-          ))}
-        </ul>
+        <div class="onav-panel">
+          <p class="o-label">Neste dossiê</p>
+          <ul>
+            {HERE.map((l) => (
+              <li><a href={l.href}>{l.label}</a></li>
+            ))}
+          </ul>
+          <p class="o-label">No portfólio</p>
+          <ul>
+            {BACK.map((l) => (
+              <li><a href={l.href}>{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
       </details>
       <ThemeToggle />
     </div>
-  </nav>
+  </div>
 </header>
 
 <script>
-  const details = document.querySelector<HTMLDetailsElement>('.nav-mobile');
-  details?.addEventListener('click', (ev) => {
-    if ((ev.target as HTMLElement).closest('a')) details.open = false;
+  const more = document.querySelector<HTMLDetailsElement>('.onav-more');
+  more?.addEventListener('click', (ev) => {
+    if ((ev.target as HTMLElement).closest('a')) more.open = false;
   });
 </script>
 
 <style>
-  .nav-wrap {
+  /* sólido + filete: o portfólio usa vidro fosco, aqui é papel timbrado */
+  .onav-wrap {
     position: sticky;
     top: 0;
     z-index: 50;
-    background: color-mix(in srgb, var(--bg) 78%, transparent);
-    backdrop-filter: blur(14px) saturate(1.4);
-    -webkit-backdrop-filter: blur(14px) saturate(1.4);
-    border-bottom: 1px solid var(--glass-border);
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
   }
-  .nav {
+  .onav {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-4);
-    height: 60px;
+    height: 56px;
   }
 
-  .back {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+  .onav-brand {
     font-family: var(--font-mono);
-    font-size: var(--fs-small);
-    color: var(--text-2);
-    white-space: nowrap;
-    transition: color var(--dur-2) var(--ease);
-  }
-  .back:hover {
-    color: var(--text);
-    text-decoration: none;
-  }
-  .back :global(svg) {
-    color: var(--accent);
-    transition: translate var(--dur-2) var(--ease);
-  }
-  .back:hover :global(svg) {
-    translate: -3px 0;
-  }
-  .back b {
-    color: var(--text);
     font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    white-space: nowrap;
   }
-  .back-label--short {
-    display: none;
+  .onav-brand:hover {
+    color: var(--accent);
+  }
+  .onav-at {
+    color: var(--accent);
+  }
+  .onav-cursor {
+    color: var(--text-3);
   }
 
-  .nav-links {
+  .onav-crumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-left: var(--space-4);
+    border-left: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+    white-space: nowrap;
+  }
+  .onav-crumb a:hover {
+    color: var(--accent);
+  }
+  .onav-crumb [aria-current] {
+    color: var(--text);
+  }
+
+  .onav-here {
     display: flex;
     gap: var(--space-5);
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
   }
-  .nav-links a {
-    position: relative;
-    color: var(--text-2);
-    font-size: var(--fs-small);
-    font-weight: 500;
-    padding-block: 4px;
-    transition: color var(--dur-2) var(--ease);
-  }
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -2px;
-    height: 2px;
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform var(--dur-2) var(--ease);
-  }
-  .nav-links a:hover {
-    color: var(--text);
-    text-decoration: none;
-  }
-  .nav-links a:hover::after {
-    transform: scaleX(0.55);
+  .onav-here a:hover {
+    color: var(--accent);
   }
 
-  .nav-actions {
+  .onav-actions {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
-  .nav-mobile {
+  .onav-more {
     position: relative;
-    display: none;
   }
-  .nav-mobile summary {
-    display: inline-flex;
+  .onav-more summary {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    list-style: none;
-    cursor: pointer;
-    padding: 7px 12px;
+    gap: var(--space-2);
+    padding: 6px 10px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
     color: var(--text-2);
-    font-size: var(--fs-small);
-    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
   }
-  .nav-mobile summary::-webkit-details-marker {
+  .onav-more summary::-webkit-details-marker {
     display: none;
   }
-  .nav-mobile[open] summary {
-    color: var(--text);
-    border-color: var(--border-strong);
+  .onav-more[open] summary {
+    border-color: var(--accent-border);
+    color: var(--accent);
   }
-  .nav-mobile-panel {
+  .onav-panel {
     position: absolute;
     right: 0;
     top: calc(100% + 8px);
-    min-width: 190px;
     display: grid;
-    padding: var(--space-2);
+    gap: var(--space-2);
+    min-width: 12rem;
+    padding: var(--space-4);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
     background: var(--bg-raised);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lightbox);
   }
-  .nav-mobile-panel a {
-    display: block;
-    padding: 10px 12px;
-    border-radius: var(--radius-sm);
-    color: var(--text-2);
-    font-size: var(--fs-small);
+  .onav-panel ul {
+    display: grid;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    list-style: none;
   }
-  .nav-mobile-panel a:hover {
-    background: var(--bg-raised-2);
-    color: var(--text);
-    text-decoration: none;
+  .onav-panel a {
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+  .onav-panel a:hover {
+    color: var(--accent);
   }
 
-  @media (max-width: 860px) {
-    .nav-links {
+  @media (max-width: 900px) {
+    .onav-here {
       display: none;
     }
-    .nav-mobile {
-      display: block;
+    .onav-crumb {
+      margin-right: auto;
     }
   }
-  @media (max-width: 420px) {
-    .back-label {
+  @media (max-width: 560px) {
+    .onav {
+      gap: var(--space-3);
+    }
+    .onav-crumb {
+      padding-left: var(--space-3);
+    }
+    /* espaço curto: o rastro encolhe para o nó atual — "projetos" continua no
+       painel "Ir para" e na marca à esquerda. Sem isso o botão de tema é cortado. */
+    .onav-crumb a,
+    .onav-crumb [aria-hidden] {
       display: none;
     }
-    .back-label--short {
-      display: inline;
-      color: var(--text);
-      font-weight: 700;
+    .onav-more summary span {
+      display: none;
+    }
+  }
+  @media (min-width: 901px) {
+    .onav-more {
+      display: none;
     }
   }
 </style>

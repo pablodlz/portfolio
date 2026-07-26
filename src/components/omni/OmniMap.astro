@@ -1,313 +1,140 @@
 ---
-import SectionHeading from '../ui/SectionHeading.astro';
-import Icon from '../ui/Icon.astro';
-import type { IconName } from '../../lib/icons';
+import Sec from './Sec.astro';
+import { MAP_BLOCKS } from '../../lib/omni';
 
 /**
- * O mapa do sistema inteiro, como trilha vertical.
- * Desenhado em CSS com os tokens — acompanha o tema, não custa JS e não
- * depende de nenhuma biblioteca de diagrama.
+ * O ciclo como MATRIZ entre duas travas — não como linha do tempo vertical.
+ * A leitura importante não é "primeiro isto, depois aquilo": é que os sete
+ * blocos giram em ciclo *entre* duas decisões humanas que o código impõe. Por
+ * isso as travas são faixas, e o ciclo é uma grade de células com filete
+ * compartilhado.
  */
-interface Node {
-  kind: 'human' | 'gate' | 'hostile' | 'step' | 'know' | 'win' | 'loop';
-  n?: string;
-  icon?: IconName;
-  label: string;
-  desc: string;
-  href?: string;
-}
+const LOCKS_IN = [
+  {
+    k: 'antes de tudo',
+    t: 'O operador autoriza o escopo',
+    d: 'Nada acontece antes disto. O alcance da caça é uma decisão humana, registrada — e vira um portão determinístico, fora do alcance do modelo, que falha fechado.',
+  },
+];
 
-const FLOW: Node[] = [
+const LOCKS_OUT = [
   {
-    kind: 'human',
-    icon: 'shield-check',
-    label: 'O operador autoriza o escopo',
-    desc: 'Nada acontece antes disto. O alcance da caça é uma decisão humana, registrada.',
-  },
-  {
-    kind: 'gate',
-    icon: 'shield',
-    label: 'O escopo vira uma trava de código',
-    desc: 'A autorização deixa de ser instrução ao modelo e passa a ser um portão determinístico — que falha fechado e está fora do alcance da IA.',
-  },
-  {
-    kind: 'step',
-    n: '01',
-    label: 'Percepção',
-    href: '#fases',
-    desc: 'A superfície é reconstruída — inclusive o código que a aplicação publica no navegador, com as rotas que nenhum crawler encontra.',
-  },
-  {
-    kind: 'step',
-    n: '02',
-    label: 'Raciocínio',
-    href: '#diferencial',
-    desc: 'O agente aprende a máquina de estados do alvo e a confronta com o que ela jamais poderia permitir. Cada violação é um ataque deduzido.',
-  },
-  {
-    kind: 'know',
-    n: '03',
-    label: 'Conhecimento, antes de agir',
-    href: '#conhecimento',
-    desc: '~489 mil documentos de segurança consultados a cada passo — e outra vez a cada falha, porque a falha é a melhor pergunta.',
-  },
-  {
-    kind: 'step',
-    n: '04',
-    label: 'O arsenal dispara',
-    href: '#arsenal',
-    desc: 'Mais de 140 ferramentas ofensivas, cada chamada filtrada pelo que ela de fato alcança.',
-  },
-  {
-    kind: 'hostile',
-    icon: 'target',
-    label: 'O alvo responde',
-    desc: 'A resposta é território hostil: entra como resumo estruturado, nunca crua no raciocínio do agente.',
-  },
-  {
-    kind: 'gate',
-    n: '05',
-    label: 'O firewall julga',
-    href: '#firewall',
-    desc: 'Dez portões, um juiz adversarial e a reprodução ponta a ponta. O padrão é descartar — e a maioria é descartada.',
-  },
-  {
-    kind: 'win',
-    icon: 'trophy',
-    label: 'Sobrou: achado confirmado',
-    desc: 'Nota máxima, reproduzível, com a gravidade derivada da evidência — não declarada pela IA.',
-  },
-  {
-    kind: 'human',
-    icon: 'mail',
-    label: 'O humano aprova o envio',
-    desc: 'A plataforma monta o relatório pronto. Quem aperta o botão é uma pessoa — sempre.',
-  },
-  {
-    kind: 'step',
-    n: '06',
-    label: 'O desfecho vira aprendizado',
-    href: '#operador',
-    desc: 'Pago, duplicado ou recusado: o que o programa respondeu de verdade recalibra onde e como caçar em seguida.',
-  },
-  {
-    kind: 'loop',
-    icon: 'activity',
-    label: 'E recomeça — mais afiada',
-    desc: 'A próxima caça começa sabendo o que a anterior aprendeu.',
+    k: 'no fim',
+    t: 'O humano aprova o envio',
+    d: 'A plataforma monta o relatório pronto. Quem aperta o botão é uma pessoa — sempre. E o desfecho real do relatório volta como dado para a próxima caça.',
   },
 ];
 ---
 
-<section id="mapa" class="section omni-map">
-  <div class="container">
-    <SectionHeading
-      eyebrow="o sistema inteiro"
-      title="Do escopo autorizado ao bounty pago — e de volta"
-      description="Um ciclo fechado. Cada etapa numerada tem uma seção própria mais abaixo; as demais são as travas que não dependem do bom comportamento do modelo."
-    />
+<Sec
+  n="01"
+  id="ciclo"
+  title="Um ciclo fechado, entre duas decisões humanas"
+  lede="Sete blocos giram em ciclo. O que os cerca não é bom comportamento do modelo: são duas travas de código — quem autoriza no começo e quem aprova no fim. <b>Cada bloco abre a seção que o detalha.</b>"
+>
+  {LOCKS_IN.map((l) => (
+    <div class="lock">
+      <p class="o-label o-label--accent">{l.k}</p>
+      <p class="lock-t">{l.t}</p>
+      <p class="lock-d">{l.d}</p>
+    </div>
+  ))}
 
-    <ol class="flow">
-      {FLOW.map((node, i) => (
-        <li class:list={['flow-item', `is-${node.kind}`, 'reveal']} data-ri={i % 6}>
-          <span class="flow-marker" aria-hidden="true">
-            {node.n ? <span class="flow-n">{node.n}</span> : <Icon name={node.icon ?? 'arrow-right'} size={17} />}
-          </span>
-          <div class="flow-body">
-            <h3>
-              {node.href ? <a href={node.href}>{node.label}</a> : node.label}
-            </h3>
-            <p>{node.desc}</p>
-          </div>
-        </li>
-      ))}
-    </ol>
-
-    <aside class="flow-aside reveal">
-      <span class="flow-aside-n">07</span>
-      <div>
-        <h3><a href="#console">O console observa tudo isso</a></h3>
-        <p>
-          Um painel lê o ciclo inteiro em tempo real — a postura do portfólio, por que cada achado
-          morreu, o que está pronto para sair. Ele mostra; quem decide continua sendo você.
-        </p>
-      </div>
-    </aside>
+  <div class="cycle-mark" aria-hidden="true">
+    <span class="cycle-line"></span>
+    <span class="cycle-word">o ciclo</span>
+    <span class="cycle-line"></span>
   </div>
-</section>
+
+  <ol class="o-matrix cycle">
+    {MAP_BLOCKS.map((b) => (
+      <li class="o-cell">
+        <span class="o-cell-n">{b.n}</span>
+        <h3 class="o-cell-t"><a href={b.href}>{b.title}</a></h3>
+        <p>{b.desc}</p>
+      </li>
+    ))}
+    <li class="o-cell is-loop">
+      <span class="o-cell-n" aria-hidden="true">↻</span>
+      <h3 class="o-cell-t">E recomeça</h3>
+      <p>A próxima caça começa sabendo o que a anterior aprendeu — onde valeu, onde não valeu e por quê.</p>
+    </li>
+  </ol>
+
+  {LOCKS_OUT.map((l) => (
+    <div class="lock lock--out">
+      <p class="o-label o-label--accent">{l.k}</p>
+      <p class="lock-t">{l.t}</p>
+      <p class="lock-d">{l.d}</p>
+    </div>
+  ))}
+</Sec>
 
 <style>
-  .omni-map {
-    background: var(--bg-raised);
-    border-block: 1px solid var(--border);
-  }
-
-  .flow {
-    display: grid;
-    gap: 0;
-    max-width: 54rem;
-  }
-
-  .flow-item {
-    position: relative;
-    display: grid;
-    grid-template-columns: 38px minmax(0, 1fr);
-    gap: var(--space-5);
-    padding-bottom: var(--space-6);
-  }
-  /* o fio que liga as etapas */
-  .flow-item::before {
-    content: '';
-    position: absolute;
-    left: 18px;
-    top: 38px;
-    bottom: 0;
-    width: 2px;
-    background: linear-gradient(180deg, var(--border-strong), var(--border));
-  }
-  .flow-item:last-child {
-    padding-bottom: 0;
-  }
-  .flow-item:last-child::before {
-    display: none;
-  }
-
-  .flow-marker {
-    display: grid;
-    place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: var(--radius-pill);
-    border: 1px solid var(--border-strong);
-    background: var(--bg);
-    color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    flex: none;
-  }
-  .flow-n {
-    letter-spacing: -0.02em;
-  }
-
-  /* etapas numeradas: a linha de raciocínio da plataforma */
-  .is-step .flow-marker,
-  .is-know .flow-marker {
-    border-color: var(--accent-border);
-    background: var(--accent-soft);
-    color: var(--accent);
-  }
-  /* travas e vitória: preenchidas, porque são o que não se negocia */
-  .is-gate .flow-marker,
-  .is-win .flow-marker {
-    border-color: var(--accent);
-    background: var(--accent);
-    color: var(--on-accent);
-  }
-  .is-human .flow-marker {
-    border-style: dashed;
-    border-color: var(--accent-border);
-    color: var(--accent);
-  }
-  .is-hostile .flow-marker {
-    border-color: var(--border-strong);
-    background: var(--bg-raised-2);
-    color: var(--text-2);
-  }
-  .is-loop .flow-marker {
-    border-style: dashed;
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .flow-body {
-    padding-top: 5px;
-    display: grid;
-    gap: var(--space-2);
-  }
-  .flow-body h3 {
-    font-size: var(--fs-h3);
-    line-height: 1.35;
-  }
-  .flow-body h3 a {
-    color: inherit;
-  }
-  .flow-body h3 a:hover {
-    color: var(--accent);
-  }
-  .flow-body p {
-    color: var(--text-2);
-    font-size: var(--fs-small);
-    line-height: 1.75;
-    max-width: 46rem;
-  }
-
-  /* etapas-trava ganham um leve destaque de fundo */
-  .is-gate .flow-body,
-  .is-human .flow-body {
-    padding: var(--space-3) var(--space-4);
-    margin-top: -6px;
+  .lock {
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-5);
     border: 1px solid var(--accent-border);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     background: var(--accent-soft);
   }
-  .is-gate .flow-body p,
-  .is-human .flow-body p {
-    color: var(--text);
+  .lock--out {
+    margin-top: var(--space-5);
   }
-
-  .flow-aside {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: var(--space-5);
-    align-items: start;
-    max-width: 54rem;
-    margin-top: var(--space-7);
-    padding: var(--space-5);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--accent);
-    border-radius: var(--radius-lg);
-    background: var(--bg);
-  }
-  .flow-aside-n {
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
+  .lock-t {
+    margin-top: var(--space-2);
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
     font-weight: 600;
-    color: var(--accent);
-    padding-top: 4px;
+    letter-spacing: -0.01em;
   }
-  .flow-aside h3 {
-    font-size: var(--fs-h3);
-    margin-bottom: var(--space-2);
-  }
-  .flow-aside h3 a {
-    color: inherit;
-  }
-  .flow-aside h3 a:hover {
-    color: var(--accent);
-  }
-  .flow-aside p {
+  .lock-d {
+    margin-top: var(--space-2);
+    max-width: 68ch;
     color: var(--text-2);
     font-size: var(--fs-small);
     line-height: 1.75;
   }
 
+  .cycle-mark {
+    display: grid;
+    grid-template-columns: var(--space-6) auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-3);
+    margin-block: var(--space-5) var(--space-4);
+  }
+  .cycle-line {
+    height: 1px;
+    background: var(--border-strong);
+  }
+  .cycle-word {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-3);
+  }
+
+  .cycle {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    list-style: none;
+  }
+  .cycle .is-loop {
+    background: var(--bg-raised);
+  }
+  .cycle .is-loop .o-cell-n {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  @media (max-width: 1000px) {
+    .cycle {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
   @media (max-width: 560px) {
-    .flow-item {
-      grid-template-columns: 32px minmax(0, 1fr);
-      gap: var(--space-4);
-    }
-    .flow-item::before {
-      left: 15px;
-      top: 34px;
-    }
-    .flow-marker {
-      width: 32px;
-      height: 32px;
-    }
-    .flow-aside {
+    .cycle {
       grid-template-columns: 1fr;
-      gap: var(--space-3);
     }
   }
 </style>

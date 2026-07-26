@@ -146,6 +146,9 @@ const METRIC = /redução de ([\d,]+%)/;
   .proj-featured:hover {
     border-color: var(--accent);
     transform: translateY(-2px);
+    /* O card inteiro é um link: o sublinhado global de `a:hover` riscaria o
+       cartão todo. A afordância aqui é a borda + a seta que anda. */
+    text-decoration: none;
   }
   .pf-media {
     display: grid;

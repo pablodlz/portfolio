@@ -1,89 +1,72 @@
 ---
-import SectionHeading from '../ui/SectionHeading.astro';
+import Sec from './Sec.astro';
 import { OPERATOR_FNS } from '../../lib/omni';
 ---
 
-<section id="operador" class="section omni-operator">
-  <div class="container">
-    <SectionHeading
-      eyebrow="autonomia"
-      title="Achar o bug é metade. A outra metade é conduzir a caça."
-      description="Os motores acham. O resto — julgar, escolher, insistir, encadear — é o que normalmente exigiria um caçador sênior humano ao lado. E é medido contra o resultado real, porque reflexão sem dado vira oráculo confiante e errado."
-    />
+<Sec
+  n="04"
+  id="operador"
+  title="Achar o bug é metade. A outra metade é conduzir a caça."
+  lede="Os motores acham. O resto — julgar, escolher, insistir, encadear — é o que normalmente exigiria um caçador sênior humano ao lado. E é medido contra o resultado real, porque reflexão sem dado vira oráculo confiante e errado."
+>
+  <ol class="fns">
+    {OPERATOR_FNS.map((f, i) => (
+      <li class="fn">
+        <span class="fn-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <div>
+          <h3 class="fn-t">{f.title}</h3>
+          <p class="fn-d">{f.solves}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
 
-    <div class="op-grid">
-      {OPERATOR_FNS.map((f, i) => (
-        <article class="op-card reveal" data-ri={i % 3}>
-          <h3>{f.title}</h3>
-          <p>{f.solves}</p>
-        </article>
-      ))}
-    </div>
-
-    <blockquote class="op-quote reveal">
-      A fronteira é sagrada: essas camadas <b>propõem e medem</b>. Quem <b>autoriza</b> continua sendo
-      o código determinístico e o operador humano — nunca o modelo de linguagem.
-    </blockquote>
-  </div>
-</section>
+  <p class="o-note">
+    A fronteira é sagrada: essas camadas <b>propõem e medem</b>. Quem <b>autoriza</b> continua sendo o
+    código determinístico e o operador humano — nunca o modelo de linguagem.
+  </p>
+</Sec>
 
 <style>
-  .omni-operator {
-    background: var(--bg-raised);
-    border-block: 1px solid var(--border);
-  }
-  .op-grid {
+  .fns {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-5);
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-7);
+    margin-top: var(--space-6);
+    list-style: none;
   }
-  .op-card {
+  .fn {
     display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
     gap: var(--space-3);
-    align-content: start;
-    padding: var(--space-5);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg);
-    transition:
-      border-color var(--dur-2) var(--ease),
-      transform var(--dur-2) var(--ease);
+    align-items: start;
+    padding-block: var(--space-4);
+    border-top: 1px solid var(--border);
   }
-  .op-card:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-2px);
+  .fn-n {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--border-strong);
+    font-variant-numeric: tabular-nums;
   }
-  .op-card h3 {
-    font-size: var(--fs-h3);
-    line-height: 1.35;
+  .fn:hover .fn-n {
+    color: var(--accent);
   }
-  .op-card p {
+  .fn-t {
+    font-size: 1.0625rem;
+    letter-spacing: -0.01em;
+  }
+  .fn-d {
+    margin-top: var(--space-2);
     color: var(--text-2);
     font-size: var(--fs-small);
     line-height: 1.75;
   }
 
-  .op-quote {
-    max-width: 52rem;
-    margin-top: var(--space-6);
-    padding-left: var(--space-5);
-    border-left: 3px solid var(--accent);
-    color: var(--text-2);
-    font-size: var(--fs-body-lg);
-    line-height: 1.75;
-  }
-  .op-quote b {
-    color: var(--text);
-    font-weight: 600;
-  }
-
-  @media (max-width: 900px) {
-    .op-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-  @media (max-width: 620px) {
-    .op-grid {
+  @media (max-width: 820px) {
+    .fns {
       grid-template-columns: 1fr;
     }
   }

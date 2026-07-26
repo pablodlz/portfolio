@@ -1,154 +1,116 @@
 ---
-import SectionHeading from '../ui/SectionHeading.astro';
-import Tag from '../ui/Tag.astro';
+import Sec from './Sec.astro';
 import { CAPABILITIES } from '../../lib/omni';
+
+/** O eixo vem primeiro e ocupa a linha inteira; o resto é ficha de motores. */
+const axis = CAPABILITIES.filter((c) => c.tag === 'o eixo');
+const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
 ---
 
-<section id="diferencial" class="section omni-edge atmosphere">
-  <div class="container">
-    <SectionHeading
-      eyebrow="o diferencial"
-      title="Gerar-e-testar é raso. Modelar-e-deduzir, não."
-      description="A indústria de pentest com IA opera num único paradigma: inventa um payload, dispara, observa, segue. É empírico e ganancioso — e por isso não enxerga a classe de bug que mais paga."
-    />
-
-    <div class="edge-split reveal">
-      <p>
-        O Omni-Pentest troca isso por <b>deduzir a partir de um modelo formal do alvo</b>. É a divisão
-        de trabalho que faz sentido entre uma IA e um computador:
-      </p>
-      <ul class="edge-division">
-        <li>
-          <span class="edge-who">a IA</span>
-          faz o que é criativo e impreciso — a abstração, as hipóteses, as regras que o produto
-          deveria cumprir;
-        </li>
-        <li>
-          <span class="edge-who">o código</span>
-          faz o que é rigoroso e verificável — aprender a máquina de estados, resolver as restrições,
-          verificar as propriedades e julgar o achado.
-        </li>
-      </ul>
+<Sec
+  n="03"
+  id="metodo"
+  title="Gerar-e-testar é raso. Modelar-e-deduzir, não."
+  lede="A indústria de pentest com IA opera num único paradigma: inventa um payload, dispara, observa, segue. É empírico e ganancioso — e por isso não enxerga a classe de bug que mais paga."
+>
+  <div class="split">
+    <div class="split-side">
+      <p class="o-label">A IA faz</p>
+      <p>o que é criativo e impreciso — a abstração, as hipóteses, as regras que o produto deveria cumprir.</p>
     </div>
-
-    <div class="edge-grid">
-      {CAPABILITIES.map((c, i) => (
-        <article class:list={['edge-card', 'reveal', { 'edge-card--axis': c.tag === 'o eixo' }]} data-ri={i % 3}>
-          <Tag>{c.tag}</Tag>
-          <h3>{c.name}</h3>
-          <p>{c.what}</p>
-        </article>
-      ))}
+    <div class="split-side">
+      <p class="o-label o-label--accent">O código faz</p>
+      <p>o que é rigoroso e verificável — aprender a máquina de estados, resolver as restrições, verificar as propriedades e julgar o achado.</p>
     </div>
-
-    <p class="edge-note reveal">
-      Cada motor apenas <b>propõe</b> um candidato melhor — o firewall segue sendo o único juiz.
-      E tudo isso roda em <b>CPU comum, sem placa de vídeo</b>: a inteligência mora em álgebra e
-      lógica, não em computação pesada.
-    </p>
   </div>
-</section>
+
+  {axis.map((c) => (
+    <article class="axis">
+      <p class="o-label o-label--accent">{c.tag}</p>
+      <h3 class="axis-t">{c.name}</h3>
+      <p class="axis-d">{c.what}</p>
+    </article>
+  ))}
+
+  <p class="o-label motors-label">Os outros motores</p>
+  <div class="o-rows">
+    {rest.map((c) => (
+      <div class="o-row">
+        <div class="o-row-k">{c.tag}</div>
+        <div class="o-row-v">
+          <span class="o-row-t">{c.name}</span>
+          {c.what}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <p class="o-note">
+    Cada motor apenas <b>propõe</b> um candidato melhor — o firewall segue sendo o único juiz. E tudo
+    isso roda em <b>CPU comum, sem placa de vídeo</b>: a inteligência mora em álgebra e lógica, não em
+    computação pesada.
+  </p>
+</Sec>
 
 <style>
-  .edge-split {
+  .split {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    gap: var(--space-6);
-    align-items: start;
-    max-width: 62rem;
-    margin-bottom: var(--space-7);
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--space-6);
+    border-top: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
   }
-  .edge-split > p {
-    color: var(--text-2);
-    font-size: var(--fs-body-lg);
-    line-height: 1.75;
+  .split-side {
+    padding: var(--space-5) var(--space-5) var(--space-5) 0;
   }
-  .edge-split b {
-    color: var(--text);
-    font-weight: 600;
+  .split-side + .split-side {
+    padding-left: var(--space-5);
+    border-left: 1px solid var(--border);
   }
-
-  .edge-division {
-    display: grid;
-    gap: var(--space-4);
-  }
-  .edge-division li {
-    padding-left: var(--space-4);
-    border-left: 2px solid var(--accent-border);
+  .split-side p + p {
+    margin-top: var(--space-2);
     color: var(--text-2);
     font-size: var(--fs-small);
     line-height: 1.75;
   }
-  .edge-who {
-    display: block;
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent);
-    margin-bottom: 2px;
-  }
 
-  .edge-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-5);
-  }
-  .edge-card {
-    display: grid;
-    gap: var(--space-3);
-    align-content: start;
-    justify-items: start;
+  .axis {
+    margin-top: var(--space-6);
     padding: var(--space-5);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    background: var(--bg-raised);
-    transition:
-      border-color var(--dur-2) var(--ease),
-      transform var(--dur-2) var(--ease);
-  }
-  .edge-card:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-2px);
-  }
-  /* o eixo do sistema ocupa a largura inteira e ganha a borda de acento */
-  .edge-card--axis {
-    grid-column: 1 / -1;
-    border-color: var(--accent-border);
+    border: 1px solid var(--accent-border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-sm);
     background: var(--accent-soft);
   }
-  .edge-card--axis h3 {
-    font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.75rem);
+  .axis-t {
+    margin-top: var(--space-2);
+    font-size: 1.375rem;
+    letter-spacing: -0.02em;
   }
-  .edge-card--axis p {
-    font-size: var(--fs-body);
-    max-width: 58rem;
-  }
-  .edge-card h3 {
-    font-size: var(--fs-h3);
-    line-height: 1.35;
-  }
-  .edge-card p {
-    color: var(--text-2);
-    font-size: var(--fs-small);
-    line-height: 1.75;
-  }
-
-  .edge-note {
-    max-width: 52rem;
-    margin-top: var(--space-6);
-    color: var(--text-2);
+  .axis-d {
+    margin-top: var(--space-3);
+    max-width: 66ch;
+    color: var(--text);
     font-size: var(--fs-small);
     line-height: 1.8;
   }
-  .edge-note b {
-    color: var(--text);
+
+  .motors-label {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
   }
 
-  @media (max-width: 900px) {
-    .edge-split,
-    .edge-grid {
+  @media (max-width: 720px) {
+    .split {
       grid-template-columns: 1fr;
+    }
+    .split-side {
+      padding: var(--space-4) 0;
+    }
+    .split-side + .split-side {
+      padding-left: 0;
+      border-left: none;
+      border-top: 1px solid var(--border);
     }
   }
 </style>

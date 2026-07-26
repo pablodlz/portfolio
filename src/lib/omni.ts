@@ -34,7 +34,6 @@ export interface MapBlock {
   title: string;
   desc: string;
   href: string;
-  tone: 'perc' | 'core' | 'know' | 'tool' | 'gate' | 'learn' | 'view';
 }
 
 /** O mapa do sistema — cada bloco aponta para a seção que o detalha. */
@@ -44,49 +43,42 @@ export const MAP_BLOCKS: MapBlock[] = [
     title: 'Percepção',
     desc: 'Reconstrói a superfície do alvo — inclusive o que o cliente publica sem perceber.',
     href: '#fases',
-    tone: 'perc',
   },
   {
     n: '02',
     title: 'Raciocínio',
     desc: 'Aprende uma teoria formal do alvo e deduz o bug da estrutura dela.',
-    href: '#diferencial',
-    tone: 'core',
+    href: '#metodo',
   },
   {
     n: '03',
     title: 'Conhecimento',
     desc: 'Uma base de ~489 mil documentos consultada antes de agir, a cada passo.',
     href: '#conhecimento',
-    tone: 'know',
   },
   {
     n: '04',
     title: 'Arsenal',
     desc: 'Mais de 140 ferramentas, todas atrás do portão de escopo.',
     href: '#arsenal',
-    tone: 'tool',
   },
   {
     n: '05',
     title: 'Firewall',
     desc: 'Dez portões e um juiz adversarial. O padrão é descartar.',
     href: '#firewall',
-    tone: 'gate',
   },
   {
     n: '06',
     title: 'Aprendizado',
     desc: 'O que o programa respondeu de verdade vira prioridade da próxima caça.',
     href: '#operador',
-    tone: 'learn',
   },
   {
     n: '07',
     title: 'Console',
     desc: 'O portfólio inteiro num painel — e a decisão continua sendo humana.',
     href: '#console',
-    tone: 'view',
   },
 ];
 

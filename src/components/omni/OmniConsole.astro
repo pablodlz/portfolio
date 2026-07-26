@@ -1,124 +1,105 @@
 ---
-import SectionHeading from '../ui/SectionHeading.astro';
+import Sec from './Sec.astro';
 import { withBase } from '../../lib/url';
 import { CONSOLE_PAGES } from '../../lib/omni';
 ---
 
-<section id="console" class="section omni-console">
-  <div class="container">
-    <SectionHeading
-      eyebrow="o painel"
-      title="O portfólio inteiro num relance"
-      description="Depois que a caça roda e os achados entram, é aqui que se revê tudo. O painel lê e escreve apenas pelos mesmos caminhos validados que o agente usa — a interface nunca vira uma segunda fonte da verdade."
+<Sec
+  n="07"
+  id="console"
+  band
+  title="O portfólio inteiro num relance"
+  lede="Depois que a caça roda e os achados entram, é aqui que se revê tudo. O painel lê e escreve pelos <b>mesmos caminhos validados</b> que o agente usa — a interface nunca vira uma segunda fonte da verdade."
+>
+  <figure class="shot">
+    <img
+      src={withBase('/omni-pentest/operator-console.gif')}
+      alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
+      width="1100"
+      height="688"
+      loading="lazy"
+      decoding="async"
     />
+    <figcaption>
+      <span class="shot-cap-k">figura única</span>
+      As dez páginas em sequência, sobre uma instalação real.
+      <b>Nomes de programa e de achado estão anonimizados</b> — são vulnerabilidades ainda não
+      corrigidas em programas reais.
+    </figcaption>
+  </figure>
 
-    <figure class="console-figure reveal">
-      <img
-        src={withBase('/omni-pentest/operator-console.gif')}
-        alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
-        width="1100"
-        height="688"
-        loading="lazy"
-        decoding="async"
-      />
-      <figcaption>
-        As dez páginas em sequência, sobre uma instalação real.
-        <b>Nomes de programa e de achado estão anonimizados</b> — são vulnerabilidades ainda não
-        corrigidas em programas reais.
-      </figcaption>
-    </figure>
+  <p class="o-label pages-label">Sumário do painel — cada página responde a uma pergunta</p>
+  <ol class="o-index pages">
+    {CONSOLE_PAGES.map((p, i) => (
+      <li>
+        <span class="o-index-n">
+          <span class="pages-n">{String(i + 1).padStart(2, '0')}</span>{p.name}
+        </span>
+        <span class="o-index-dots" aria-hidden="true"></span>
+        <span class="o-index-q">{p.answers}</span>
+      </li>
+    ))}
+  </ol>
 
-    <ul class="console-pages">
-      {CONSOLE_PAGES.map((p, i) => (
-        <li class="reveal" data-ri={i % 5}>
-          <span class="console-page-name">{p.name}</span>
-          <span class="console-page-q">{p.answers}</span>
-        </li>
-      ))}
-    </ul>
-
-    <p class="console-note reveal">
-      O relatório <b>sai</b> do painel — copiado, revisado, enviado por uma pessoa. Nenhum botão ali
-      submete coisa alguma a plataforma nenhuma.
-    </p>
-  </div>
-</section>
+  <p class="o-note">
+    O relatório <b>sai</b> do painel — copiado, revisado e enviado por uma pessoa. Nenhum botão ali
+    submete coisa alguma a plataforma nenhuma.
+  </p>
+</Sec>
 
 <style>
-  .omni-console {
-    background: var(--bg-raised);
-    border-block: 1px solid var(--border);
+  .shot {
+    margin-top: var(--space-6);
   }
-
-  .console-figure {
-    margin-bottom: var(--space-7);
-  }
-  .console-figure img {
+  .shot img {
     display: block;
     width: 100%;
     height: auto;
     border: 1px solid var(--border-strong);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-sm);
     background: var(--bg);
   }
-  .console-figure figcaption {
+  .shot figcaption {
     margin-top: var(--space-3);
+    max-width: 70ch;
     color: var(--text-3);
     font-size: var(--fs-xs);
-    line-height: 1.7;
-    text-align: center;
+    line-height: 1.75;
   }
-  .console-figure figcaption b {
+  .shot-cap-k {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-right: var(--space-2);
+  }
+  .shot figcaption b {
     color: var(--text-2);
   }
 
-  .console-pages {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: var(--space-3);
+  .pages-label {
+    display: block;
+    margin-top: var(--space-7);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-strong);
   }
-  .console-pages li {
-    display: grid;
-    gap: var(--space-2);
-    align-content: start;
-    padding: var(--space-4);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    background: var(--bg);
-    transition: border-color var(--dur-2) var(--ease);
+  .pages {
+    margin-top: var(--space-4);
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--space-7);
+    list-style: none;
   }
-  .console-pages li:hover {
-    border-color: var(--accent-border);
-  }
-  .console-page-name {
-    font-weight: 600;
-    font-size: var(--fs-small);
-  }
-  .console-page-q {
-    color: var(--text-2);
+  .pages-n {
+    font-family: var(--font-mono);
     font-size: var(--fs-xs);
-    line-height: 1.6;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-right: var(--space-3);
   }
 
-  .console-note {
-    max-width: 46rem;
-    margin-top: var(--space-6);
-    color: var(--text-2);
-    font-size: var(--fs-small);
-    line-height: 1.8;
-  }
-  .console-note b {
-    color: var(--text);
-  }
-
-  @media (max-width: 1000px) {
-    .console-pages {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-  @media (max-width: 640px) {
-    .console-pages {
-      grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 820px) {
+    .pages {
+      grid-template-columns: 1fr;
     }
   }
 </style>
