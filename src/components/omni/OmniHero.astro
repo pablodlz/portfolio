@@ -1,0 +1,181 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../../img/omni-pentest/logo.png';
+import Badge from '../ui/Badge.astro';
+import Button from '../ui/Button.astro';
+import { STATS, OMNI_VERSION, OMNI_SNAPSHOT } from '../../lib/omni';
+---
+
+<section class="omni-hero atmosphere" id="topo">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <Badge tone="accent" dot pulse>v{OMNI_VERSION} · {OMNI_SNAPSHOT}</Badge>
+
+      <h1>
+        Omni&#8209;Pentest
+        <span class="hero-sub">O agente que <span class="text-accent">deduz</span> a vulnerabilidade em vez de tropeçar nela.</span>
+      </h1>
+
+      <p class="hero-lede">
+        Uma plataforma de segurança ofensiva conduzida por um agente de IA: você aponta um alvo
+        autorizado e ele leva a caça do reconhecimento ao relatório. A diferença está em <b>como</b> ele
+        acha o bug — não disparando payloads no escuro, mas <b>aprendendo uma teoria formal do alvo e
+        deduzindo a falha da estrutura dessa teoria</b>.
+      </p>
+
+      <p class="hero-lede">
+        E em <b>o que ele deixa passar</b>: todo achado atravessa um firewall de validação onde o
+        padrão é descartar. O que sobra é reproduzível — e nada é enviado a lugar nenhum sem um
+        humano aprovar.
+      </p>
+
+      <div class="hero-ctas">
+        <Button href="#mapa" variant="primary" icon="target">Ver como funciona</Button>
+        <Button href="#contato" variant="secondary" icon="mail">Falar com o autor</Button>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <Image
+        src={logo}
+        alt="Brasão do Omni-Pentest: um dragão prateado sobre escudo negro com bordas douradas"
+        widths={[320, 460]}
+        sizes="(max-width: 900px) 220px, 380px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+
+  <div class="container">
+    <ul class="hero-stats">
+      {STATS.map((s, i) => (
+        <li class="reveal" data-ri={i}>
+          <span class="stat-value">
+            {s.value}{s.unit && <span class="stat-unit">{s.unit}</span>}
+          </span>
+          <span class="stat-label">{s.label}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .omni-hero {
+    padding-block: clamp(3rem, 7vw, 5rem) var(--section-pad);
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--space-8);
+  }
+  .hero-copy {
+    display: grid;
+    gap: var(--space-5);
+    justify-items: start;
+    max-width: 44rem;
+  }
+
+  h1 {
+    display: grid;
+    gap: var(--space-4);
+    font-size: var(--fs-display);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    background: linear-gradient(180deg, var(--text), var(--text-2));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .hero-sub {
+    font-family: var(--font-body);
+    font-size: clamp(1.15rem, 0.9rem + 1.1vw, 1.65rem);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: var(--text);
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    max-width: 32rem;
+  }
+
+  .hero-lede {
+    color: var(--text-2);
+    font-size: var(--fs-body-lg);
+    line-height: 1.75;
+  }
+  .hero-lede b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .hero-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+
+  .hero-art {
+    justify-self: end;
+  }
+  .hero-art :global(img) {
+    width: clamp(200px, 26vw, 380px);
+    height: auto;
+    filter: drop-shadow(0 24px 60px rgba(0, 0, 0, 0.55));
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border);
+  }
+  .hero-stats li {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+  }
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 1.4rem + 1.8vw, 2.9rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--accent);
+  }
+  .stat-unit {
+    font-size: 0.55em;
+    margin-left: 2px;
+  }
+  .stat-label {
+    font-size: var(--fs-small);
+    line-height: 1.6;
+    color: var(--text-2);
+    max-width: 15rem;
+  }
+
+  @media (max-width: 900px) {
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    .hero-art {
+      order: -1;
+      justify-self: start;
+    }
+    .hero-stats {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-6) var(--space-5);
+    }
+  }
+  @media (max-width: 520px) {
+    .hero-stats {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

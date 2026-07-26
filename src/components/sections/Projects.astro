@@ -1,6 +1,8 @@
 ---
 import { data, publicationByUrn } from '../../lib/data';
 import { formatYearMonth, formatIsoDate } from '../../lib/dates';
+import { withBase } from '../../lib/url';
+import { OMNI_VERSION } from '../../lib/omni';
 import SectionHeading from '../ui/SectionHeading.astro';
 import Card from '../ui/Card.astro';
 import Badge from '../ui/Badge.astro';
@@ -8,6 +10,15 @@ import Tag from '../ui/Tag.astro';
 import Icon from '../ui/Icon.astro';
 
 const { projects, speaking } = data;
+// Destaque com página própria (/omni-pentest) — não vem do LinkedIn, então não
+// entra em linkedin.json (ADR-0004: aquele JSON é a exportação curada, e só).
+const OMNI_SKILLS = [
+  'Segurança Ofensiva',
+  'Bug Bounty',
+  'IA aplicada',
+  'Python',
+  'Clean Architecture',
+];
 // A métrica do artigo vem do texto do JSON (não inventar números).
 const METRIC = /redução de ([\d,]+%)/;
 ---
@@ -19,6 +30,34 @@ const METRIC = /redução de ([\d,]+%)/;
       title="Projetos & Pesquisa"
       description="Pesquisa aplicada em ML × ransomware e AppSec levada a palco."
     />
+
+    <a class="proj-featured reveal" href={withBase('/omni-pentest')}>
+      <span class="pf-media" aria-hidden="true">
+        <Icon name="target" size={26} />
+      </span>
+      <span class="pf-body">
+        <span class="pf-top">
+          <Badge tone="accent">Projeto autoral</Badge>
+          <span class="pf-version">v{OMNI_VERSION}</span>
+        </span>
+        <span class="pf-title">Omni&#8209;Pentest</span>
+        <span class="pf-desc">
+          Plataforma de bug bounty conduzida por um agente de IA que <b>modela o alvo e deduz a
+          vulnerabilidade</b> — em vez de só disparar payloads. Todo achado passa por um firewall de
+          validação de dez portões onde o padrão é <b>descartar</b>, e nenhum relatório sai sem
+          aprovação humana.
+        </span>
+        <span class="pf-skills">
+          {OMNI_SKILLS.map((s) => (
+            <Tag>{s}</Tag>
+          ))}
+        </span>
+        <span class="pf-cta">
+          Conhecer o projeto
+          <Icon name="arrow-right" size={16} />
+        </span>
+      </span>
+    </a>
 
     <div class="proj-grid">
       {projects.map((p, i) => {
@@ -88,6 +127,93 @@ const METRIC = /redução de ([\d,]+%)/;
   }
   .projects :global(.card) {
     background: var(--bg);
+  }
+
+  /* Destaque: o projeto autoral com página própria (/omni-pentest). */
+  .proj-featured {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+    margin-bottom: var(--space-6);
+    padding: var(--space-6);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    background: var(--accent-soft);
+    color: inherit;
+    transition: border-color var(--dur-2) var(--ease), transform var(--dur-2) var(--ease);
+  }
+  .proj-featured:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .pf-media {
+    display: grid;
+    place-items: center;
+    inline-size: 52px;
+    block-size: 52px;
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    color: var(--accent);
+  }
+  .pf-body {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+  .pf-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .pf-version {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .pf-title {
+    font-family: var(--font-display);
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+  .pf-desc {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .pf-desc b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .pf-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .pf-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: var(--space-1);
+    color: var(--accent);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .proj-featured:hover .pf-cta :global(svg) {
+    translate: 3px 0;
+  }
+  .pf-cta :global(svg) {
+    transition: translate var(--dur-2) var(--ease);
+  }
+  @media (max-width: 640px) {
+    .proj-featured {
+      grid-template-columns: 1fr;
+      padding: var(--space-5);
+    }
   }
 
   .proj-grid {

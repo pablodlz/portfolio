@@ -1,0 +1,154 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import Tag from '../ui/Tag.astro';
+import { CAPABILITIES } from '../../lib/omni';
+---
+
+<section id="diferencial" class="section omni-edge atmosphere">
+  <div class="container">
+    <SectionHeading
+      eyebrow="o diferencial"
+      title="Gerar-e-testar é raso. Modelar-e-deduzir, não."
+      description="A indústria de pentest com IA opera num único paradigma: inventa um payload, dispara, observa, segue. É empírico e ganancioso — e por isso não enxerga a classe de bug que mais paga."
+    />
+
+    <div class="edge-split reveal">
+      <p>
+        O Omni-Pentest troca isso por <b>deduzir a partir de um modelo formal do alvo</b>. É a divisão
+        de trabalho que faz sentido entre uma IA e um computador:
+      </p>
+      <ul class="edge-division">
+        <li>
+          <span class="edge-who">a IA</span>
+          faz o que é criativo e impreciso — a abstração, as hipóteses, as regras que o produto
+          deveria cumprir;
+        </li>
+        <li>
+          <span class="edge-who">o código</span>
+          faz o que é rigoroso e verificável — aprender a máquina de estados, resolver as restrições,
+          verificar as propriedades e julgar o achado.
+        </li>
+      </ul>
+    </div>
+
+    <div class="edge-grid">
+      {CAPABILITIES.map((c, i) => (
+        <article class:list={['edge-card', 'reveal', { 'edge-card--axis': c.tag === 'o eixo' }]} data-ri={i % 3}>
+          <Tag>{c.tag}</Tag>
+          <h3>{c.name}</h3>
+          <p>{c.what}</p>
+        </article>
+      ))}
+    </div>
+
+    <p class="edge-note reveal">
+      Cada motor apenas <b>propõe</b> um candidato melhor — o firewall segue sendo o único juiz.
+      E tudo isso roda em <b>CPU comum, sem placa de vídeo</b>: a inteligência mora em álgebra e
+      lógica, não em computação pesada.
+    </p>
+  </div>
+</section>
+
+<style>
+  .edge-split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: var(--space-6);
+    align-items: start;
+    max-width: 62rem;
+    margin-bottom: var(--space-7);
+  }
+  .edge-split > p {
+    color: var(--text-2);
+    font-size: var(--fs-body-lg);
+    line-height: 1.75;
+  }
+  .edge-split b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .edge-division {
+    display: grid;
+    gap: var(--space-4);
+  }
+  .edge-division li {
+    padding-left: var(--space-4);
+    border-left: 2px solid var(--accent-border);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.75;
+  }
+  .edge-who {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  .edge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+  .edge-card {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    justify-items: start;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+    transition:
+      border-color var(--dur-2) var(--ease),
+      transform var(--dur-2) var(--ease);
+  }
+  .edge-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+  /* o eixo do sistema ocupa a largura inteira e ganha a borda de acento */
+  .edge-card--axis {
+    grid-column: 1 / -1;
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+  }
+  .edge-card--axis h3 {
+    font-size: clamp(1.35rem, 1.1rem + 0.8vw, 1.75rem);
+  }
+  .edge-card--axis p {
+    font-size: var(--fs-body);
+    max-width: 58rem;
+  }
+  .edge-card h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.35;
+  }
+  .edge-card p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.75;
+  }
+
+  .edge-note {
+    max-width: 52rem;
+    margin-top: var(--space-6);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .edge-note b {
+    color: var(--text);
+  }
+
+  @media (max-width: 900px) {
+    .edge-split,
+    .edge-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

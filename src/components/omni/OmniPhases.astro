@@ -1,0 +1,95 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import { PHASES } from '../../lib/omni';
+---
+
+<section id="fases" class="section omni-phases">
+  <div class="container">
+    <SectionHeading
+      eyebrow="a caça"
+      title="Seis fases, uma superfície por vez"
+      description="O agente caminha por uma máquina de fases, consulta o conhecimento antes de agir e registra o que já testou — para não repetir a si mesmo nem esquecer o que ficou aberto."
+    />
+
+    <ol class="phases">
+      {PHASES.map((p, i) => (
+        <li class="phase reveal" data-ri={i % 3}>
+          <span class="phase-n">{String(i + 1).padStart(2, '0')}</span>
+          <h3>{p.name}</h3>
+          <p>{p.what}</p>
+        </li>
+      ))}
+    </ol>
+
+    <p class="phases-note reveal">
+      <b>E ele não desiste.</b> No modo padrão, o alvo nunca se "esgota" sozinho: quando a fila de
+      hipóteses zera, o sistema gira uma lente nova em vez de encerrar. A caça termina por decisão
+      do operador — parar ou trocar de alvo — ou pelo orçamento combinado.
+      <i>"Não compensa mais"</i> é julgamento humano, não do agente.
+    </p>
+  </div>
+</section>
+
+<style>
+  .phases {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+  .phase {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+    transition:
+      border-color var(--dur-2) var(--ease),
+      transform var(--dur-2) var(--ease);
+  }
+  .phase:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+  .phase-n {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .phase h3 {
+    font-size: var(--fs-h3);
+  }
+  .phase p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.75;
+  }
+
+  .phases-note {
+    max-width: 52rem;
+    margin-top: var(--space-6);
+    padding: var(--space-5);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    background: var(--accent-soft);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .phases-note b {
+    color: var(--text);
+  }
+
+  @media (max-width: 900px) {
+    .phases {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 620px) {
+    .phases {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

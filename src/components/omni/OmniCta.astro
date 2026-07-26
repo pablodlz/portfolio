@@ -1,0 +1,136 @@
+---
+import { data, obfuscatedEmail } from '../../lib/data';
+import { withBase } from '../../lib/url';
+import Button from '../ui/Button.astro';
+import { GUARANTEES, OMNI_VERSION, OMNI_SNAPSHOT } from '../../lib/omni';
+
+const mail = obfuscatedEmail();
+const { profile } = data;
+---
+
+<section id="garantias" class="section omni-guarantees">
+  <div class="container">
+    <p class="eyebrow reveal">o que não se negocia</p>
+    <h2 class="reveal" data-ri="1">Quatro garantias que não dependem do bom comportamento do modelo</h2>
+
+    <div class="gr-grid">
+      {GUARANTEES.map((g, i) => (
+        <article class="gr-card reveal" data-ri={i % 4}>
+          <h3>{g.title}</h3>
+          <p>{g.what}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section id="contato" class="section omni-cta atmosphere">
+  <div class="container cta-inner">
+    <p class="eyebrow reveal">handshake</p>
+    <h2 class="reveal" data-ri="1">Quer conversar sobre o projeto?</h2>
+    <p class="cta-sub reveal" data-ri="2">
+      O Omni-Pentest é um projeto pessoal de pesquisa aplicada em segurança ofensiva e IA, de
+      <b>{profile.fullName}</b>. O código é fechado, mas a conversa não: dúvidas sobre arquitetura,
+      resultados ou uma demonstração são bem-vindas.
+    </p>
+
+    <div class="cta-buttons reveal" data-ri="3">
+      <Button href="#contato" class="js-mail" data-u={mail.u} data-d={mail.d} variant="primary" icon="mail">
+        <span class="js-mail-addr">Enviar e-mail</span>
+      </Button>
+      <Button href={profile.contact.linkedin} variant="secondary" icon="linkedin" external>LinkedIn</Button>
+      <Button href={withBase('/')} variant="ghost" icon="arrow-right">Ver o portfólio completo</Button>
+    </div>
+
+    <noscript>
+      <p class="cta-noscript">e-mail: pablogalerani [arroba] gmail [ponto] com</p>
+    </noscript>
+
+    <p class="cta-version reveal" data-ri="4">
+      <b>Esta página retrata a versão {OMNI_VERSION}</b>, de {OMNI_SNAPSHOT}. A plataforma continua
+      em desenvolvimento ativo e evolui mais rápido do que esta página — o que você lê aqui é um
+      retrato daquele momento, não necessariamente o estado atual.
+    </p>
+  </div>
+</section>
+
+<style>
+  .omni-guarantees h2 {
+    max-width: 34rem;
+    margin-bottom: var(--space-6);
+  }
+  .gr-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-5);
+  }
+  .gr-card {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: var(--space-5);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-lg);
+    background: var(--accent-soft);
+  }
+  .gr-card h3 {
+    font-size: var(--fs-h3);
+  }
+  .gr-card p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.75;
+  }
+
+  /* --- CTA --- */
+  .cta-inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: var(--space-4);
+  }
+  .omni-cta h2 {
+    max-width: 22rem;
+  }
+  .cta-sub {
+    max-width: 40rem;
+    color: var(--text-2);
+    font-size: var(--fs-body-lg);
+    line-height: 1.75;
+  }
+  .cta-sub b {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .cta-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+  .cta-noscript {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    color: var(--text-2);
+  }
+  .cta-version {
+    max-width: 44rem;
+    margin-top: var(--space-5);
+    padding: var(--space-4);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-md);
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.8;
+  }
+  .cta-version b {
+    color: var(--text-2);
+  }
+
+  @media (max-width: 720px) {
+    .gr-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

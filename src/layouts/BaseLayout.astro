@@ -37,14 +37,17 @@ const sourceEgg = `<!--
 interface Props {
   title?: string;
   description?: string;
+  /** rota desta página a partir do base (ex.: "/omni-pentest"); default = home */
+  canonicalPath?: string;
 }
 
 const {
   title = `${data.profile.fullName} • Cybersecurity Analyst`,
   description = data.about.summary,
+  canonicalPath = '/',
 } = Astro.props;
 
-const canonical = new URL(withBase('/'), Astro.site);
+const canonical = new URL(withBase(canonicalPath), Astro.site);
 const ogImage = new URL(withBase('/og.png'), Astro.site);
 ---
 

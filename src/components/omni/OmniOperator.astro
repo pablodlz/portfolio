@@ -1,0 +1,90 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import { OPERATOR_FNS } from '../../lib/omni';
+---
+
+<section id="operador" class="section omni-operator">
+  <div class="container">
+    <SectionHeading
+      eyebrow="autonomia"
+      title="Achar o bug é metade. A outra metade é conduzir a caça."
+      description="Os motores acham. O resto — julgar, escolher, insistir, encadear — é o que normalmente exigiria um caçador sênior humano ao lado. E é medido contra o resultado real, porque reflexão sem dado vira oráculo confiante e errado."
+    />
+
+    <div class="op-grid">
+      {OPERATOR_FNS.map((f, i) => (
+        <article class="op-card reveal" data-ri={i % 3}>
+          <h3>{f.title}</h3>
+          <p>{f.solves}</p>
+        </article>
+      ))}
+    </div>
+
+    <blockquote class="op-quote reveal">
+      A fronteira é sagrada: essas camadas <b>propõem e medem</b>. Quem <b>autoriza</b> continua sendo
+      o código determinístico e o operador humano — nunca o modelo de linguagem.
+    </blockquote>
+  </div>
+</section>
+
+<style>
+  .omni-operator {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+  .op-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+  .op-card {
+    display: grid;
+    gap: var(--space-3);
+    align-content: start;
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    transition:
+      border-color var(--dur-2) var(--ease),
+      transform var(--dur-2) var(--ease);
+  }
+  .op-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+  }
+  .op-card h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.35;
+  }
+  .op-card p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.75;
+  }
+
+  .op-quote {
+    max-width: 52rem;
+    margin-top: var(--space-6);
+    padding-left: var(--space-5);
+    border-left: 3px solid var(--accent);
+    color: var(--text-2);
+    font-size: var(--fs-body-lg);
+    line-height: 1.75;
+  }
+  .op-quote b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .op-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 620px) {
+    .op-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

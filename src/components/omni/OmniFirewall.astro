@@ -1,0 +1,227 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import { OUTCOMES } from '../../lib/omni';
+
+// Os dez, na ordem em que o candidato os atravessa. O décimo é a nota
+// recalculada — por isso ele ganha um estágio próprio no funil, logo abaixo.
+const GATES = [
+  'evidência estruturada',
+  'escopo',
+  'identidade',
+  'exploração real',
+  'efeito ponta a ponta',
+  'classe de impacto',
+  'duplicidade',
+  'reprodutibilidade',
+  'juiz adversarial',
+];
+---
+
+<section id="firewall" class="section omni-firewall">
+  <div class="container">
+    <SectionHeading
+      eyebrow="o filtro"
+      title="Um firewall onde o padrão é descartar"
+      description="É o que separa um achado real de ruído bem escrito. Todo candidato — venha de qualquer motor — entra pela mesma porta, e a maioria não sai dela."
+    />
+
+    <div class="fw-layout">
+      <div class="fw-funnel reveal">
+        <div class="fw-stage fw-stage--in">
+          <span class="fw-stage-label">entra</span>
+          <p>Candidato + evidência</p>
+        </div>
+
+        <div class="fw-stage fw-stage--gates">
+          <span class="fw-stage-label">nove portões de validade</span>
+          <ul class="fw-gates">
+            {GATES.map((g) => <li>{g}</li>)}
+          </ul>
+        </div>
+
+        <div class="fw-stage fw-stage--score">
+          <span class="fw-stage-label">o décimo: a nota recalculada pelo código</span>
+          <p>
+            A confiança é <b>recomputada</b> a partir da evidência. O número que o modelo acha que
+            merece é ignorado — e só a nota máxima, com todos os portões aprovados, abre um relatório.
+          </p>
+        </div>
+
+        <div class="fw-stage fw-stage--out">
+          <span class="fw-stage-label">sai</span>
+          <p>Relatório pronto — aguardando aprovação humana</p>
+        </div>
+      </div>
+
+      <div class="fw-outcomes">
+        <h3 class="fw-outcomes-title reveal">Os cinco destinos possíveis</h3>
+        <ul>
+          {OUTCOMES.map((o, i) => (
+            <li class:list={['fw-outcome', `is-${o.tone}`, 'reveal']} data-ri={i % 3}>
+              <div class="fw-outcome-head">
+                <span class="fw-outcome-key">{o.key}</span>
+                <span class="fw-outcome-who">{o.who}</span>
+              </div>
+              <p>{o.means}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <p class="fw-note reveal">
+      Antes da saída, dois reforços: um <b>juiz adversarial</b> — cético contra defensor — tenta
+      derrubar o próprio achado, e um bug de estado só conta quando a <b>reprodução</b> confirma o
+      efeito do lado da vítima. A gravidade é <b>derivada da evidência</b>, com cada elevação paga
+      por uma prova estruturada: achado somente de leitura não vira crítico.
+    </p>
+  </div>
+</section>
+
+<style>
+  .fw-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  /* --- o funil --- */
+  .fw-funnel {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .fw-stage {
+    position: relative;
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+  }
+  /* seta entre os estágios */
+  .fw-stage:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: calc(-1 * var(--space-3) - 1px);
+    width: 2px;
+    height: var(--space-3);
+    background: var(--border-strong);
+  }
+  .fw-stage-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-3);
+    margin-bottom: var(--space-2);
+  }
+  .fw-stage p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.7;
+  }
+  .fw-stage b {
+    color: var(--text);
+  }
+  .fw-stage--in p,
+  .fw-stage--out p {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .fw-stage--gates {
+    border-color: var(--accent-border);
+    background: var(--accent-soft);
+  }
+  .fw-stage--gates .fw-stage-label {
+    color: var(--accent);
+  }
+  .fw-stage--out {
+    border-color: var(--accent);
+  }
+
+  .fw-gates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .fw-gates li {
+    padding: 3px 10px;
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+  }
+
+  /* --- os desfechos --- */
+  .fw-outcomes-title {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--space-4);
+  }
+  .fw-outcomes ul {
+    display: grid;
+    gap: var(--space-3);
+    list-style: none;
+  }
+  .fw-outcome {
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    background: var(--bg-raised);
+  }
+  .fw-outcome.is-win {
+    border-left-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .fw-outcome.is-hold {
+    border-left-color: var(--accent-border);
+  }
+  .fw-outcome-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+  }
+  .fw-outcome-key {
+    font-weight: 600;
+    color: var(--text);
+  }
+  .fw-outcome-who {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .fw-outcome p {
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.7;
+  }
+
+  .fw-note {
+    max-width: 56rem;
+    margin-top: var(--space-7);
+    padding: var(--space-5);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-raised);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .fw-note b {
+    color: var(--text);
+  }
+
+  @media (max-width: 900px) {
+    .fw-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+</style>

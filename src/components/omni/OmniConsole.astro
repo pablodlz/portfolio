@@ -1,0 +1,124 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+import { withBase } from '../../lib/url';
+import { CONSOLE_PAGES } from '../../lib/omni';
+---
+
+<section id="console" class="section omni-console">
+  <div class="container">
+    <SectionHeading
+      eyebrow="o painel"
+      title="O portfólio inteiro num relance"
+      description="Depois que a caça roda e os achados entram, é aqui que se revê tudo. O painel lê e escreve apenas pelos mesmos caminhos validados que o agente usa — a interface nunca vira uma segunda fonte da verdade."
+    />
+
+    <figure class="console-figure reveal">
+      <img
+        src={withBase('/omni-pentest/operator-console.gif')}
+        alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
+        width="1100"
+        height="688"
+        loading="lazy"
+        decoding="async"
+      />
+      <figcaption>
+        As dez páginas em sequência, sobre uma instalação real.
+        <b>Nomes de programa e de achado estão anonimizados</b> — são vulnerabilidades ainda não
+        corrigidas em programas reais.
+      </figcaption>
+    </figure>
+
+    <ul class="console-pages">
+      {CONSOLE_PAGES.map((p, i) => (
+        <li class="reveal" data-ri={i % 5}>
+          <span class="console-page-name">{p.name}</span>
+          <span class="console-page-q">{p.answers}</span>
+        </li>
+      ))}
+    </ul>
+
+    <p class="console-note reveal">
+      O relatório <b>sai</b> do painel — copiado, revisado, enviado por uma pessoa. Nenhum botão ali
+      submete coisa alguma a plataforma nenhuma.
+    </p>
+  </div>
+</section>
+
+<style>
+  .omni-console {
+    background: var(--bg-raised);
+    border-block: 1px solid var(--border);
+  }
+
+  .console-figure {
+    margin-bottom: var(--space-7);
+  }
+  .console-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+  }
+  .console-figure figcaption {
+    margin-top: var(--space-3);
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+    text-align: center;
+  }
+  .console-figure figcaption b {
+    color: var(--text-2);
+  }
+
+  .console-pages {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-3);
+  }
+  .console-pages li {
+    display: grid;
+    gap: var(--space-2);
+    align-content: start;
+    padding: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg);
+    transition: border-color var(--dur-2) var(--ease);
+  }
+  .console-pages li:hover {
+    border-color: var(--accent-border);
+  }
+  .console-page-name {
+    font-weight: 600;
+    font-size: var(--fs-small);
+  }
+  .console-page-q {
+    color: var(--text-2);
+    font-size: var(--fs-xs);
+    line-height: 1.6;
+  }
+
+  .console-note {
+    max-width: 46rem;
+    margin-top: var(--space-6);
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .console-note b {
+    color: var(--text);
+  }
+
+  @media (max-width: 1000px) {
+    .console-pages {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .console-pages {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
