@@ -705,13 +705,17 @@ export const HARNESS: HarnessFact[] = [
   },
 ];
 
-/** O comando que abre uma caça — bloco de terminal. */
+/**
+ * O comando que abre uma caça — bloco de terminal.
+ * O corpo é `white-space: pre` numa coluna estreita: linha acima de ~40 caracteres
+ * deixa um scrollbar permanente no desktop. Mantenha curtas.
+ */
 export const HARNESS_TERM = {
   prompt: '›',
   cmd: '/bounty <alvo>',
   lines: [
-    'escopo autorizado · 47 ativos declarados',
-    'conhecimento consultado antes de cada exploração',
+    'escopo autorizado · 47 ativos',
+    'conhecimento antes de cada exploit',
     'modo profundo: só o operador encerra',
   ],
 };
