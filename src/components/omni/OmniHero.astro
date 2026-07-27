@@ -21,7 +21,7 @@ const { profile } = data;
       <h1 class="cover-h1">Omni&#8209;Pentest</h1>
 
       <p class="cover-thesis">
-        O agente que <em>deduz</em> a vulnerabilidade<br />
+        O agente que <em>deduz</em> a vulnerabilidade<br class="thesis-br" />
         em vez de tropeçar nela.
       </p>
 
@@ -213,6 +213,28 @@ const { profile } = data;
     }
     .cover-mark {
       width: 180px;
+    }
+  }
+  @media (max-width: 640px) {
+    .cover {
+      padding-block: var(--space-6) var(--space-6);
+    }
+    /* A quebra é composição de desktop: numa coluna estreita a primeira linha
+       já quebra sozinha e o <br> criava uma terceira linha órfã. */
+    .thesis-br {
+      display: none;
+    }
+    .cover-thesis {
+      text-wrap: pretty;
+    }
+    /* Dois links empilhados leem melhor que dois sublinhados colados — e a 27px
+       de altura eram alvo curto demais para o dedo. */
+    .cover-links {
+      gap: var(--space-2);
+    }
+    .cover-links a {
+      width: fit-content;
+      padding-block: var(--space-2);
     }
   }
 </style>

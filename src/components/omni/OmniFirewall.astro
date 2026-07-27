@@ -79,11 +79,12 @@ const GATES = [
         </tr>
       </thead>
       <tbody>
+        {/* `data-label`: no celular a tabela vira ficha empilhada (omni.css) */}
         {OUTCOMES.map((o) => (
           <tr class:list={[`is-${o.tone}`]}>
             <th scope="row">{o.key}</th>
-            <td>{o.means}</td>
-            <td class="o-who">{o.who}</td>
+            <td data-label="O que significa">{o.means}</td>
+            <td class="o-who" data-label="Quem decide o próximo passo">{o.who}</td>
           </tr>
         ))}
       </tbody>
@@ -348,6 +349,20 @@ const GATES = [
     .stages div {
       grid-template-columns: 1fr;
       gap: var(--space-2);
+    }
+    /* a tabela virou ficha empilhada: o destino é o TÍTULO do cartão */
+    .o-table th[scope='row'] {
+      padding: 0 0 var(--space-3) 0;
+      font-size: var(--fs-body);
+    }
+    /* o filete do vencedor passa a marcar a ficha inteira, não a célula */
+    .o-table tr.is-win {
+      border-color: var(--accent-border);
+      box-shadow: inset 3px 0 0 var(--accent);
+    }
+    .o-table tr.is-win th[scope='row'] {
+      box-shadow: none;
+      padding-left: 0;
     }
   }
   @media (max-width: 560px) {

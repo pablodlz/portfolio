@@ -74,11 +74,23 @@
     overflow: hidden;
   }
   .o-cell {
+    position: relative;
     display: grid;
     align-content: start;
     gap: var(--space-2);
     padding: var(--space-5) var(--space-4);
     background: var(--bg);
+  }
+  /* A célula toda vira o alvo: só o texto do título dava 22px de altura — metade
+     do mínimo confortável para o dedo. O link segue sendo o link (nome acessível
+     e foco intactos); é a área de toque que cresce. */
+  .o-cell-t a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .o-cell:has(.o-cell-t a):hover {
+    background: var(--bg-raised);
   }
   .o-cell-n {
     font-family: var(--font-mono);
@@ -181,6 +193,69 @@
     font-size: var(--fs-xs);
     color: var(--text-3);
     white-space: nowrap;
+  }
+
+  /* No celular a tabela de três colunas mede 512px num viewport de 380: rolava
+     dentro do wrapper com a coluna VENCEDORA inteira fora da tela, e nada
+     avisava que havia mais. Cada linha vira uma ficha empilhada — o cabeçalho
+     de coluna reaparece como rótulo de cada célula, via `data-label`. */
+  @media (max-width: 720px) {
+    .o-table {
+      min-width: 0;
+      display: block;
+    }
+    .o-table thead {
+      /* o rótulo migrou para dentro das células; o leitor de tela usa o data-label */
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .o-table tbody,
+    .o-table tr,
+    .o-table th,
+    .o-table td {
+      display: block;
+      width: auto;
+    }
+    .o-table tr {
+      padding: var(--space-4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+    .o-table tr + tr {
+      margin-top: var(--space-3);
+    }
+    .o-table th[scope='row'] {
+      padding: 0 0 var(--space-3) 0;
+      margin-bottom: var(--space-3);
+      border-bottom: 1px solid var(--border-strong);
+      white-space: normal;
+    }
+    .o-table td {
+      padding: 0;
+      border-bottom: none;
+      white-space: normal;
+    }
+    .o-table td + td {
+      margin-top: var(--space-4);
+    }
+    .o-table td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 4px;
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+    }
+    .o-table .o-who {
+      white-space: normal;
+    }
   }
 
   /* ---------- rótulo em mono (sobrancelha do dossiê) ---------- */
@@ -440,6 +515,14 @@
   .o-term-out {
     color: var(--text-3);
   }
+  /* Num celular estreito a linha do terminal ultrapassa a tela, e pedir rolagem
+     lateral dentro de um bloco de leitura é hostil: `pre-wrap` quebra a linha
+     preservando a indentação de origem. */
+  @media (max-width: 560px) {
+    .o-term-body {
+      white-space: pre-wrap;
+    }
+  }
 
   /* ---------- nota lateral ---------- */
   .o-note {
@@ -472,10 +555,13 @@
     .o-index-q {
       text-align: left;
     }
-    /* a tira de fluxo empilha: melhor ler 8 linhas que rolar 8 colunas */
+    /* A tira de fluxo empilha: melhor ler 8 linhas que rolar 8 colunas. Em duas
+       colunas ela leria como CONJUNTO, e a ordem é o conteúdo — então empilha
+       mesmo, só com a linha mais baixa para a lista não virar um paredão. */
     .o-flow a,
     .o-flow span {
       flex-basis: 100%;
+      padding-block: var(--space-2);
       text-align: left;
     }
   }

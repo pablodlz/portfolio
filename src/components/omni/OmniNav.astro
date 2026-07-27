@@ -45,9 +45,13 @@ const ALL = [
     </a>
 
     <nav class="onav-crumb" aria-label="Localização">
-      <a href={withBase('/#projetos')}>projetos</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">omni&#8209;pentest</span>
+      {/* o nome acessível vem do aria-label porque abaixo de 400px sobra só a
+          seta — e "←" sozinho não se anuncia */}
+      <a href={withBase('/#projetos')} aria-label="Voltar para Projetos">
+        <span class="crumb-back" aria-hidden="true">←</span><span class="crumb-word">projetos</span>
+      </a>
+      <span class="crumb-sep" aria-hidden="true">/</span>
+      <span class="crumb-here" aria-current="page">omni&#8209;pentest</span>
     </nav>
 
     <nav class="onav-here" aria-label="Seções do dossiê">
@@ -166,6 +170,8 @@ const ALL = [
     display: flex;
     align-items: center;
     gap: var(--space-2);
+    /* sem isto o rótulo quebra em "Ir / para" quando a barra aperta */
+    white-space: nowrap;
     padding: 6px 10px;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
@@ -200,16 +206,23 @@ const ALL = [
   }
   .onav-panel ul {
     display: grid;
-    gap: var(--space-2);
     margin-bottom: var(--space-2);
     list-style: none;
   }
+  /* Este painel É a navegação no celular: com 17px de altura os itens ficavam
+     colados e o dedo errava de seção. Cada linha vira uma faixa de ~40px. */
   .onav-panel a {
+    display: block;
+    padding: 9px 8px;
+    margin-inline: -8px;
+    border-radius: var(--radius-sm);
     font-size: var(--fs-small);
     color: var(--text-2);
   }
   .onav-panel a:hover {
     color: var(--accent);
+    background: var(--bg);
+    text-decoration: none;
   }
 
   @media (max-width: 900px) {
@@ -220,6 +233,13 @@ const ALL = [
       margin-right: auto;
     }
   }
+  /* a seta só aparece quando o rastro vira botão de voltar (≤560px) */
+  .crumb-back {
+    display: none;
+    margin-right: 3px;
+    color: var(--text-3);
+  }
+
   @media (max-width: 560px) {
     .onav {
       gap: var(--space-3);
@@ -227,14 +247,52 @@ const ALL = [
     .onav-crumb {
       padding-left: var(--space-3);
     }
-    /* espaço curto: o rastro encolhe para o nó atual — "projetos" continua no
-       painel "Ir para" e na marca à esquerda. Sem isso o botão de tema é cortado. */
+    /* alvo de toque na barra: o texto sozinho dá 22px, metade do confortável */
     .onav-crumb a,
-    .onav-crumb [aria-hidden] {
+    .onav-brand {
+      display: inline-block;
+      padding-block: 8px;
+      margin-block: -8px;
+    }
+    .onav-actions {
+      flex: none;
+      margin-left: auto;
+      gap: 6px;
+    }
+    /* ~10px arrancados do botão são o que separa "←projetos" de "←projet…" */
+    .onav-more summary {
+      gap: 4px;
+      padding: 6px 8px;
+    }
+    /* Espaço curto: some o nó ATUAL, não o caminho de volta. "omni-pentest" é
+       redundante (o título gigante logo abaixo diz o mesmo), enquanto "projetos"
+       é a única saída daqui — e escondê-la deixava o celular sem volta. */
+    .crumb-sep,
+    .crumb-here {
       display: none;
     }
-    .onav-more summary span {
+    .crumb-back {
+      display: inline;
+    }
+  }
+  /* Telas de 320–380px: nem "←projetos" cabe junto da marca e do botão. Fica a
+     seta sozinha — a afordância de voltar universal no celular — com o nome
+     acessível preservado no aria-label do link. */
+  @media (max-width: 384px) {
+    .crumb-word {
       display: none;
+    }
+    .onav-crumb a {
+      display: inline-flex;
+      align-items: center;
+      /* alvo de toque: a seta sozinha teria ~10px de largura */
+      padding: 8px 6px;
+      margin: -8px -6px;
+      font-size: var(--fs-small);
+    }
+    .crumb-back {
+      margin-right: 0;
+      color: var(--text-2);
     }
   }
   @media (min-width: 901px) {

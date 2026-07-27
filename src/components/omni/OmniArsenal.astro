@@ -21,11 +21,12 @@ import { ARSENAL, TOOL_GROUPS, ARSENAL_NOTE } from '../../lib/omni';
         </tr>
       </thead>
       <tbody>
+        {/* `data-label`: no celular a tabela vira ficha empilhada (omni.css) */}
         {ARSENAL.map((a) => (
           <tr>
             <th scope="row">{a.name}</th>
-            <td class="o-num">{a.count ?? '—'}</td>
-            <td>{a.role}</td>
+            <td class="o-num" data-label="Escala">{a.count ?? '—'}</td>
+            <td data-label="O que cobre">{a.role}</td>
           </tr>
         ))}
       </tbody>
@@ -65,5 +66,16 @@ import { ARSENAL, TOOL_GROUPS, ARSENAL_NOTE } from '../../lib/omni';
     letter-spacing: -0.01em;
     white-space: normal;
     vertical-align: top;
+  }
+  @media (max-width: 720px) {
+    /* a tabela virou ficha empilhada: a frente é o TÍTULO do cartão */
+    .arsenal-table .o-table th[scope='row'] {
+      padding: 0 0 var(--space-3) 0;
+      font-size: var(--fs-body);
+    }
+    /* a contagem é o dado forte da ficha, não uma coluna estreita */
+    .arsenal-table .o-table .o-num {
+      font-size: 1.25rem;
+    }
   }
 </style>

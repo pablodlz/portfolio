@@ -24,11 +24,13 @@ const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
         </tr>
       </thead>
       <tbody>
+        {/* `data-label` reapresenta o cabeçalho de coluna quando a tabela vira
+            ficha empilhada no celular (regra em omni.css) */}
         {PARADIGM.map((r) => (
           <tr>
             <th scope="row">{r.question}</th>
-            <td>{r.generate}</td>
-            <td class="td-win">{r.deduce}</td>
+            <td data-label="Gerar-e-testar">{r.generate}</td>
+            <td class="td-win" data-label="Modelar-e-deduzir">{r.deduce}</td>
           </tr>
         ))}
       </tbody>
@@ -179,8 +181,10 @@ const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
       border-left: none;
       border-top: 1px solid var(--border);
     }
+    /* a tabela virou ficha empilhada: a largura fixa da chave não se aplica mais */
     .para-wrap th[scope='row'] {
-      width: 9rem;
+      width: auto;
+      font-size: var(--fs-body);
     }
   }
 </style>

@@ -89,6 +89,16 @@ const { profile } = data;
     color: var(--accent);
     text-decoration: none;
   }
+  /* cinco links de 22px lado a lado no rodapé: sem folga vertical o dedo erra */
+  @media (max-width: 720px) {
+    .colophon-links {
+      gap: var(--space-2) var(--space-5);
+    }
+    .colophon-links a {
+      display: inline-block;
+      padding-block: 7px;
+    }
+  }
 
   .colophon-legal {
     margin-top: var(--space-4);

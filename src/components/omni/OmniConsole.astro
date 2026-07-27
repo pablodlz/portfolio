@@ -13,14 +13,25 @@ import { CONSOLE_PAGES, CONSOLE_DETAILS, CONSOLE_SPEC } from '../../lib/omni';
   lede="Depois que a caça roda e os achados entram, é aqui que se revê tudo. O painel lê e escreve pelos <b>mesmos caminhos validados</b> que o agente usa — a interface nunca vira uma segunda fonte da verdade."
 >
   <figure class="shot">
-    <img
-      src={withBase('/omni-pentest/operator-console.gif')}
-      alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
-      width="1100"
-      height="688"
-      loading="lazy"
-      decoding="async"
-    />
+    {/* A 340px de largura o painel não se lê. O toque abre o GIF em tamanho
+        natural — a única saída num aparelho estreito para uma figura larga. */}
+    <a
+      class="shot-zoom"
+      href={withBase('/omni-pentest/operator-console.gif')}
+      target="_blank"
+      rel="noopener"
+      aria-label="Abrir a animação do console em tamanho original"
+    >
+      <img
+        src={withBase('/omni-pentest/operator-console.gif')}
+        alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
+        width="1100"
+        height="688"
+        loading="lazy"
+        decoding="async"
+      />
+      <span class="shot-hint" aria-hidden="true">toque para ampliar</span>
+    </a>
     <figcaption>
       <span class="shot-cap-k">figura única</span>
       As dez páginas em sequência, sobre uma instalação real — 40 alvos, 144 achados.
@@ -72,6 +83,13 @@ import { CONSOLE_PAGES, CONSOLE_DETAILS, CONSOLE_SPEC } from '../../lib/omni';
   .shot {
     margin-top: var(--space-6);
   }
+  .shot-zoom {
+    position: relative;
+    display: block;
+  }
+  .shot-zoom:hover {
+    text-decoration: none;
+  }
   .shot img {
     display: block;
     width: 100%;
@@ -79,6 +97,28 @@ import { CONSOLE_PAGES, CONSOLE_DETAILS, CONSOLE_SPEC } from '../../lib/omni';
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
     background: var(--bg);
+  }
+  .shot-zoom:hover img {
+    border-color: var(--accent-border);
+  }
+  /* a dica só faz sentido onde a figura de fato não se lê */
+  .shot-hint {
+    display: none;
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    padding: 4px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    color: var(--text-2);
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+  }
+  @media (max-width: 720px) {
+    .shot-hint {
+      display: block;
+    }
   }
   .shot figcaption {
     margin-top: var(--space-3);
