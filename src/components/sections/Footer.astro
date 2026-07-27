@@ -1,21 +1,11 @@
 ---
 import { data, obfuscatedEmail } from '../../lib/data';
 import { withBase } from '../../lib/url';
+import { SECTION_LINKS } from '../../lib/nav';
 
 const year = new Date().getFullYear();
 const mail = obfuscatedEmail();
 const repoUrl = `${data.profile.contact.github}/portfolio`;
-
-const SECTION_LINKS = [
-  { href: '#sobre', label: 'Sobre' },
-  { href: '#skills', label: 'Skills' },
-  { href: '#experiencia', label: 'Experiência' },
-  { href: '#formacao', label: 'Formação' },
-  { href: '#projetos', label: 'Projetos' },
-  { href: '#certificacoes', label: 'Certificações' },
-  { href: '#publicacoes', label: 'Publicações' },
-  { href: '#contato', label: 'Contato' },
-];
 ---
 
 <footer class="footer">
