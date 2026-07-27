@@ -39,12 +39,19 @@ interface Props {
   description?: string;
   /** rota desta página a partir do base (ex.: "/omni-pentest"); default = home */
   canonicalPath?: string;
+  /**
+   * Registro do b1t nesta página. `full` (padrão) é o do portfólio, onde ele é
+   * o anfitrião; `calm` é o de uma página que se lê, onde ele é companhia de
+   * canto. Ver `components/ui/Mascot.astro`.
+   */
+  mascotMode?: 'full' | 'calm';
 }
 
 const {
   title = `${data.profile.fullName} • Cybersecurity Analyst`,
   description = data.about.summary,
   canonicalPath = '/',
+  mascotMode = 'full',
 } = Astro.props;
 
 const canonical = new URL(withBase(canonicalPath), Astro.site);
@@ -94,7 +101,7 @@ const ogImage = new URL(withBase('/og.png'), Astro.site);
     <Fragment set:html={sourceEgg} />
     <a href="#conteudo" class="skip-link">Pular para o conteúdo</a>
     <slot />
-    <Mascot />
+    <Mascot mode={mascotMode} />
     <ContactFab />
     <script src="../scripts/app.ts"></script>
   </body>

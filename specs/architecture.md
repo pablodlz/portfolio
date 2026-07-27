@@ -78,6 +78,28 @@ partir de referências open-source estilo Lucide, traço 2px, 24×24). ~15 ícon
 Sem `astro-icon`/`@iconify` (evita dep + JSON gigante de glifos). Novos ícones = editar
 um único arquivo, rastreável em code review.
 
+## ADR-0007 — b1t tem dois registros, escolhidos pela PÁGINA
+
+**Status:** aceito
+
+**Contexto.** O b1t foi desenhado para o portfólio, onde ele é o anfitrião: passeia até
+elementos reais, apresenta cada seção, aponta o terminal e — uma vez por carregamento —
+aperta o toggle e troca o tema para o claro, de brincadeira. Isso funciona numa página
+que a pessoa **percorre**. No dossiê `/omni-pentest`, que a pessoa **lê**, o mesmo
+repertório vira interferência: um robô andando por cima de um mapa de mil pixels, e uma
+troca para o tema claro numa página cujas figuras são artefatos de tela escura.
+
+**Decisão.** `BaseLayout` recebe `mascotMode` (`full` | `calm`) e o repassa ao
+componente como `data-mode`; `/omni-pentest` pede `calm`. No modo calmo o b1t **não
+encena nada por conta própria**: sem episódios, sem passeio, sem apresentação de seção e
+**sem a brincadeira do tema**. Continua vivo no canto — pisca, segue o cursor, acena de
+perto, dorme e responde a clique exatamente como antes.
+
+**Consequência.** Tudo o que o usuário **provoca** é idêntico nos dois modos; o que muda
+é só o que o b1t faz **sozinho**. A trava do tema fica dentro do próprio episódio (o
+único ponto por onde ele alcança o tema), e não apenas em quem o sorteia — um chamador
+novo não reabre a porta por descuido.
+
 ## Árvore de pastas (alvo)
 
 ```
@@ -91,19 +113,25 @@ portfolio/
 │  ├─ lib/                     # schema.ts (Zod), data.ts, dates.ts, certs.ts
 │  ├─ styles/                  # tokens.css, global.css
 │  ├─ components/
-│  │  ├─ ui/                   # Icon, Button, Badge, Tag, Card, SectionHeading, ThemeToggle, Terminal
-│  │  └─ sections/             # Hero, About, Skills, Experience, Education, Projects,
-│  │                           #   Certifications, Publications, Contact, Footer + Nav
+│  │  ├─ ui/                   # Icon, Button, Badge, Tag, Card, SectionHeading, ThemeToggle,
+│  │  │                        #   Terminal, ContactFab, Mascot (b1t)
+│  │  ├─ sections/             # Hero, About, Skills, Experience, Education, Projects,
+│  │  │                        #   Certifications, Publications, Contact, Footer + Nav
+│  │  └─ omni/                 # dossiê /omni-pentest: Sec, Fig, Deep + Omni* (uma por seção)
 │  ├─ layouts/BaseLayout.astro # head, CSP meta, SEO, fontes, scripts globais
+│  │                           #   props: title · description · canonicalPath · mascotMode
 │  ├─ scripts/                 # theme-init (inline hasheado), app.ts (reveal/lightbox/filtro/mailto)
 │  └─ pages/
 │     ├─ index.astro
+│     ├─ omni-pentest.astro    # dossiê do projeto autoral (mascotMode="calm")
 │     └─ 404.astro
+├─ diagrams/                   # fontes .mmd + render.mjs (autoria, NUNCA roda no CI)
 ├─ public/
 │  ├─ .well-known/security.txt
 │  ├─ security.txt
 │  ├─ robots.txt               # sitemap apontando p/ base
 │  ├─ og.png · favicon.svg · favicon-96.png · apple-touch-icon.png · icon-192/512.png
+│  ├─ omni-pentest/            # diagramas/*.svg pré-renderizados + operator-console.gif
 │  └─ site.webmanifest
 ├─ .github/workflows/deploy.yml · .github/dependabot.yml
 ├─ astro.config.mjs · tsconfig.json · package.json · package-lock.json

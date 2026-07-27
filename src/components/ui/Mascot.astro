@@ -7,10 +7,27 @@
  * respeitando o que está visível. Tudo em transform/opacity (GPU); desligado
  * em mobile (coarse) e sob prefers-reduced-motion; nunca bloqueia cliques
  * (só o próprio robô captura ponteiro) nem cobre texto por muito tempo.
+ *
+ * DOIS REGISTROS. No portfólio ele é o anfitrião: passeia, apresenta seção por
+ * seção e apronta. No dossiê do Omni Pentest (`mode="calm"`) o documento é o
+ * assunto e ele é companhia — fica no canto, reage a quem chega perto e a quem
+ * clica, e não sai andando por cima da leitura. É a mesma criatura em outro
+ * ambiente, não uma versão capada: nada do que o usuário PROVOCA foi tirado.
  */
+interface Props {
+  /**
+   * `full` (padrão) — o repertório inteiro, com passeio e travessura.
+   * `calm` — sem episódios espontâneos, sem passeio e **sem a brincadeira do
+   * tema**: numa página que é toda escura de propósito, trocar para o claro na
+   * cara do leitor não é piada, é defeito.
+   */
+  mode?: 'full' | 'calm';
+}
+
+const { mode = 'full' } = Astro.props;
 ---
 
-<div id="mascot" class="mascot" data-state="idle" data-emotion="curious" hidden>
+<div id="mascot" class="mascot" data-state="idle" data-emotion="curious" data-mode={mode} hidden>
   <button type="button" class="mascot-hit" aria-label="b1t, o pet do site — clique para brincar">
     <span class="mascot-body">
       <svg class="mascot-svg" viewBox="0 0 72 72" width="60" height="60" aria-hidden="true">
@@ -77,6 +94,9 @@
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const coarse = matchMedia('(pointer: coarse)').matches;
     const mobile = coarse || innerWidth < 900;
+    // registro calmo (dossiê do Omni): sem episódio espontâneo, sem passeio e
+    // sem a brincadeira do tema. Tudo o que o usuário provoca continua igual.
+    const calm = root.dataset.mode === 'calm';
     root.hidden = false;
 
     /* ---------------------------------------------- estado ----------- */
@@ -509,7 +529,10 @@
 
     async function epThemePrank(tok: symbol): Promise<void> {
       const btn = q('#theme-toggle');
-      if (!vis(btn) || themePranked || document.documentElement.dataset.userTheme) return;
+      // a trava de `calm` fica AQUI, no episódio, e não só em quem o sorteia:
+      // é o único ponto por onde o b1t alcança o tema, então é o único que
+      // precisa estar certo se algum chamador novo aparecer
+      if (calm || !vis(btn) || themePranked || document.documentElement.dataset.userTheme) return;
       markPranked();
       mischief = true;
       setEmotion('playful');
@@ -657,8 +680,11 @@
 
     /* ---------------------------------------------- diretor (priorizado) */
     // mobile-first: os episódios rodam no celular também (só reduced-motion desliga)
+    // `calm` entra aqui, num lugar só: é o portão por onde TODA cena espontânea
+    // passa (diretor e scroll). Barrar aqui vale mais que apagar a lista de
+    // episódios — nenhum caminho novo escapa por engano.
     const canPlay = () =>
-      !busy && !asleep && !termActive && !reduced && !document.hidden && !scrolling;
+      !busy && !asleep && !termActive && !reduced && !calm && !document.hidden && !scrolling;
 
     // contabilidade única de estado p/ qualquer "cena" (episódio ou seção):
     // token, volta pra casa no fim, libera busy — e aborta limpo se o alvo sumir
@@ -1094,20 +1120,35 @@
       if (idleQueue.length === 0) idleQueue = [...IDLE].sort(() => Math.random() - 0.5);
       return idleQueue.pop()!;
     };
+    // As dicas do portfólio falam do terminal, das conquistas e do F12 — nada
+    // disso existe no dossiê. Repetir lá seria o b1t apontando para uma porta
+    // que não tem: no modo calmo ele comenta o que está NA página, e raramente.
+    const CALM_TIPS = [
+      'a primeira figura é o sistema inteiro. começa por ela. 🗺️',
+      'toca numa figura pra abrir em tamanho original. 🔍',
+      'repara: o firewall descarta por padrão. 🚫',
+      'nada sai daqui sem um humano aprovar. 🧑‍⚖️',
+      'linha pontilhada = consulta. nada sai pra rede. 🔌',
+      'cada bloco numerado do mapa vira uma seção. 👇',
+    ];
     let tipQueue: string[] = [];
     const nextTip = (): string => {
-      if (tipQueue.length === 0) tipQueue = [...TIPS].sort(() => Math.random() - 0.5);
+      const pool = calm ? CALM_TIPS : TIPS;
+      if (tipQueue.length === 0) tipQueue = [...pool].sort(() => Math.random() - 0.5);
       return tipQueue.pop()!;
     };
     const idleTick = (): void => {
-      // pausa maior: ~16–30s entre uma animação ociosa e a próxima
+      // pausa maior: ~16–30s entre uma animação ociosa e a próxima; no modo
+      // calmo, ~40–75s e com muito menos fala — presença, não performance
+      const base = calm ? 40000 : 16000;
+      const spread = calm ? 35000 : 14000;
       setTimeout(() => {
         if (!asleep && !busy && root.dataset.state === 'idle') {
-          if (Math.random() < 0.35) say(nextTip(), 4200);
+          if (Math.random() < (calm ? 0.2 : 0.35)) say(nextTip(), 4200);
           else void anim(nextIdleAnim());
         }
         idleTick();
-      }, 16000 + Math.random() * 14000);
+      }, base + Math.random() * spread);
     };
 
     /* ---------------------------------------------- boot ------------- */
@@ -1119,18 +1160,24 @@
     setEmotion('curious');
     armSleep();
     idleTick();
-    if (!reduced) scheduleDirector(); // roda no mobile também (mobile-first)
-    setTimeout(() => say(vary('boot', [
+    if (!reduced && !calm) scheduleDirector(); // roda no mobile também (mobile-first)
+    // a saudação continua nos dois modos — sumir por completo pareceria quebrado,
+    // e é ela que diz que ele responde a clique. No calmo é uma só, e demora mais
+    // a chegar: quem abriu o dossiê veio ler, não ser recebido.
+    setTimeout(() => say(vary('boot', calm ? [
+      'oi — sou o b1t. 🤖 fico quietinho aqui enquanto você lê.',
+      'salve! b1t na área. 🤖 tô de canto; clica se quiser papo.',
+    ] : [
       'e aí! sou o b1t 🤖 vivo aqui no site — clica ou explora o terminal ↑',
       'salve! sou o b1t. 🤖 role a página que eu te apresento tudo. 👇',
       'oi! b1t na área. 🤖 clica em mim ou testa o terminal ali ↑',
-    ]), 5200), 3500);
+    ]), 5200), calm ? 6000 : 3500);
 
     // garante que a "brincadeira do tema" aconteça (uma vez por sessão), sem
     // depender do sorteio — tenta num momento aleatório da navegação e, se
     // estiver ocupado/rolando, tenta de novo logo em seguida
     const tryThemePrank = (): void => {
-      if (reduced || themePranked || document.documentElement.dataset.userTheme) return;
+      if (reduced || calm || themePranked || document.documentElement.dataset.userTheme) return;
       if (!canPlay() || !vis(q('#theme-toggle'))) {
         setTimeout(tryThemePrank, 7000);
         return;
@@ -1151,7 +1198,7 @@
           lastEpisodeAt = performance.now();
         });
     };
-    if (!reduced) setTimeout(tryThemePrank, 28000 + Math.random() * 22000);
+    if (!reduced && !calm) setTimeout(tryThemePrank, 28000 + Math.random() * 22000);
     };
     if ('requestIdleCallback' in window)
       (window as unknown as { requestIdleCallback: (cb: () => void, o?: { timeout: number }) => void }).requestIdleCallback(boot, { timeout: 1800 });
