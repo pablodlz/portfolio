@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import omniLogo from '../../../img/omni-pentest/logo.png';
 import { data, publicationByUrn } from '../../lib/data';
 import { formatYearMonth, formatIsoDate } from '../../lib/dates';
 import { withBase } from '../../lib/url';
@@ -32,15 +34,26 @@ const METRIC = /redução de ([\d,]+%)/;
     />
 
     <a class="proj-featured reveal" href={withBase('/omni-pentest')}>
-      <span class="pf-media" aria-hidden="true">
-        <Icon name="target" size={26} />
+      {/* O brasão no lugar do ícone genérico: o projeto tem marca própria, e é
+          ela que a pessoa vai reencontrar na página do dossiê. Decorativo
+          (alt vazio) — quem dá o nome acessível ao card é o título logo ao lado. */}
+      <span class="pf-media">
+        <Image
+          class="pf-logo"
+          src={omniLogo}
+          alt=""
+          widths={[144, 216]}
+          sizes="72px"
+          loading="lazy"
+          decoding="async"
+        />
       </span>
       <span class="pf-body">
         <span class="pf-top">
           <Badge tone="accent">Projeto autoral</Badge>
           <span class="pf-version">v{OMNI_VERSION}</span>
         </span>
-        <span class="pf-title">Omni&#8209;Pentest</span>
+        <span class="pf-title">Omni&#160;Pentest</span>
         <span class="pf-desc">
           Plataforma de bug bounty conduzida por um agente de IA que <b>modela o alvo e deduz a
           vulnerabilidade</b> — em vez de só disparar payloads. Todo achado passa por um firewall de
@@ -151,14 +164,19 @@ const METRIC = /redução de ([\d,]+%)/;
     text-decoration: none;
   }
   .pf-media {
-    display: grid;
-    place-items: center;
-    inline-size: 52px;
-    block-size: 52px;
+    inline-size: 72px;
+    block-size: 72px;
+    overflow: hidden;
     border: 1px solid var(--accent-border);
     border-radius: var(--radius-md);
     background: var(--bg);
-    color: var(--accent);
+  }
+  .pf-logo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* a arte já é quadrada — `cover` só garante que nunca sobre faixa vazia */
+    object-fit: cover;
   }
   .pf-body {
     display: grid;

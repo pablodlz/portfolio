@@ -16,9 +16,23 @@ const { profile } = data;
 <section class="cover" id="topo">
   <div class="container cover-grid">
     <div class="cover-main">
+      {/* O brasão abre a folha de rosto, acima do título — é a marca do projeto,
+          não uma ilustração de apoio na margem. O `sizes` acompanha a regra de
+          largura do CSS: no celular ele é o container inteiro
+          (100vw menos as duas goteiras de 1.25rem). */}
+      <Image
+        class="cover-mark"
+        src={logo}
+        alt="Brasão do Omni Pentest: um dragão prateado sobre escudo negro com bordas douradas"
+        widths={[192, 312, 468, 640, 840]}
+        sizes="(max-width: 500px) calc(100vw - 2.5rem), (max-width: 900px) 420px, 156px"
+        loading="eager"
+        fetchpriority="high"
+      />
+
       <p class="o-label o-label--accent">Dossiê técnico · projeto autoral</p>
 
-      <h1 class="cover-h1">Omni&#8209;Pentest</h1>
+      <h1 class="cover-h1">Omni Pentest</h1>
 
       <p class="cover-thesis">
         O agente que <em>deduz</em> a vulnerabilidade<br class="thesis-br" />
@@ -59,16 +73,6 @@ const { profile } = data;
     </div>
 
     <aside class="cover-side">
-      <Image
-        class="cover-mark"
-        src={logo}
-        alt="Brasão do Omni-Pentest: um dragão prateado sobre escudo negro com bordas douradas"
-        widths={[260, 380]}
-        sizes="(max-width: 900px) 180px, 300px"
-        loading="eager"
-        fetchpriority="high"
-      />
-
       <p class="o-label cover-side-label">Em números</p>
       <ul class="cover-ledger">
         {STATS.map((s) => (
@@ -96,8 +100,22 @@ const { profile } = data;
     align-items: start;
   }
 
+  /* Em duas colunas o brasão é um selo acima do título — grande demais e
+     empurraria a declaração para fora da primeira tela. */
+  .cover-mark {
+    display: block;
+    width: clamp(120px, 12vw, 156px);
+    height: auto;
+    margin-bottom: var(--space-4);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
   .cover-h1 {
     margin-top: var(--space-4);
+    /* "Omni Pentest" quebra em duas linhas abaixo de ~360px — e quebrar entre
+       as duas palavras é o certo; o que não pode é partir uma delas. */
+    text-wrap: balance;
     font-size: clamp(2.75rem, 1rem + 7vw, 5rem);
     font-weight: 700;
     line-height: 0.95;
@@ -158,14 +176,7 @@ const { profile } = data;
     display: grid;
     justify-items: end;
   }
-  .cover-mark {
-    width: min(300px, 100%);
-    height: auto;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-  }
   .cover-side-label {
-    margin-top: var(--space-6);
     justify-self: stretch;
     padding-bottom: var(--space-2);
     border-bottom: 1px solid var(--border-strong);
@@ -211,8 +222,14 @@ const { profile } = data;
     .cover-side {
       justify-items: start;
     }
+    /* Empilhado, o brasão deixa de ser um selo na margem e vira a ABERTURA da
+       página: ocupa a largura inteira do container. O teto de 420px é o que
+       impede que, num tablet em retrato, ele vire um quadrado de 800px — em
+       telefone nenhum ele morde (o container só passa de 420px acima de 468px
+       de viewport, e aí já não é telefone). */
     .cover-mark {
-      width: 180px;
+      width: 100%;
+      max-width: 420px;
     }
   }
   @media (max-width: 640px) {
