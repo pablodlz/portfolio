@@ -54,7 +54,10 @@ const mail = obfuscatedEmail();
       btn.setAttribute('aria-expanded', String(open));
       btn.setAttribute('aria-label', open ? 'Fechar contato rápido' : 'Abrir contato rápido');
     };
-    btn.addEventListener('click', () => setOpen(panel.hidden));
+    // `hidden` deixou de ser só booleano no HTML — hoje aceita `"until-found"`, e o
+    // TypeScript 6 tipa a propriedade como `boolean | "until-found"`. O clique quer
+    // dizer "abre se não estiver visível", e as duas formas de esconder contam.
+    btn.addEventListener('click', () => setOpen(panel.hidden !== false));
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !panel.hidden) setOpen(false);
     });
