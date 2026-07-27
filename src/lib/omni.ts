@@ -1,5 +1,10 @@
 /**
- * Conteúdo da página do Omni-Pentest (/omni-pentest).
+ * Conteúdo da página do Omni Pentest (/omni-pentest).
+ *
+ * ✍️ O nome do produto é **Omni Pentest**, sem hífen. O hífen existe só no
+ * identificador técnico — o repositório e a rota (`/omni-pentest`) — e não deve
+ * vazar para texto lido por gente. Onde o nome não pode quebrar de linha (chip,
+ * rodapé, menu), use o espaço inquebrável `&#160;`.
  *
  * Mesmo padrão de `Nav.astro`/`Footer.astro`: conteúdo de página vive no código,
  * tipado — `data/linkedin.json` continua sendo APENAS a exportação curada do
