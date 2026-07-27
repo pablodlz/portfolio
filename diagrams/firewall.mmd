@@ -1,19 +1,23 @@
 %% O funil de validação. O padrão é descartar — e o descarte se parte em duas
 %% filas pela única pergunta acionável: "quem destrava este achado?".
+%% A largura NATURAL do diagrama é o que decide o tamanho da letra na página
+%% (ver diagrams/README.md). Aqui ela é ditada pela fileira de CINCO saídas lá
+%% embaixo: cada linha de rótulo passa a valer ~8px de largura final, então
+%% mantenha as quebras curtas — nas saídas, ~16 caracteres.
 flowchart TD
-  F["Achado + evidência"]:::step --> AR{"Rejeição automática<br/>classes conhecidas de ruído"}:::gate
-  AR -->|"ruído conhecido: descarta"| K0["descartado"]:::drop
-  AR -->|"passa"| G["dez portões — escopo · identidade · exploração<br/>impacto · vetor CVSS · deduplicação<br/>reprodutibilidade · juiz adversarial"]:::gate
+  F["Achado + evidência"]:::step --> AR{"Rejeição automática<br/>classes conhecidas<br/>de ruído"}:::gate
+  AR -->|"ruído conhecido:<br/>descarta"| K0["descartado"]:::drop
+  AR -->|"passa"| G["dez portões<br/>escopo · identidade<br/>exploração · impacto<br/>vetor CVSS<br/>deduplicação<br/>reprodução<br/>juiz adversarial"]:::gate
   G --> C{"Confiança recomputada<br/>de 0 a 10"}:::gate
-  C -->|"abaixo de 10"| Q{"QUEM DESTRAVA este achado?"}:::gate
-  C -->|"10, e tudo passou"| DD{"deduplicação interna<br/>por causa raiz"}:::gate
-  Q -->|"o OPERADOR — falta um recurso<br/>que só ele tem"| PB["aguardando o operador"]:::hold
-  Q -->|"o AGENTE — mecanismo de pé,<br/>ainda dá para escalar"| EG["escalando"]:::hold
-  Q -->|"ninguém — não é bug"| K["descartado"]:::drop
-  DD -->|"duplicata"| ARC["absorvido — outro achado<br/>já cobre o caso"]:::drop
-  DD -->|"única"| SAN["sanitização da saída<br/>nunca vaza o ambiente do operador"]:::gate
-  SAN --> R["CONFIRMADO — vira relatório"]:::win
-  C -.->|"sobreviveu: deriva a magnitude"| SEV["severidade DERIVADA da evidência<br/>vetor CVSS pago por artefato<br/>teto e piso por taxonomia<br/>independente do veredito:<br/>nunca ressuscita um descarte"]:::sev
+  C -->|"abaixo de 10"| Q{"QUEM DESTRAVA<br/>este achado?"}:::gate
+  C -->|"10, e tudo passou"| DD{"deduplicação<br/>interna<br/>por causa raiz"}:::gate
+  Q -->|"o OPERADOR:<br/>falta um recurso<br/>que só ele tem"| PB["aguardando<br/>o operador"]:::hold
+  Q -->|"o AGENTE:<br/>mecanismo de pé,<br/>dá para escalar"| EG["escalando"]:::hold
+  Q -->|"ninguém:<br/>não é bug"| K["descartado"]:::drop
+  DD -->|"duplicata"| ARC["absorvido<br/>outro achado<br/>já cobre o caso"]:::drop
+  DD -->|"única"| SAN["sanitização<br/>da saída<br/>nunca vaza o<br/>ambiente do<br/>operador"]:::gate
+  SAN --> R["CONFIRMADO<br/>vira relatório"]:::win
+  C -.->|"sobreviveu:<br/>deriva a<br/>magnitude"| SEV["severidade DERIVADA<br/>da evidência<br/>vetor CVSS<br/>por artefato<br/>teto e piso<br/>por taxonomia<br/>independente<br/>do veredito:<br/>nunca ressuscita<br/>um descarte"]:::sev
   classDef gate fill:#1c1a18,stroke:#9a948b,color:#f2f0ed,font-weight:bold
   classDef step fill:#1b1a18,stroke:#3a3631,color:#eae7e2
   classDef drop fill:#141312,stroke:#2e2b27,color:#948d83

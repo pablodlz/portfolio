@@ -5,15 +5,15 @@ import { withBase } from '../../lib/url';
  * Figura do dossiê: um diagrama (ou a captura do console) sobre uma placa
  * escura, com legenda e saída para o tamanho original.
  *
- * A regra de tamanho é a razão de este componente existir. Uma figura de
- * fluxograma tem um piso de legibilidade: encolher um mapa de 1100px para os
- * 340px de um celular deixaria o texto com 4,6px. Então a imagem **encolhe até
- * caber, mas nunca abaixo do piso** (`min`), e o que não couber rola dentro da
- * placa — a página nunca rola de lado junto.
+ * A figura **sempre aparece inteira**: encolhe até caber na coluna, em qualquer
+ * largura, e a placa nunca rola de lado. Foi uma decisão explícita do autor —
+ * uma figura cortada é lida como um erro da página, enquanto uma figura pequena
+ * é lida como uma miniatura, e miniatura tem para onde ir.
  *
- * Sem estilo por instância: a CSP não tem `'unsafe-inline'` em `style-src`, e
- * hash de CSP não cobre atributo `style`. Daí o piso vir por CLASSE, de um
- * punhado de valores fixos, em vez de uma custom property calculada.
+ * O custo é real e por isso a saída fica ao lado: num telefone estreito o texto
+ * de um mapa de 1100px chega a ~5px. Daí a imagem inteira ser um link para o
+ * arquivo original — e o aviso aparecer justamente nas larguras em que o
+ * encolhimento morde.
  */
 interface Props {
   /** nome do arquivo em /omni-pentest/diagramas/ (ou o caminho completo, se `raw`) */
@@ -22,13 +22,6 @@ interface Props {
   /** dimensões naturais — reservam a caixa e evitam o pulo do layout */
   w: number;
   h: number;
-  /**
-   * Piso de legibilidade em px — abaixo dele a placa rola em vez de encolher.
-   * Regra para escolher: **70% da largura natural**. O texto dos diagramas é
-   * desenhado a 15px, e a 70% ele chega a ~10,5px — o menor tamanho que ainda se
-   * lê sem abrir a figura. Os três valores cobrem as larguras que existem hoje.
-   */
-  min?: 560 | 780 | 960;
   /** rótulo curto antes da legenda ("figura 1", "diagrama") */
   kicker?: string;
   /** legenda — aceita HTML */
@@ -39,12 +32,12 @@ interface Props {
   raw?: boolean;
 }
 
-const { src, alt, w, h, min = 780, kicker, caption, eager = false, raw = false } = Astro.props;
+const { src, alt, w, h, kicker, caption, eager = false, raw = false } = Astro.props;
 const href = withBase(raw ? src : `/omni-pentest/diagramas/${src}`);
 ---
 
 <figure class="fig">
-  <div class:list={['fig-plate', `is-min-${min}`]}>
+  <div class="fig-plate">
     <a class="fig-open" href={href} target="_blank" rel="noopener" aria-label={`Abrir em tamanho original: ${alt}`}>
       <img
         src={href}
@@ -59,9 +52,10 @@ const href = withBase(raw ? src : `/omni-pentest/diagramas/${src}`);
   <figcaption>
     {kicker && <span class="fig-k">{kicker}</span>}
     <span set:html={caption} />
-    {/* Só onde a figura de fato não cabe: dizer "arraste" num desktop onde ela
-        coube inteira seria instrução para um problema que não existe. */}
-    <span class="fig-hint">Arraste a figura para o lado, ou toque para abrir em tamanho original.</span>
+    {/* Só nas larguras em que a figura encolhe a ponto de o texto dela apertar.
+        Num desktop onde ela cabe legível, seria instrução para um problema que
+        não existe. */}
+    <span class="fig-hint">Toque na figura para abri-la em tamanho original.</span>
   </figcaption>
 </figure>
 
@@ -71,39 +65,25 @@ const href = withBase(raw ? src : `/omni-pentest/diagramas/${src}`);
   }
 
   .fig-plate {
-    overflow-x: auto;
-    /* arrastar a figura de lado não pode disparar o "voltar" do navegador */
-    overscroll-behavior-x: contain;
     padding: var(--space-5);
     border: 1px solid var(--plate-border);
     border-radius: var(--radius-md);
     background: var(--plate);
   }
   .fig-open {
-    /* a âncora encolhe até o conteúdo; sem isto a placa rola mas a imagem
-       fica cortada no lugar de deslizar */
-    display: inline-block;
-    min-width: min-content;
+    display: block;
   }
   .fig-open:hover {
     text-decoration: none;
   }
   .fig-plate img {
     display: block;
-    /* encolhe para caber, nunca AMPLIA além do natural */
+    /* encolhe o quanto for preciso para caber inteira; nunca AMPLIA além do
+       natural — esticar o GIF de 1100px numa tela larga só o borraria */
     width: auto;
     max-width: 100%;
     height: auto;
-  }
-  /* o piso: abaixo dele a placa passa a rolar */
-  .is-min-560 img {
-    min-width: 560px;
-  }
-  .is-min-780 img {
-    min-width: 780px;
-  }
-  .is-min-960 img {
-    min-width: 960px;
+    margin-inline: auto;
   }
 
   .fig figcaption {
@@ -129,19 +109,16 @@ const href = withBase(raw ? src : `/omni-pentest/diagramas/${src}`);
     font-family: var(--font-mono);
     color: var(--text-2);
   }
-  @media (max-width: 720px) {
+  @media (max-width: 900px) {
     .fig-hint {
       display: block;
     }
-    /* a placa come 32px de largura útil justo onde ela é mais escassa */
+  }
+  @media (max-width: 720px) {
+    /* a placa come 32px de largura útil justo onde ela é mais escassa — e agora
+       cada pixel dela vira tamanho de letra dentro da figura */
     .fig-plate {
       padding: var(--space-3);
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .fig-plate {
-      scroll-behavior: smooth;
     }
   }
 </style>

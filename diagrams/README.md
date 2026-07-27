@@ -54,6 +54,17 @@ todas são sobrescrevíveis por variável de ambiente se o caminho mudar:
 
 Depois de renderizar, **confira no navegador em 390px e em 1280px** que nenhum rótulo estoura a caixa.
 
+### A largura natural é a variável mais cara
+
+A figura na página **sempre aparece inteira** — encolhe até caber na coluna, em qualquer largura, e
+nunca rola de lado (`Fig.astro`). A consequência para quem desenha é direta: **a largura natural do
+diagrama é o divisor da legibilidade no celular**. A coluna útil de um telefone de 390px dá ~358px,
+então um mapa de 800px chega lá a 45% (texto de ~6,7px) e um de 1440px, a 25% (~3,7px).
+
+Na prática: **prefira empilhar a alargar**. Um `flowchart TB` estreito e alto se lê num telefone; o
+mesmo conteúdo espalhado na horizontal, não. Onde a largura for inevitável, conte com a saída que a
+legenda oferece — a figura inteira é link para o arquivo original.
+
 ### As três decisões que não são cosméticas
 
 - **`htmlLabels: false`, nos dois níveis do config.** Com rótulo em HTML o mermaid emite

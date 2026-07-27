@@ -2,18 +2,49 @@
 import Fig from './Fig.astro';
 
 /**
- * A abertura: duas figuras antes de qualquer seção numerada — o sistema
- * inteiro, e o que ele produz.
+ * A abertura: o sistema inteiro e o painel onde ele é revisto, antes de
+ * qualquer seção numerada.
  *
  * Deliberadamente NÃO é uma `<Sec>`: não tem número e não entra no sumário. É
  * um sumário POR IMAGEM, para quem quer ver a forma da coisa antes de ler onze
  * seções de texto. A espinha vertical atravessa mesmo assim, com a coluna da
  * numeração vazia — é o que diz "isto abre o documento" em vez de "isto é o §01".
  *
+ * O que ele NÃO faz é explicar o sistema: quem explica é o §01 em diante. Aqui
+ * o texto é **guia de leitura** — narra o percurso da figura e entrega a chave
+ * (cor e tipo de linha) para que o mapa se leia sozinho. Uma figura destas
+ * jogada sem chave é decoração; com a chave, é o sumário.
+ *
  * O GIF do console mora aqui, e não mais no §10: a captura é a segunda coisa
  * que a pessoa quer ver, não a décima. O §10 segue sendo onde ele é explicado,
  * e aponta de volta para esta figura.
  */
+
+/* As cores são as MESMAS do `classDef` de `diagrams/mapa.mmd` — se um mudar
+   lá, muda aqui. É a única duplicação da paleta, e é intencional: uma legenda
+   que não bate com a figura é pior que nenhuma legenda. */
+const KEY = [
+  {
+    sw: 'core',
+    t: 'Laranja',
+    d: 'onde a vulnerabilidade é <b>deduzida</b>, e onde ela é confirmada. É o miolo da tese — o resto existe para alimentá-lo ou para julgá-lo.',
+  },
+  {
+    sw: 'fw',
+    t: 'Vermelho',
+    d: 'o que é hostil ou corta: o <b>alvo</b>, que nunca é tratado como confiável, e o <b>firewall</b>, cujo padrão é descartar.',
+  },
+  {
+    sw: 'know',
+    t: 'Dourado',
+    d: 'o que a plataforma <b>sabe</b>: a base consultada antes de agir, e o aprendizado que o desfecho real de cada relatório devolve.',
+  },
+  {
+    sw: 'human',
+    t: 'Borda clara, cantos redondos',
+    d: 'onde há uma <b>pessoa</b> — autoriza o escopo na primeira caixa, aprova o envio na penúltima. Não há terceira.',
+  },
+];
 ---
 
 <section id="visao" class="open">
@@ -21,9 +52,38 @@ import Fig from './Fig.astro';
     <p class="open-n" aria-hidden="true">◇</p>
     <div class="open-main">
       <p class="o-label o-label--accent">De relance</p>
+
+      <h2 class="open-h">O sistema inteiro cabe numa figura. Comece por ela.</h2>
+
       <p class="open-lede">
-        Duas figuras antes do texto: <b>o sistema inteiro</b> e <b>o painel onde ele é revisto</b>.
-        O resto da página abre cada peça delas.
+        Um alvo autorizado entra em cima; um relatório aprovado por gente sai embaixo. Entre os dois,
+        o percurso é sempre o mesmo: um <b>portão determinístico</b> impede que qualquer ferramenta
+        toque no que não foi liberado, o alvo é <b>modelado</b> a partir do que ele próprio publica, a
+        falha é <b>deduzida</b> desse modelo — e tudo o que aparece atravessa um <b>firewall onde o
+        padrão é descartar</b>. O que sobra vira relatório. O que o relatório rendeu <b>volta</b> como
+        prioridade da caça seguinte.
+      </p>
+
+      <p class="open-lede open-lede--2">
+        As duas figuras abaixo são esse percurso e o painel onde ele é revisto. O resto da página abre
+        cada peça delas, uma seção por bloco numerado.
+      </p>
+
+      <p class="o-label key-label">Como ler o mapa</p>
+      <ul class="key">
+        {KEY.map((k) => (
+          <li class="key-i">
+            <span class:list={['key-sw', `is-${k.sw}`]} aria-hidden="true"></span>
+            <span class="key-b">
+              <b class="key-t">{k.t}</b> — <span set:html={k.d} />
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="key-lines">
+        <b>Linha cheia</b> é o caminho do ataque — o que de fato sai para a rede.
+        <b>Linha pontilhada</b> é consulta ou leitura: informação que se move sem que nada seja
+        enviado ao alvo.
       </p>
 
       <Fig
@@ -31,11 +91,26 @@ import Fig from './Fig.astro';
         alt="Mapa do sistema: o operador autoriza o escopo, o portão de escopo libera o arsenal contra o alvo, a percepção alimenta o raciocínio com o conhecimento ao lado, o firewall descarta por padrão, o que sobra vira relatório sob aprovação humana, e o desfecho volta como prioridade da próxima caça"
         w={1094}
         h={1337}
-        min={780}
         eager
         kicker="figura 1"
-        caption="O ciclo completo, ponta a ponta. As caixas de <b>borda clara</b> são as travas humanas — autorizar o escopo no começo, aprovar o envio no fim; a <b>laranja</b> é onde a vulnerabilidade é deduzida, e a <b>vermelha</b> é o firewall, que descarta por padrão. Destrinchado a partir do §&#8202;01."
+        caption="Leia de cima para baixo: autorização, ferramentas, alvo, o que se aprende dele, o que se deduz, o julgamento. As duas setas pontilhadas que <b>chegam</b> ao bloco 06 são o que fecha o circuito — tanto o relatório aprovado quanto a pilha do que foi descartado alimentam a próxima caça. Cada bloco numerado abre a seção que o detalha, a partir do §&#8202;01."
       />
+
+      <div class="open-turn">
+        <p class="o-label o-label--accent">A outra ponta</p>
+        <h3 class="open-h3">E é aqui que uma pessoa decide o que sai</h3>
+        <p class="open-p">
+          A caça roda sem supervisão — o console não a conduz, ele a <b>audita</b>. É onde o portfólio
+          inteiro aparece de uma vez: quantos alvos, quantos achados, o que o firewall descartou e por
+          qual portão, o que já está redigido e esperando um veredito. E é editável: quando o operador
+          discorda de uma classificação, o achado volta para o firewall e é rejulgado — a correção não
+          é um post-it, é entrada de dado.
+        </p>
+        <p class="open-p">
+          É também o único lugar onde um relatório é aprovado. <b>Nada é submetido sem que alguém
+          aperte o botão</b> — a plataforma não tem caminho para fazer isso sozinha.
+        </p>
+      </div>
 
       <Fig
         src="/omni-pentest/operator-console.gif"
@@ -43,9 +118,8 @@ import Fig from './Fig.astro';
         alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
         w={1100}
         h={688}
-        min={780}
         kicker="figura 2"
-        caption="O console do operador — as dez páginas em sequência, sobre uma instalação real: 40 alvos, 144 achados. <b>Nomes de programa e de achado estão anonimizados</b>: são vulnerabilidades ainda não corrigidas em programas reais. Explicado no §&#8202;10."
+        caption="As dez páginas em sequência, sobre uma instalação real: 40 alvos, 144 achados. <b>Nomes de programa e de achado estão anonimizados</b> — são vulnerabilidades ainda não corrigidas em programas reais. Destrinchado no §&#8202;10."
       />
     </div>
   </div>
@@ -77,14 +151,130 @@ import Fig from './Fig.astro';
     padding-block: var(--space-7);
   }
 
-  .open-lede {
+  /* mesma escala do `.sec-title`: a abertura não pode competir com a capa nem
+     parecer menor que as seções que ela apresenta */
+  .open-h {
     margin-top: var(--space-3);
+    max-width: 26ch;
+    font-size: clamp(1.5rem, 2.6vw, 2.05rem);
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  .open-lede {
+    margin-top: var(--space-4);
     max-width: 62ch;
     color: var(--text-2);
     font-size: var(--fs-body);
     line-height: 1.75;
   }
+  .open-lede--2 {
+    margin-top: var(--space-3);
+  }
   .open-lede b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* --- a chave de leitura --- */
+  .key-label {
+    margin-top: var(--space-6);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .key {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4) var(--space-6);
+    margin-top: var(--space-4);
+    list-style: none;
+  }
+  .key-i {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: start;
+  }
+  /* a amostra repete o par fill/stroke do nó no diagrama — mesma altura da
+     primeira linha de texto, para nascer alinhada com ela */
+  .key-sw {
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.15rem;
+    border: 1px solid;
+    border-radius: 3px;
+  }
+  .is-core {
+    background: #2a120b;
+    border-color: #ff5024;
+  }
+  .is-fw {
+    background: #25120f;
+    border-color: #a15a4a;
+  }
+  .is-know {
+    background: #1d1708;
+    border-color: #8a6d1f;
+  }
+  .is-human {
+    background: #1c1a18;
+    border-color: #7f7a72;
+    border-radius: 999px;
+  }
+  .key-b {
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+  }
+  /* o `<b>` do corpo vem de `set:html` e só o `:global` o alcança — mas ele é
+     mais específico que `.key-t`, então o título precisa da descendência para
+     não herdar a cor do corpo */
+  .key-b :global(b) {
+    color: var(--text-2);
+    font-weight: 600;
+  }
+  .key-i .key-t {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .key-lines {
+    margin-top: var(--space-4);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--border);
+    max-width: 70ch;
+    color: var(--text-3);
+    font-size: var(--fs-xs);
+    line-height: 1.7;
+  }
+  .key-lines b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* --- a virada para o console --- */
+  .open-turn {
+    margin-top: var(--space-7);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border-strong);
+  }
+  .open-h3 {
+    margin-top: var(--space-2);
+    max-width: 28ch;
+    font-size: clamp(1.25rem, 1.9vw, 1.5rem);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .open-p {
+    margin-top: var(--space-3);
+    max-width: 66ch;
+    color: var(--text-2);
+    font-size: var(--fs-small);
+    line-height: 1.8;
+  }
+  .open-p b {
     color: var(--text);
     font-weight: 600;
   }
@@ -101,6 +291,11 @@ import Fig from './Fig.astro';
       border-left: none;
       margin-block: 0;
       padding-block: 0;
+    }
+    /* duas colunas de chave num telefone dariam ~11 caracteres por linha */
+    .key {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-4);
     }
   }
 </style>

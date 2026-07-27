@@ -1,19 +1,21 @@
 %% O núcleo: em torno do Cartógrafo, a percepção CONSTRÓI o modelo, a dedução
 %% DERIVA o bug e o aprendizado AFIA a próxima caça.
+%% As quebras são curtas de propósito: a largura NATURAL do diagrama é o que
+%% decide o tamanho da letra na página (ver diagrams/README.md).
 flowchart TB
-  BP["Blueprint do alvo<br/>reconstrói o código publicado no cliente"]:::perc
-  CTM["Modelo cognitivo<br/>entidades · papéis · invariantes"]:::perc
-  COR["O corante<br/>efeito no tempo, nos atores e nos canais"]:::perc
-  CART["CARTÓGRAFO DE ESTADOS<br/>aprende a máquina de estados<br/>e verifica as propriedades de segurança"]:::core
+  BP["Blueprint do alvo<br/>reconstrói o código<br/>publicado no cliente"]:::perc
+  CTM["Modelo cognitivo<br/>entidades · papéis<br/>invariantes"]:::perc
+  COR["O corante<br/>efeito no tempo,<br/>nos atores e nos canais"]:::perc
+  CART["CARTÓGRAFO DE ESTADOS<br/>aprende a máquina de estados<br/>e verifica as propriedades<br/>de segurança"]:::core
   AUTHZ["Matriz de autorização<br/>completude de acesso"]:::ded
-  NEO["Síntese simbólica<br/>resolve o input exato do desvio"]:::ded
-  META["Oráculos metamórficos<br/>relações que não podem quebrar"]:::ded
-  FW["Firewall<br/>dez portões e reprodução"]:::fw
+  NEO["Síntese simbólica<br/>resolve o input exato<br/>do desvio"]:::ded
+  META["Oráculos metamórficos<br/>relações que não<br/>podem quebrar"]:::ded
+  FW["Firewall<br/>dez portões<br/>e reprodução"]:::fw
   FLY["Volante de veredito<br/>prioridades por contexto"]:::learn
   BP --> CART
   CTM --> CART
   COR -. "oráculo de efeito" .-> CART
-  CART -- "propriedade de acesso" --> AUTHZ
+  CART -- "propriedade<br/>de acesso" --> AUTHZ
   CART -- "contraexemplo" --> NEO
   CTM -- "invariantes" --> META
   CART == "contraexemplo direto" ==> FW
@@ -21,7 +23,7 @@ flowchart TB
   NEO --> FW
   META --> FW
   FW -- "veredito" --> FLY
-  FLY -. "prioridades afiam a próxima caça" .-> CART
+  FLY -. "afia a próxima caça" .-> CART
   classDef perc fill:#1c1a18,stroke:#7f7a72,color:#f2f0ed
   classDef core fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold
   classDef ded fill:#171614,stroke:#4c4740,color:#dcd7d0
