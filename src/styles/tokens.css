@@ -41,6 +41,12 @@
     --glass-border: color-mix(in srgb, var(--border) 80%, transparent);
     /* texto sobre scrim escuro — igual nos dois temas (overlays de imagem) */
     --text-on-scrim: #f2f0ed;
+    /* Placa das figuras: fica ESCURA nos dois temas, como o --scrim acima. Os
+       diagramas e a captura do console são artefatos de tela escura — pousá-los
+       sobre papel branco no tema claro trocaria o contraste deles pelo do fundo.
+       Por isso NÃO são redefinidos em [data-theme='light']. */
+    --plate: #0e0d0c;
+    --plate-border: #3a3631;
 
     /* --- tipografia --- */
     --font-display: 'Space Grotesk Variable', 'Segoe UI', system-ui, sans-serif;

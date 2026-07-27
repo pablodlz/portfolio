@@ -1,6 +1,7 @@
 ---
 import Sec from './Sec.astro';
 import Deep from './Deep.astro';
+import Fig from './Fig.astro';
 import { KNOWLEDGE_SOURCES, KNOWLEDGE_HOW, GOLDEN_RULE } from '../../lib/omni';
 ---
 
@@ -34,6 +35,16 @@ import { KNOWLEDGE_SOURCES, KNOWLEDGE_HOW, GOLDEN_RULE } from '../../lib/omni';
       </div>
     ))}
   </div>
+
+  <Fig
+    src="conhecimento.svg"
+    alt="As fontes indexadas alimentam uma busca semântica e um índice de correlação; a primeira passa pelo balanceamento por fonte e a segunda pela correlação instantânea, e as duas desembocam na priorização que responde ao agente"
+    w={805}
+    h={557}
+    min={560}
+    kicker="figura 5"
+    caption="Duas rotas para o mesmo acervo: a <b>semântica</b>, para quando a pergunta é vaga, e a <b>correlação</b>, para quando já se tem um fio na mão. O que chega ao agente nunca é o resultado cru — vem priorizado pelo que está sendo explorado agora."
+  />
 
   <div class="golden">
     <p class="o-label o-label--accent">Regra de ouro</p>

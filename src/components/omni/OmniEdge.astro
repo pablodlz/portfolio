@@ -1,6 +1,7 @@
 ---
 import Sec from './Sec.astro';
 import Deep from './Deep.astro';
+import Fig from './Fig.astro';
 import { CAPABILITIES, CAPABILITIES_NOTE, PARADIGM } from '../../lib/omni';
 
 /** O eixo vem primeiro e ocupa a linha inteira; o resto é ficha de motores. */
@@ -55,6 +56,16 @@ const rest = CAPABILITIES.filter((c) => c.tag !== 'o eixo');
       <p class="axis-d" set:html={c.what} />
     </article>
   ))}
+
+  <Fig
+    src="nucleo.svg"
+    alt="O núcleo: blueprint, modelo cognitivo e corante alimentam o Cartógrafo de Estados; dele saem a matriz de autorização, a síntese simbólica e os oráculos metamórficos, todos desembocando no firewall, cujo veredito volta pelo volante"
+    w={1382}
+    h={631}
+    min={960}
+    kicker="figura 3"
+    caption="Em torno do Cartógrafo: à esquerda o que <b>constrói o modelo</b>, ao centro o que <b>deduz o bug</b> dele, e à direita o que <b>afia a caça seguinte</b>. A seta grossa é o caminho curto — um contraexemplo do verificador já é um bypass, e vai direto ao firewall."
+  />
 
   <p class="o-label motors-label">Os outros sete motores</p>
   <div class="o-rows">

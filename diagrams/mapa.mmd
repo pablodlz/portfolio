@@ -1,0 +1,42 @@
+%% O sistema inteiro num mapa — da autorização do escopo até o bounty pago, e de
+%% volta, porque o desfecho real vira prioridade da caça seguinte.
+flowchart TB
+  OP(["OPERADOR — autoriza o escopo · aprova o relatório"]):::human
+  SCOPE["PORTÃO DE ESCOPO · falha fechada<br/>fora do alcance do modelo"]:::ctrl
+  ARS["04 · ARSENAL<br/>mais de 140 ferramentas ofensivas"]:::ext
+  TGT(["ALVO — HOSTIL"]):::hostile
+  PERC["01 · PERCEPÇÃO<br/>lê o código que o alvo publica no navegador<br/>contrato de API · rotas invisíveis · modelo do alvo"]:::step
+  RAG["03 · CONHECIMENTO<br/>cerca de 489 mil documentos<br/>consultados a cada passo, antes de agir"]:::know
+  DED["02 · RACIOCÍNIO — o Cartógrafo de Estados<br/>aprende a máquina de estados e a verifica<br/>matriz de autorização · oráculos · solucionador"]:::core
+  FW["05 · FIREWALL — dez portões e um juiz adversarial<br/>o padrão é DESCARTAR"]:::fw
+  LAY["descartado · escalando · aguardando o operador · absorvido"]:::out
+  EXP["CONFIRMADO — nota 10 de 10"]:::win
+  H1(["PLATAFORMA DE BOUNTY — só com aprovação humana"]):::human
+  FLY["06 · APRENDIZADO<br/>o que pagou vira prioridade · onde caçar agora"]:::learn
+  NEXT["a próxima caça — mais afiada"]:::step
+  CON["07 · CONSOLE DO OPERADOR<br/>o portfólio inteiro num relance"]:::ext
+  OP -- "autoriza" --> SCOPE
+  SCOPE -- "só o autorizado sai" --> ARS
+  ARS -- "tráfego de ataque" --> TGT
+  TGT -- "resposta · nunca crua" --> PERC
+  PERC -- "superfície e invariantes" --> DED
+  RAG -. "antes de agir" .-> DED
+  DED -- "candidato + evidência" --> FW
+  FW -- "descarte — o padrão" --> LAY
+  FW -- "10 de 10" --> EXP
+  EXP -- "a triagem prevê o veredito" --> H1
+  H1 -. "duplicado · pago · rejeitado" .-> FLY
+  LAY -. "pista — reabre a hipótese" .-> FLY
+  FLY --> NEXT
+  CON -. "lê" .-> LAY
+  classDef human fill:#1c1a18,stroke:#7f7a72,color:#f2f0ed
+  classDef hostile fill:#25120f,stroke:#a15a4a,color:#efb9a9,font-weight:bold
+  classDef ctrl fill:#1c1a18,stroke:#9a948b,color:#f2f0ed,font-weight:bold
+  classDef step fill:#1b1a18,stroke:#3a3631,color:#eae7e2
+  classDef know fill:#1d1708,stroke:#8a6d1f,color:#dcc48a
+  classDef core fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold
+  classDef fw fill:#25120f,stroke:#a15a4a,color:#efb9a9,font-weight:bold
+  classDef out fill:#141312,stroke:#2e2b27,color:#948d83
+  classDef win fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold
+  classDef learn fill:#1d1708,stroke:#a8842a,color:#e6cd82
+  classDef ext fill:#171614,stroke:#3a3631,color:#d3cdc4

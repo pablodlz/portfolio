@@ -1,0 +1,29 @@
+%% O núcleo: em torno do Cartógrafo, a percepção CONSTRÓI o modelo, a dedução
+%% DERIVA o bug e o aprendizado AFIA a próxima caça.
+flowchart TB
+  BP["Blueprint do alvo<br/>reconstrói o código publicado no cliente"]:::perc
+  CTM["Modelo cognitivo<br/>entidades · papéis · invariantes"]:::perc
+  COR["O corante<br/>efeito no tempo, nos atores e nos canais"]:::perc
+  CART["CARTÓGRAFO DE ESTADOS<br/>aprende a máquina de estados<br/>e verifica as propriedades de segurança"]:::core
+  AUTHZ["Matriz de autorização<br/>completude de acesso"]:::ded
+  NEO["Síntese simbólica<br/>resolve o input exato do desvio"]:::ded
+  META["Oráculos metamórficos<br/>relações que não podem quebrar"]:::ded
+  FW["Firewall<br/>dez portões e reprodução"]:::fw
+  FLY["Volante de veredito<br/>prioridades por contexto"]:::learn
+  BP --> CART
+  CTM --> CART
+  COR -. "oráculo de efeito" .-> CART
+  CART -- "propriedade de acesso" --> AUTHZ
+  CART -- "contraexemplo" --> NEO
+  CTM -- "invariantes" --> META
+  CART == "contraexemplo direto" ==> FW
+  AUTHZ --> FW
+  NEO --> FW
+  META --> FW
+  FW -- "veredito" --> FLY
+  FLY -. "prioridades afiam a próxima caça" .-> CART
+  classDef perc fill:#1c1a18,stroke:#7f7a72,color:#f2f0ed
+  classDef core fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold
+  classDef ded fill:#171614,stroke:#4c4740,color:#dcd7d0
+  classDef learn fill:#1d1708,stroke:#a8842a,color:#e6cd82
+  classDef fw fill:#25120f,stroke:#a15a4a,color:#efb9a9,font-weight:bold

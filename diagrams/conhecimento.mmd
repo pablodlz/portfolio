@@ -1,0 +1,21 @@
+%% A base de conhecimento: o que está indexado, como a consulta se comporta e
+%% por que o resultado chega priorizado em vez de cru.
+flowchart TB
+  SRC["Fontes indexadas — cerca de 489 mil documentos<br/>vulnerabilidades conhecidas · as exploradas agora<br/>probabilidade de exploração · provas de conceito<br/>assinaturas da comunidade · relatos reais · técnica"]:::src
+  SEM[("busca semântica")]:::store
+  XREF[["índice de correlação"]]:::store
+  RET["balanceamento por fonte<br/>ao menos um resultado de cada fonte relevante<br/>busca progressiva: índice, contexto, detalhe"]:::hub
+  HUB{{"correlação instantânea<br/>vulnerabilidade ↔ fraqueza ↔ exploit<br/>↔ prova ↔ assinatura ↔ probabilidade"}}:::hub
+  SCORE["priorização<br/>exploração ativa · probabilidade · frescor<br/>reforço quando três ou mais fontes concordam"]:::hub
+  A(["o agente — consulta a cada passo, e a cada falha"]):::pick
+  SRC --> SEM
+  SRC --> XREF
+  SEM --> RET
+  XREF --> HUB
+  RET --> SCORE
+  HUB --> SCORE
+  SCORE --> A
+  classDef src fill:#1c1a18,stroke:#7f7a72,color:#f2f0ed
+  classDef store fill:#1d1708,stroke:#8a6d1f,color:#dcc48a
+  classDef hub fill:#1b1a18,stroke:#3a3631,color:#eae7e2
+  classDef pick fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold

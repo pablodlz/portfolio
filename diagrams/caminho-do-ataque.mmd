@@ -1,0 +1,25 @@
+%% Da intenção do agente até o tráfego que sai, e de volta. Nada alcança o alvo
+%% sem passar pelo portão de escopo, e o que volta entra como resumo.
+flowchart TB
+  OP(["Operador"]):::ext
+  AGENT["Agente<br/>o ciclo recon → … → relatório"]:::reason
+  RAGN["Conhecimento<br/>cerca de 489 mil documentos"]:::reason
+  LLMP(["Modelos de linguagem<br/>provedores intercambiáveis"]):::ext
+  SCOPE["PORTÃO DE ESCOPO · falha fechada<br/>fora do alcance do modelo"]:::ctrl
+  ARS["Arsenal ofensivo<br/>mais de 140 ferramentas"]:::ext
+  TGT(["Alvo — HOSTIL"]):::hostile
+  BACK["de volta ao contexto do agente<br/>resumo, nunca o corpo bruto"]:::reason
+  ENV[("segredos")]:::asset
+  AGENT -. "consulta antes de agir" .-> RAGN
+  AGENT -. "abstração · hipótese" .-> LLMP
+  OP -- "autoriza o escopo" --> SCOPE
+  AGENT -- "ação proposta" --> SCOPE
+  SCOPE -- "autorizada" --> ARS
+  ARS -- "tráfego de ataque" --> TGT
+  TGT -- "resposta CONTROLADA PELO ATACANTE" --> BACK
+  ENV -. "cada segredo só ao adaptador que o usa" .-> ARS
+  classDef ext fill:#171614,stroke:#3a3631,color:#d3cdc4
+  classDef hostile fill:#25120f,stroke:#a15a4a,color:#efb9a9,font-weight:bold
+  classDef asset fill:#1d1708,stroke:#8a6d1f,color:#dcc48a
+  classDef ctrl fill:#1c1a18,stroke:#9a948b,color:#f2f0ed,font-weight:bold
+  classDef reason fill:#1b1a18,stroke:#3a3631,color:#eae7e2

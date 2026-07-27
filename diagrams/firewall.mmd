@@ -1,0 +1,22 @@
+%% O funil de validação. O padrão é descartar — e o descarte se parte em duas
+%% filas pela única pergunta acionável: "quem destrava este achado?".
+flowchart TD
+  F["Achado + evidência"]:::step --> AR{"Rejeição automática<br/>classes conhecidas de ruído"}:::gate
+  AR -->|"ruído conhecido: descarta"| K0["descartado"]:::drop
+  AR -->|"passa"| G["dez portões — escopo · identidade · exploração<br/>impacto · vetor CVSS · deduplicação<br/>reprodutibilidade · juiz adversarial"]:::gate
+  G --> C{"Confiança recomputada<br/>de 0 a 10"}:::gate
+  C -->|"abaixo de 10"| Q{"QUEM DESTRAVA este achado?"}:::gate
+  C -->|"10, e tudo passou"| DD{"deduplicação interna<br/>por causa raiz"}:::gate
+  Q -->|"o OPERADOR — falta um recurso<br/>que só ele tem"| PB["aguardando o operador"]:::hold
+  Q -->|"o AGENTE — mecanismo de pé,<br/>ainda dá para escalar"| EG["escalando"]:::hold
+  Q -->|"ninguém — não é bug"| K["descartado"]:::drop
+  DD -->|"duplicata"| ARC["absorvido — outro achado<br/>já cobre o caso"]:::drop
+  DD -->|"única"| SAN["sanitização da saída<br/>nunca vaza o ambiente do operador"]:::gate
+  SAN --> R["CONFIRMADO — vira relatório"]:::win
+  C -.->|"sobreviveu: deriva a magnitude"| SEV["severidade DERIVADA da evidência<br/>vetor CVSS pago por artefato<br/>teto e piso por taxonomia<br/>independente do veredito:<br/>nunca ressuscita um descarte"]:::sev
+  classDef gate fill:#1c1a18,stroke:#9a948b,color:#f2f0ed,font-weight:bold
+  classDef step fill:#1b1a18,stroke:#3a3631,color:#eae7e2
+  classDef drop fill:#141312,stroke:#2e2b27,color:#948d83
+  classDef hold fill:#1d1708,stroke:#7a6320,color:#ccb27a
+  classDef win fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold
+  classDef sev fill:#1d1708,stroke:#a8842a,color:#e6cd82

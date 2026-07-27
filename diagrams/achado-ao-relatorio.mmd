@@ -1,0 +1,34 @@
+%% Todo candidato, venha de onde vier, entra pela mesma porta. Nada pula o
+%% firewall — e o que o mundo real responde volta como prioridade da caça seguinte.
+flowchart TB
+  DED["Motores de raciocínio<br/>candidato deduzido + evidência"]:::reason
+  WRK["Trabalhadores em paralelo<br/>recon · autorização · injeção · lógica"]:::reason
+  VAL["FIREWALL DE VALIDAÇÃO<br/>dez portões · confiança recomputada"]:::ctrl
+  SEV["Severidade derivada<br/>magnitude, independente do veredito"]:::ctrl
+  LAY["descartado · escalando<br/>aguardando o operador · absorvido"]:::out
+  EXP["CONFIRMADO · 10 de 10"]:::win
+  TRI["Triagem sintética<br/>prevê o veredito da plataforma"]:::reason
+  H1(["Plataforma de bounty"]):::ext
+  OUTL["Loop de resultado<br/>duplicado · pago · rejeitado"]:::reason
+  PORT["Portfólio por valor esperado<br/>onde caçar: o programa mais fresco"]:::reason
+  FLY["Volante de veredito<br/>aprende o que paga"]:::ctrl
+  NEXT["a próxima caça"]:::reason
+  OP(["Operador"]):::ext
+  DED --> VAL
+  WRK -- "todo achado passa pelo firewall" --> VAL
+  VAL --> LAY
+  VAL -- "aprovado" --> EXP
+  VAL -. "só no sobrevivente" .-> SEV
+  VAL -- "veredito" --> FLY
+  EXP --> TRI
+  TRI -- "relatório · nunca enviado sozinho" --> H1
+  H1 -. "veredito real" .-> OUTL
+  OUTL --> PORT
+  OUTL -- "por que não ganhamos?" --> OP
+  PORT -. "alvo fresco escolhido" .-> NEXT
+  FLY -. "prioridades condicionam" .-> NEXT
+  classDef ext fill:#171614,stroke:#3a3631,color:#d3cdc4
+  classDef out fill:#141312,stroke:#2e2b27,color:#948d83
+  classDef win fill:#2a120b,stroke:#ff5024,color:#ffb49c,font-weight:bold
+  classDef ctrl fill:#1c1a18,stroke:#9a948b,color:#f2f0ed,font-weight:bold
+  classDef reason fill:#1b1a18,stroke:#3a3631,color:#eae7e2

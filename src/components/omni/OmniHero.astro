@@ -15,21 +15,23 @@ const { profile } = data;
 
 <section class="cover" id="topo">
   <div class="container cover-grid">
-    <div class="cover-main">
-      {/* O brasão abre a folha de rosto, acima do título — é a marca do projeto,
-          não uma ilustração de apoio na margem. O `sizes` acompanha a regra de
-          largura do CSS: no celular ele é o container inteiro
-          (100vw menos as duas goteiras de 1.25rem). */}
-      <Image
-        class="cover-mark"
-        src={logo}
-        alt="Brasão do Omni Pentest: um dragão prateado sobre escudo negro com bordas douradas"
-        widths={[192, 312, 468, 640, 840]}
-        sizes="(max-width: 500px) calc(100vw - 2.5rem), (max-width: 900px) 420px, 156px"
-        loading="eager"
-        fetchpriority="high"
-      />
+    {/* Filho DIRETO da grade, e não da coluna de texto: é o que permite ao mesmo
+        elemento ocupar o alto da coluna direita no desktop e a primeira faixa —
+        largura inteira — quando a capa empilha. Um `order`/`float` não resolveria:
+        de dentro de `.cover-main` ele não teria como saltar para a outra coluna.
+        O `sizes` acompanha a mesma regra (no celular, o container inteiro:
+        100vw menos as duas goteiras de 1.25rem). */}
+    <Image
+      class="cover-mark"
+      src={logo}
+      alt="Brasão do Omni Pentest: um dragão prateado sobre escudo negro com bordas douradas"
+      widths={[300, 468, 600, 840, 900]}
+      sizes="(max-width: 500px) calc(100vw - 2.5rem), (max-width: 900px) 420px, 300px"
+      loading="eager"
+      fetchpriority="high"
+    />
 
+    <div class="cover-main">
       <p class="o-label o-label--accent">Dossiê técnico · projeto autoral</p>
 
       <h1 class="cover-h1">Omni Pentest</h1>
@@ -96,17 +98,29 @@ const { profile } = data;
   .cover-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
-    gap: var(--space-8);
+    grid-template-areas:
+      'main mark'
+      'main side';
+    column-gap: var(--space-8);
+    row-gap: var(--space-6);
     align-items: start;
   }
+  .cover-main {
+    grid-area: main;
+  }
+  .cover-mark {
+    grid-area: mark;
+  }
+  .cover-side {
+    grid-area: side;
+  }
 
-  /* Em duas colunas o brasão é um selo acima do título — grande demais e
-     empurraria a declaração para fora da primeira tela. */
+  /* Em duas colunas o brasão é o selo no alto da margem, sobre o razão. */
   .cover-mark {
     display: block;
-    width: clamp(120px, 12vw, 156px);
+    justify-self: end;
+    width: min(300px, 100%);
     height: auto;
-    margin-bottom: var(--space-4);
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
   }
@@ -215,19 +229,24 @@ const { profile } = data;
   }
 
   @media (max-width: 900px) {
+    /* Empilhado o brasão sobe para a PRIMEIRA faixa — antes do título — e deixa
+       de ser um selo na margem: ocupa a largura inteira do container. O teto de
+       420px impede que, num tablet em retrato, ele vire um quadrado de 800px; em
+       telefone nenhum ele morde (o container só passa de 420px acima de 468px de
+       viewport, e aí já não é telefone). */
     .cover-grid {
       grid-template-columns: 1fr;
+      grid-template-areas:
+        'mark'
+        'main'
+        'side';
       gap: var(--space-6);
     }
     .cover-side {
       justify-items: start;
     }
-    /* Empilhado, o brasão deixa de ser um selo na margem e vira a ABERTURA da
-       página: ocupa a largura inteira do container. O teto de 420px é o que
-       impede que, num tablet em retrato, ele vire um quadrado de 800px — em
-       telefone nenhum ele morde (o container só passa de 420px acima de 468px
-       de viewport, e aí já não é telefone). */
     .cover-mark {
+      justify-self: start;
       width: 100%;
       max-width: 420px;
     }

@@ -1,0 +1,106 @@
+---
+import Fig from './Fig.astro';
+
+/**
+ * A abertura: duas figuras antes de qualquer seção numerada — o sistema
+ * inteiro, e o que ele produz.
+ *
+ * Deliberadamente NÃO é uma `<Sec>`: não tem número e não entra no sumário. É
+ * um sumário POR IMAGEM, para quem quer ver a forma da coisa antes de ler onze
+ * seções de texto. A espinha vertical atravessa mesmo assim, com a coluna da
+ * numeração vazia — é o que diz "isto abre o documento" em vez de "isto é o §01".
+ *
+ * O GIF do console mora aqui, e não mais no §10: a captura é a segunda coisa
+ * que a pessoa quer ver, não a décima. O §10 segue sendo onde ele é explicado,
+ * e aponta de volta para esta figura.
+ */
+---
+
+<section id="visao" class="open">
+  <div class="container open-grid">
+    <p class="open-n" aria-hidden="true">◇</p>
+    <div class="open-main">
+      <p class="o-label o-label--accent">De relance</p>
+      <p class="open-lede">
+        Duas figuras antes do texto: <b>o sistema inteiro</b> e <b>o painel onde ele é revisto</b>.
+        O resto da página abre cada peça delas.
+      </p>
+
+      <Fig
+        src="mapa.svg"
+        alt="Mapa do sistema: o operador autoriza o escopo, o portão de escopo libera o arsenal contra o alvo, a percepção alimenta o raciocínio com o conhecimento ao lado, o firewall descarta por padrão, o que sobra vira relatório sob aprovação humana, e o desfecho volta como prioridade da próxima caça"
+        w={1094}
+        h={1337}
+        min={780}
+        eager
+        kicker="figura 1"
+        caption="O ciclo completo, ponta a ponta. As caixas de <b>borda clara</b> são as travas humanas — autorizar o escopo no começo, aprovar o envio no fim; a <b>laranja</b> é onde a vulnerabilidade é deduzida, e a <b>vermelha</b> é o firewall, que descarta por padrão. Destrinchado a partir do §&#8202;01."
+      />
+
+      <Fig
+        src="/omni-pentest/operator-console.gif"
+        raw
+        alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
+        w={1100}
+        h={688}
+        min={780}
+        kicker="figura 2"
+        caption="O console do operador — as dez páginas em sequência, sobre uma instalação real: 40 alvos, 144 achados. <b>Nomes de programa e de achado estão anonimizados</b>: são vulnerabilidades ainda não corrigidas em programas reais. Explicado no §&#8202;10."
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .open {
+    padding-block: var(--space-7);
+    border-block: 1px solid var(--border);
+    background: var(--bg-raised);
+  }
+
+  /* mesma grade das seções, para a espinha nascer alinhada com as de baixo */
+  .open-grid {
+    display: grid;
+    grid-template-columns: 92px minmax(0, 1fr);
+    align-items: start;
+  }
+  .open-n {
+    position: sticky;
+    top: 76px;
+    font-size: var(--fs-xs);
+    color: var(--text-3);
+  }
+  .open-main {
+    padding-left: var(--space-6);
+    border-left: 1px solid var(--border);
+    margin-block: calc(-1 * var(--space-7));
+    padding-block: var(--space-7);
+  }
+
+  .open-lede {
+    margin-top: var(--space-3);
+    max-width: 62ch;
+    color: var(--text-2);
+    font-size: var(--fs-body);
+    line-height: 1.75;
+  }
+  .open-lede b {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 720px) {
+    .open-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .open-n {
+      display: none;
+    }
+    .open-main {
+      padding-left: 0;
+      border-left: none;
+      margin-block: 0;
+      padding-block: 0;
+    }
+  }
+</style>

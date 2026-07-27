@@ -1,7 +1,6 @@
 ---
 import Sec from './Sec.astro';
 import Deep from './Deep.astro';
-import { withBase } from '../../lib/url';
 import { CONSOLE_PAGES, CONSOLE_DETAILS, CONSOLE_SPEC } from '../../lib/omni';
 ---
 
@@ -12,33 +11,13 @@ import { CONSOLE_PAGES, CONSOLE_DETAILS, CONSOLE_SPEC } from '../../lib/omni';
   title="O portfólio inteiro num relance"
   lede="Depois que a caça roda e os achados entram, é aqui que se revê tudo. O painel lê e escreve pelos <b>mesmos caminhos validados</b> que o agente usa — a interface nunca vira uma segunda fonte da verdade."
 >
-  <figure class="shot">
-    {/* A 340px de largura o painel não se lê. O toque abre o GIF em tamanho
-        natural — a única saída num aparelho estreito para uma figura larga. */}
-    <a
-      class="shot-zoom"
-      href={withBase('/omni-pentest/operator-console.gif')}
-      target="_blank"
-      rel="noopener"
-      aria-label="Abrir a animação do console em tamanho original"
-    >
-      <img
-        src={withBase('/omni-pentest/operator-console.gif')}
-        alt="As dez páginas do console em sequência, da postura do portfólio até a configuração da instalação"
-        width="1100"
-        height="688"
-        loading="lazy"
-        decoding="async"
-      />
-      <span class="shot-hint" aria-hidden="true">toque para ampliar</span>
-    </a>
-    <figcaption>
-      <span class="shot-cap-k">figura única</span>
-      As dez páginas em sequência, sobre uma instalação real — 40 alvos, 144 achados.
-      <b>Nomes de programa e de achado estão anonimizados</b>: são vulnerabilidades ainda não
-      corrigidas em programas reais.
-    </figcaption>
-  </figure>
+  {/* A animação subiu para a abertura da página (figura 2): é a segunda coisa
+      que a pessoa quer ver, não a décima. Aqui fica o caminho de volta — repetir
+      1 MB de GIF a três telas de distância não acrescentaria nada. */}
+  <p class="backref">
+    <a href="#visao">↑ A animação do painel abre esta página</a> — as dez telas em sequência, sobre uma
+    instalação real. O que vem abaixo é o que cada uma delas responde.
+  </p>
 
   <p class="o-label pages-label">Sumário do painel — cada página responde a uma pergunta</p>
   <ol class="o-index pages">
@@ -80,62 +59,20 @@ import { CONSOLE_PAGES, CONSOLE_DETAILS, CONSOLE_SPEC } from '../../lib/omni';
 </Sec>
 
 <style>
-  .shot {
+  .backref {
     margin-top: var(--space-6);
-  }
-  .shot-zoom {
-    position: relative;
-    display: block;
-  }
-  .shot-zoom:hover {
-    text-decoration: none;
-  }
-  .shot img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--border-strong);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--accent-border);
     border-radius: var(--radius-sm);
-    background: var(--bg);
-  }
-  .shot-zoom:hover img {
-    border-color: var(--accent-border);
-  }
-  /* a dica só faz sentido onde a figura de fato não se lê */
-  .shot-hint {
-    display: none;
-    position: absolute;
-    right: var(--space-3);
-    bottom: var(--space-3);
-    padding: 4px 8px;
-    border: 1px solid var(--border-strong);
-    border-radius: var(--radius-sm);
-    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    background: var(--accent-soft);
+    max-width: 68ch;
     color: var(--text-2);
-    font-family: var(--font-mono);
-    font-size: var(--fs-xs);
-  }
-  @media (max-width: 720px) {
-    .shot-hint {
-      display: block;
-    }
-  }
-  .shot figcaption {
-    margin-top: var(--space-3);
-    max-width: 70ch;
-    color: var(--text-3);
-    font-size: var(--fs-xs);
+    font-size: var(--fs-small);
     line-height: 1.75;
   }
-  .shot-cap-k {
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  .backref a {
     color: var(--accent);
-    margin-right: var(--space-2);
-  }
-  .shot figcaption b {
-    color: var(--text-2);
+    font-weight: 600;
   }
 
   .pages-label {
